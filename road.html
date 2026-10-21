@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The road · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .readout .wide { grid-column: 1 / -1; }
+  .stages { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--hair); }
+  .stages li { padding: 16px 18px 18px 0; border-bottom: 1px solid var(--hair); display: grid; gap: 6px; align-content: start; min-width: 0; }
+  .stages li + li { padding-left: 18px; border-left: 1px solid var(--hair); }
+  .stages .k-label { color: var(--ink-3); }
+  .stages b { font-family: var(--f-display); font-weight: 700; font-size: 1.4rem; text-transform: uppercase; line-height: 1.05; }
+  .stages span { font-size: 0.95rem; color: var(--ink-2); line-height: 1.45; }
+  @media (max-width: 860px) { .stages { grid-template-columns: minmax(0, 1fr); } .stages li + li { padding-left: 0; border-left: 0; } }
+  .plate.slim { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+  .plate.slim .shot { width: 100%; max-width: 520px; justify-self: center; }
+  @media (max-width: 960px) { .plate.slim { grid-template-columns: minmax(0, 1fr); } }
+  table.tbl td.ph { font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; line-height: 1; width: 2.2em; }
+  table.tbl td .lbl { display: block; font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
+  table.tbl td.none { color: var(--ink-3); }
+  table.tbl.wide { min-width: 760px; }
+  table.tbl tr.hl td { background: color-mix(in srgb, var(--exp-wash) 60%, transparent); }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road" aria-current="page">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">16</span> Design and road · the ask</span>
+        <h1>The <em>road</em> from here</h1>
+        <p class="dek">Today Vector is a prototype and a design. The ask is one functional slice on real Jira, Bitbucket, Jenkins and EKS, for one domain, in Dev, read-only first.</p>
+        <div class="files">
+          <span class="tag t-exp"><i></i>v3 · Architecture roadmap</span>
+          <span class="tag t-exp"><i></i>v3 · Home · WJ-88</span>
+          <span class="tag">handbook · repository facts</span>
+          <span class="tag">handbook 1.9</span>
+          <span class="tag">handbook 14.11–14.13</span>
+          <span class="tag">handbook 16.1–16.5</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="A road with four milestones: 0 Prototype, today, where a blue marker sits; 1 One functional slice, the ask; 2 Approved write actions; 3 More domains and environments. A violet gate marked four decisions stands before Phase 1, and amber gates marked evidence stand before Phases 2 and 3. A dimension line underneath reads: each phase earns the next with evidence, not dates.">
+        <span class="ruler">roadmap · v3 architecture board</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="today">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">What is real today</span>
+        <h2>A prototype and a design</h2>
+        <p class="lede">Two things exist. Atlas is a working React proof of concept with a synthetic estate, and the v3 canvas is a design of 28 screens. Neither one talks to a real enterprise system.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Atlas prototype · the code</span><h4>22 views in one browser tab</h4><p>Atlas is a React proof of concept. Its 22 workspace views are hash routes under one page, plus a separate <code>/demo</code> story. Workflow state lives in browser storage under the key <code>atlas-demo-v3</code>. No production backend API is implemented.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Atlas prototype · the estate</span><h4>960 repositories, all synthetic</h4><p>Six named records anchor the scenario, starting with <code>commerce/order-service</code>. A formula generates the other 954 across eight domains, which yields 245 applications and 2,875 service instances. Nothing in it was discovered by scanning an enterprise.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Atlas prototype · the connectors</span><h4>66 connector cards, none connected</h4><p>Integrations lists 66 descriptors in eight categories, and 39 start out marked configured. That flag is display state. Validation checks a prefix and a length, then waits. Nine model descriptors, four tools, six prompt templates and eight regression cases complete the kit.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">v3 design</span><h4>28 screens and one scenario</h4><p>The v3 canvas draws 28 screens and two diagrams on one shell scoped to Dev. They follow one ticket, COM-2841, from Jira to a promotion request. Every integration in it is simulated, so the screens show what real data would look like.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">The rule for both</span><h4>Implemented, fixture or proposed</h4><p>The handbook labels every claim. Implemented means present in the inspected code, fixture means prepared or deterministic sample data, and proposed means future design. Words on screen such as approved, connected or production describe fixture state or target intent.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="today" data-label="Five drawings in turn: the Atlas window with its 22 views, the /demo story, the atlas-demo-v3 browser record and a hatched box for backend APIs; 960 repository dots in eight domain blocks with six named anchors; 66 connector cells in eight categories with 39 marked configured and Phase 1's four tools ringed; the 30 v3 boards threaded by one scenario with simulated integrations; and three columns sorting it all into implemented, fixture and proposed."><span class="ruler">what exists · October 2026</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ledger">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">The honesty rule</span>
+        <h2>Three labels on every claim</h2>
+        <p class="lede">The handbook that documents Atlas states its numbers in one table and keeps the prototype's words apart from the platform's promises.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p>Atlas contains real local logic. It traverses a graph, ranks search results, runs eight evaluation cases, checks release-gate predicates and computes a configuration fingerprint, all inside the browser. What it does not contain is anything enterprise-facing.</p>
+          <p>Handbook 16.1 lists the gaps. There is no real enterprise login, identity federation, source-permission service, tenant isolation, model inference, repository connection, tool network call, durable agent runtime, backend audit ledger, deployment, rollback or Teams bot.</p>
+          <p>The v3 design follows the same rule on its own Architecture board. Phase 0 reads "28 screens, one complete scenario in Dev. Integrations simulated." The guide keeps a third layer for the production proposal and calls it proposed every time.</p>
+          <p class="note">This page reports the prototype's numbers from the handbook's snapshot of 13 October 2026. The prototype still renders the name Atlas; Vector is the platform's name in the design.</p>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Item</th><th class="num">Value</th><th>What it means</th></tr></thead>
+            <tbody>
+              <tr><td>Workspace views</td><td class="num">22</td><td>Hash-selected views under <code>/</code>, not 22 server routes</td></tr>
+              <tr><td>Other page</td><td class="num"><code>/demo</code></td><td>Five-chapter story, independent of workflow state</td></tr>
+              <tr><td>Synthetic repositories</td><td class="num">960</td><td>Six named records plus 954 generated</td></tr>
+              <tr><td>Applications / services / domains</td><td class="num">245 / 2,875 / 8</td><td>Derived from repository fixtures; not an enterprise scan</td></tr>
+              <tr><td>Detailed graph</td><td class="num">13 / 12</td><td>Entities and assertions in a small Commerce neighbourhood</td></tr>
+              <tr><td>Model descriptors</td><td class="num">9</td><td>Illustrative aliases, endpoints, prices and timings</td></tr>
+              <tr><td>Integration descriptors</td><td class="num">66</td><td>Eight categories; 39 initially marked configured</td></tr>
+              <tr><td>Tool Registry tools</td><td class="num">4</td><td>Two read examples and two write examples</td></tr>
+              <tr><td>Prompt templates</td><td class="num">6</td><td>Only the fraud scenario has an executable fixture</td></tr>
+              <tr><td>Regression cases</td><td class="num">8</td><td>Deterministic logic driven by safety and threshold</td></tr>
+              <tr><td>Browser storage key</td><td class="num"><code>atlas-demo-v3</code></td><td>One JSON record per browser profile</td></tr>
+              <tr><td>Production backend APIs</td><td class="num">0</td><td>API paths in the target architecture are proposals</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ask">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The ask</span>
+        <h2>One slice, read-only, in Dev</h2>
+        <p class="lede">Phase 1 connects four real systems for one domain and only reads from them. Four decisions start it, and five measures judge whether it has earned Phase 2.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Phase 1 · scope</span><h4>Four real systems, one domain, Dev</h4><p>Real Jira, Bitbucket, Jenkins and EKS, for one domain, in Dev only. Read-only first, so Vector reads tickets, pull requests, builds and pods and changes none of them. The Architecture board suggests Commerce as the domain.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Four decisions</span><h4>What has to be settled first</h4><p>The board lists four, all unchecked: the first domain, read access to sources in Dev, model hosting on Bedrock or Azure, and a pilot team for @B. Handbook 16.5 names the evidence each one needs and who is likely accountable for it.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Five measures</span><h4>How Phase 1 is judged</h4><p>Task success, lead time, escaped defects, evidence freshness and cost per task, each with a one-line definition on the board. None has a value yet, because nothing real has run.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Each phase earns the next</span><h4>Evidence opens the gate</h4><p>Phase 2 adds approved write actions, each with a person. Phase 3 adds domains and environments. For a functional slice the handbook asks for a reproducible authorized scenario, denied-access tests, failure recovery, and measured quality and cost. No dates are set.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="ask" data-label="Four drawings in turn: Phase 1's scope with Dev chosen, Commerce suggested, and Jira, Bitbucket, Jenkins and EKS feeding read arrows into Vector while writes are held for Phase 2; four unchecked decision cards with their evidence and owners converging on a closed violet gate; five measures with empty gauges; and the road again with the exit evidence for Phase 1 at its gate."><span class="ruler">phase 1 · the ask</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="success">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">What success means</span>
+        <h2>Success changes with the stage</h2>
+        <p class="lede">Handbook 1.9 sets a different bar for each stage. The five measures on the Architecture board are the bar for a working product, and the prototype is judged on something much smaller.</p>
+      </header>
+      <ol class="stages">
+        <li><span class="k-label">Stage · the prototype</span><b>Understood</b><span>A reader completes the workflow, understands its evidence and recognises what is simulated.</span></li>
+        <li><span class="k-label">Stage · a functional product</span><b>Real and reproducible</b><span>Authorized real sources, reproducible artifact versions, genuine model and tool execution, meaningful quality measurements, recovery and observed deployment state.</span></li>
+        <li><span class="k-label">Stage · enterprise adoption</span><b>Measured outcomes</b><span>Task success, lead time, escaped defects, evidence freshness, cost per successful task and operational recovery. The number of logos in the connector catalog does not establish them.</span></li>
+      </ol>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Measure</th><th>On the v3 Architecture board</th><th>In handbook 1.9</th></tr></thead>
+          <tbody>
+            <tr><td><b>Task success</b></td><td>work finished without rework</td><td>task success</td></tr>
+            <tr><td><b>Lead time</b></td><td>ticket to running in Dev, then out of Dev</td><td>lead time</td></tr>
+            <tr><td><b>Escaped defects</b></td><td>found after promotion</td><td>escaped defects</td></tr>
+            <tr><td><b>Evidence freshness</b></td><td>age of sources behind answers</td><td>evidence freshness</td></tr>
+            <tr><td><b>Cost per task</b></td><td>model and compute per finished task</td><td>cost per successful task</td></tr>
+            <tr><td><b>Operational recovery</b></td><td class="none">not on the board</td><td>operational recovery</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="phases">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">The pitch and the detailed proposal</span>
+        <h2>Two roadmaps that agree on Phase 1</h2>
+        <p class="lede">The v3 board is the pitch, with four phases on one card. Handbook 14.12 is the detailed proposal, with five phases and the evidence each must produce before the next begins. Both number from zero, and their wording differs from Phase 2 on.</p>
+      </header>
+      <div class="tbl-wrap">
+        <table class="tbl wide">
+          <thead><tr><th>Phase</th><th>v3 Architecture board · the pitch</th><th>Handbook 14.12 · scope</th><th>Handbook 14.12 · required exit evidence</th></tr></thead>
+          <tbody>
+            <tr><td class="ph">0</td><td><span class="lbl">Prototype · Today</span>"28 screens, one complete scenario in Dev. Integrations simulated."</td><td><span class="lbl">Discovery / POC</span>Current UI, architecture, source inventory, threat model, prioritized gaps.</td><td>Stakeholders understand the workflow and simulation boundaries.</td></tr>
+            <tr class="hl"><td class="ph">1</td><td><span class="lbl">One functional slice · The ask</span>"Real Jira, Bitbucket, Jenkins and EKS for one domain, Dev only. Read-only first."</td><td><span class="lbl">Functional slice</span>One domain or region, one Git provider, approved model plus private endpoint, one language, retrieval, read-only tools, evaluation, trace.</td><td>Reproducible authorized scenario, denied-access tests, failure recovery, measured quality and cost.</td></tr>
+            <tr><td class="ph">2</td><td><span class="lbl">Approved write actions</span>"Re-run stages, open PRs, promote out of Dev — each with a person."</td><td><span class="lbl">Controlled pilot</span>Supported IDE integration, durable runs, immutable bundles, delivery adapter, multiple teams.</td><td>Operational recovery rehearsal, actual usage, cost reconciliation.</td></tr>
+            <tr><td class="ph">3</td><td><span class="lbl">More domains and environments</span>"Each phase earns the next with evidence, not dates."</td><td><span class="lbl">Enterprise hardening</span>Strong isolation, HA/DR, support ownership, broader adapters.</td><td>Security and operational readiness and agreed measured SLOs.</td></tr>
+            <tr><td class="ph">4</td><td class="none">The board stops at Phase 3.</td><td><span class="lbl">Federation and scale</span>Regional cells and delegated adapter and runtime ownership.</td><td>Throughput, regional controls and contract conformance under real load.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split">
+        <div class="prose">
+          <h3>Where they line up</h3>
+          <p>Phases 0 and 1 describe the same steps. The board names the systems and the environment: Jira, Bitbucket, Jenkins and EKS, in Dev. The handbook names the ingredients of the same slice: one Git provider, an approved model behind a private endpoint, one language, retrieval, read-only tools, evaluation and trace.</p>
+          <p>After Phase 1 they cut the work differently. The board's Phase 2 adds write actions, with a person approving each one. The handbook's Phase 2 is a controlled pilot with IDE integration, durable runs, immutable bundles and a delivery adapter, and its proposed decision records favour durable execution before autonomous writes. The board's Phase 3 widens scope to more domains and environments; the handbook splits the later work into hardening and then federation.</p>
+          <p>This guide shows both as written and does not merge them. Neither is a schedule: the board says each phase earns the next with evidence, and the handbook calls its week and month ranges indicative planning estimates until identity, network, data permissions, enterprise standards, procurement and staffing are resolved.</p>
+        </div>
+        <div class="prose">
+          <h3>Choices still open</h3>
+          <p>Handbook 14.13 keeps the technology open. Relational databases, graph systems, search and vector options, event backbones, durable workflow engines, policy engines, editor strategies and serving options are alternatives to evaluate against enterprise standards. None is an installed dependency.</p>
+          <p>Ratifying one of the proposed decision records takes a decision owner, the alternatives considered, a date, the consequences and implementation evidence. The table below lists the production decisions the handbook says need evidence, and marks the four that the Architecture board puts in front of Phase 1.</p>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl wide">
+          <thead><tr><th>Decision · handbook 16.5</th><th>Evidence to obtain</th><th>Likely accountable</th><th>On the v3 board</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td><b>First domain and use case</b></td><td>Actual pain, measurable success, source availability</td><td>Product and application teams</td><td>"First domain · Commerce suggested"</td></tr>
+            <tr class="hl"><td><b>Source authorization</b></td><td>Provider permission behaviour, revocation latency, private network constraints</td><td>IAM and repository owners</td><td>"Read access to sources in Dev"</td></tr>
+            <tr><td><b>Canonical identity and authority</b></td><td>Source IDs, aliases, merge and split policy, field ownership</td><td>Architecture and knowledge owners</td><td class="none">–</td></tr>
+            <tr><td><b>Editor delivery</b></td><td>Existing IDE habits, supported extensions, remote workspace policy</td><td>Developer Experience</td><td class="none">–</td></tr>
+            <tr class="hl"><td><b>Model hosting and routing</b></td><td>Approved deployments, capabilities, classification, cost and latency measurements</td><td>AI platform, security, FinOps</td><td>"Model hosting · Bedrock or Azure"</td></tr>
+            <tr><td><b>Agent durability</b></td><td>Checkpoint, replay, cancellation and side-effect tests</td><td>Runtime engineering</td><td class="none">–</td></tr>
+            <tr><td><b>Tool write scope</b></td><td>Allowed actions, idempotency, approval tiers, reconciliation</td><td>API and application owners, security</td><td class="none">–</td></tr>
+            <tr><td><b>Graph and search storage</b></td><td>Representative queries, ACL filtering, rebuild and load tests</td><td>Knowledge platform and SRE</td><td class="none">–</td></tr>
+            <tr><td><b>Tenant and residency isolation</b></td><td>Classification, permitted regions, recovery geography</td><td>Security and enterprise architecture</td><td class="none">–</td></tr>
+            <tr><td><b>Retention and deletion</b></td><td>Business purpose and deletion across derived stores</td><td>Data governance</td><td class="none">–</td></tr>
+            <tr><td><b>Release authority</b></td><td>Business, security and deployment responsibilities and the emergency process</td><td>Application owners, AppSec, delivery teams</td><td class="none">–</td></tr>
+            <tr class="hl"><td><b>@B implementation</b></td><td>Teams installation and consent, historical context, audience rules, supported SDK</td><td>Collaboration platform, IAM, product</td><td>"Pilot team for @B"</td></tr>
+            <tr><td><b>Optimus Logger integration</b></td><td>Existing API, schema and auth, trace identifiers, ownership</td><td>Tool owner and observability team</td><td class="none">–</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">The last column is this guide's matching of the board's four items to the handbook's rows. Handbook 15 lists the @B pilot team among @B's open questions, together with allowed actions, installation policy, consent and retention.</p>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where the road appears on screen</h2>
+        <p class="lede">The Architecture board carries the roadmap, the four decisions and the five measures in its right column. Home shows the same plan as everyday work: a Jira item, a backlog ticket and a meeting. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate slim">
+        <figure class="shot" data-src="screens/v3/Architecture.webp" data-w="1600" data-h="1000" data-crop="1176,168,414,350" data-title="Architecture — Roadmap card (v3)">
+          <span class="pin" data-x="1190" data-y="246">1</span>
+          <span class="pin" data-x="1190" data-y="321">2</span>
+          <span class="pin" data-x="1190" data-y="396">3</span>
+          <span class="pin" data-x="1190" data-y="470">4</span>
+          <span class="pin" data-x="1446" data-y="207">5</span>
+          <span class="ring" data-box="1193,303,375,73"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 16.1 · Architecture, right column</span>
+          <h3>The roadmap card</h3>
+          <ol class="pins">
+            <li><span><b>Prototype, "Today".</b> "28 screens, one complete scenario in Dev. Integrations simulated." The design describes itself as Phase 0.</span></li>
+            <li><span><b>One functional slice, "The ask".</b> Real Jira, Bitbucket, Jenkins and EKS for one domain, Dev only, read-only first.</span></li>
+            <li><span><b>Approved write actions.</b> Re-run stages, open PRs, promote out of Dev, each with a person.</span></li>
+            <li><span><b>More domains and environments.</b> The card's last line is the rule for all of it: "Each phase earns the next with evidence, not dates."</span></li>
+            <li><span><b>"Each phase earns the next".</b> The card's subtitle. No phase carries a date or a duration.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate slim">
+        <figure class="shot" data-src="screens/v3/Architecture.webp" data-w="1600" data-h="1000" data-crop="1176,512,414,478" data-title="Architecture — Decisions and measures (v3)">
+          <span class="pin c-ctl" data-x="1540" data-y="578">1</span>
+          <span class="pin c-ctl" data-x="1540" data-y="605">2</span>
+          <span class="pin c-ctl" data-x="1540" data-y="632">3</span>
+          <span class="pin c-ctl" data-x="1540" data-y="660">4</span>
+          <span class="pin c-tel" data-x="1400" data-y="727">5</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 16.2 · Architecture, below the roadmap</span>
+          <h3>Four decisions, five measures</h3>
+          <ol class="pins">
+            <li><span><b>First domain, Commerce suggested.</b> Evidence: actual pain, measurable success, source availability.</span></li>
+            <li><span><b>Read access to sources in Dev.</b> Evidence: how each provider's permissions behave, how fast revocation lands, private network limits.</span></li>
+            <li><span><b>Model hosting, Bedrock or Azure.</b> Evidence: approved deployments, capabilities, classification, cost and latency.</span></li>
+            <li><span><b>Pilot team for @B.</b> All four boxes are empty in the design. Nothing has been decided yet.</span></li>
+            <li><span><b>How we measure success.</b> Task success, lead time, escaped defects, evidence freshness and cost per task, each with its definition beside it.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Main.webp" data-w="1600" data-h="1000" data-crop="228,175,952,545" data-title="Home — Jira and Teams calendar (v3)">
+          <span class="pin c-exp" data-x="250" data-y="569">1</span>
+          <span class="pin c-exp" data-x="250" data-y="645">2</span>
+          <span class="pin" data-x="1076" data-y="416">3</span>
+          <span class="pin" data-x="432" data-y="206">4</span>
+          <span class="ring" data-box="258,549,511,39"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 16.3 · Home, Tuesday 13 October</span>
+          <h3>The plan as work items</h3>
+          <ol class="pins">
+            <li><span><b>WJ-88 "Vector Phase 1 — one functional slice".</b> In progress, in Venkatesh's assigned list beside COM-2841.</span></li>
+            <li><span><b>WJ-91 "@B pilot for the Commerce channel".</b> Created by Venkatesh, still in Backlog: the pilot-team decision as a ticket.</span></li>
+            <li><span><b>Phase 1 architecture sync.</b> 13:00 on the Teams calendar, one hour, marked done.</span></li>
+            <li><span><b>Since this morning.</b> "@B read Jira, Bitbucket, Jenkins, EKS, Confluence and Teams." In the design these reads are simulated. Phase 1 would make the first four real.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Size the AI traffic</h2>
+        <p class="lede">Handbook 14.11 sizes the proposed AI path with three numbers: calls per day, a peak factor and how long each call stays open. Move them and watch the average rate, the peak and the open streams follow.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="cap-ctl">
+          <div class="ctl"><label for="calls">AI calls per day <output for="calls">5M</output></label><input type="range" id="calls" min="0" max="10" step="1" value="6"></div>
+          <div class="ctl"><label for="peak">Peak factor over the average <output for="peak">10×</output></label><input type="range" id="peak" min="1" max="20" step="1" value="10"></div>
+          <div class="ctl"><label for="dur">Average active duration <output for="dur">4 s</output></label><input type="range" id="dur" min="0.5" max="30" step="0.5" value="4"></div>
+          <div class="readout">
+            <div><b id="o-avg">–</b><span>average requests/s</span></div>
+            <div><b id="o-peak">–</b><span>peak requests/s</span></div>
+            <div class="wide"><b id="o-conc">–</b><span>concurrent streams at peak, before headroom</span></div>
+          </div>
+          <p class="logline" id="o-sum" aria-live="polite"></p>
+          <div class="btnrow"><button type="button" class="btn" data-act="example">Proposal's example · 5M · 10× · 4 s</button></div>
+          <p class="note">The arithmetic is the proposal's own: calls ÷ 86,400 s gives the average, times the peak factor gives the peak, times the active duration gives open streams. At the example it gives 57.9, 579 and 2,315; the handbook rounds the average to 58 first and quotes about 580 and roughly 2,320. These are planning assumptions, not measurements. The day shape is illustrative; only its average and peak come from the sliders.</p>
+        </div>
+        <div class="board" data-stage="cap" data-label="A day-shaped load curve of AI requests per second with dashed lines for the average and the peak; below it a strip of overlapping streams where the ones open at the peak instant are highlighted and a dimension marks the active duration; and a hatched box listing what the arithmetic leaves out: token throughput, long tails, fan-out, provider quotas and regional constraints."><span class="ruler">capacity envelope · handbook 14.11</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="envelope">
+    <div class="wrap">
+      <div class="split">
+        <div class="prose">
+          <h3>Planning envelope</h3>
+          <p>The proposal plans for 500 to 5,000 applications, 1,000 to 20,000 repositories, 10,000 to 100,000 components, millions of current relationships and potentially billions of historical observations. It also illustrates 48 million daily topology observations under one proposed workload, which is why it argues for aggregation and history tiering.</p>
+          <p>The prototype's 960 repository records demonstrate none of that. The handbook calls these planning assumptions, and the targets beside them are unratified: the local fixture timings do not measure any of them.</p>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Candidate target · 14.11</th><th class="num">Value</th></tr></thead>
+            <tbody>
+              <tr><td>Control API success</td><td class="num">99.95%</td></tr>
+              <tr><td>Run admission within one second</td><td class="num">99.9%</td></tr>
+              <tr><td>Retrieval p95</td><td class="num">under 1.5 s</td></tr>
+              <tr><td>Small delta freshness</td><td class="num">mostly under 5 min</td></tr>
+              <tr><td>Metadata recovery point / recovery time</td><td class="num">≤ 5 min / ≤ 60 min</td></tr>
+              <tr><td>Prioritized graph and search rebuild</td><td class="num">≤ 4 h</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>28 + 2</b><span>screens and diagrams in the v3 design, one scenario</span></div>
+        <div><b>960</b><span>synthetic repositories in the Atlas prototype</span></div>
+        <div><b>0</b><span>production backend APIs implemented</span></div>
+        <div><b>4</b><span>real systems in Phase 1: Jira, Bitbucket, Jenkins, EKS</span></div>
+        <div><b>4</b><span>decisions to start Phase 1, all unchecked</span></div>
+        <div><b>5</b><span>measures of success on the Architecture board</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>A React proof of concept: 22 views and a <code>/demo</code> story, a synthetic estate of 960 repositories, 66 connector cards with 39 marked configured, state in browser storage under <code>atlas-demo-v3</code>, and no production backend API. Its Architecture view states that execution and integrations are simulated.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>Roadmap card: 0 Prototype · Today, 1 One functional slice · The ask, 2 Approved write actions, 3 More domains and environments</li><li>Four unchecked decisions and five measures with definitions</li><li>Home: WJ-88 in progress, WJ-91 @B pilot in Backlog, Phase 1 architecture sync at 13:00</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>Phases 0 to 4 with required exit evidence (handbook 14.12), capacity envelopes and unratified SLO targets (14.11), technology choices left open (14.13), and production decisions with the evidence they need and who is accountable (16.5).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>How others phase a platform</h2>
+        <p class="lede">Four well-known references on growing an internal platform and judging it, set beside Vector's roadmap and its five measures.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="interface.html"><span>← Chapter 15</span><b>The interface</b></a>
+    <a class="fwd" href="index.html"><span>The whole machine →</span><b>Back to the map</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, eout, clamp, lerp } = Field;
+
+  /* ---------- a road: Catmull-Rom spline sampled by arc length ---------- */
+  function spline(ctrl, n = 160) {
+    const pts = [], segs = ctrl.length - 1, m = Math.ceil(n / segs);
+    for (let i = 0; i < segs; i++) {
+      const p0 = ctrl[Math.max(0, i - 1)], p1 = ctrl[i], p2 = ctrl[i + 1], p3 = ctrl[Math.min(segs, i + 2)];
+      for (let k = 0; k < m; k++) {
+        const u = k / m, u2 = u * u, u3 = u2 * u;
+        pts.push([0, 1].map((d) => 0.5 * (2 * p1[d] + (-p0[d] + p2[d]) * u + (2 * p0[d] - 5 * p1[d] + 4 * p2[d] - p3[d]) * u2 + (-p0[d] + 3 * p1[d] - 3 * p2[d] + p3[d]) * u3)));
+      }
+    }
+    pts.push(ctrl[segs].slice());
+    const L = [0];
+    for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const total = L[L.length - 1];
+    const at = (f) => {
+      const d = clamp(f) * total; let i = 1;
+      while (i < L.length - 1 && L[i] < d) i++;
+      const u = (d - L[i - 1]) / (L[i] - L[i - 1] || 1);
+      return [lerp(pts[i - 1][0], pts[i][0], u), lerp(pts[i - 1][1], pts[i][1], u), Math.atan2(pts[i][1] - pts[i - 1][1], pts[i][0] - pts[i - 1][0])];
+    };
+    const fx = (x) => { let lo = 0, hi = 1; for (let k = 0; k < 32; k++) { const md = (lo + hi) / 2; if (at(md)[0] < x) lo = md; else hi = md; } return (lo + hi) / 2; };
+    return { at, fx, total };
+  }
+  // draw a road band between fractions f0..f1 with a width function; returns nothing
+  function drawRoad(g, road, wfn, o = {}) {
+    const N = 90, Lp = [], Rp = [], C = [];
+    for (let k = 0; k <= N; k++) {
+      const f = k / N, [x, y, a] = road.at(f), w = wfn(f) / 2, sn = Math.sin(a), cs = Math.cos(a);
+      Lp.push([x + sn * w, y - cs * w]); Rp.push([x - sn * w, y + cs * w]); C.push([x, y]);
+    }
+    g.poly(Lp.concat(Rp.slice().reverse()), { fill: "grid", color: "grid", lw: 1, close: true, a: o.a });
+    g.poly(Lp, { color: "ink-3", lw: 1.1, dash: [6, 5], a: o.a });
+    g.poly(Rp, { color: "ink-3", lw: 1.1, dash: [6, 5], a: o.a });
+    g.poly(C, { color: "#FFFFFF", lw: 2, dash: [10, 10], a: o.a });
+  }
+  function gateBar(g, x, y, ang, half, color, a = 1) {
+    const nx = -Math.sin(ang), ny = Math.cos(ang);
+    g.line(x - nx * half, y - ny * half, x + nx * half, y + ny * half, { color, lw: 3.2, a });
+    g.circle(x - nx * half, y - ny * half, 3.6, { fill: color, a }); g.circle(x + nx * half, y + ny * half, 3.6, { fill: color, a });
+  }
+  function milestone(g, x, y, r, i, a = 1) {
+    if (i === 0) g.circle(x, y, r, { fill: "ink", a });
+    else if (i === 1) g.circle(x, y, r, { fill: "card", stroke: "ink", lw: 2.2, a });
+    else g.circle(x, y, r, { fill: "card", stroke: "ink-3", lw: 1.4, dash: [3, 3], a });
+    g.text(String(i), x, y + r * 0.36, { size: r * 1.05, weight: 600, color: i === 0 ? "#FFFFFF" : i === 1 ? "ink" : "ink-3", align: "center", a });
+  }
+
+  const PHASES = [
+    { title: "Prototype", chip: "today", sub: "28 screens, one complete scenario in Dev. Integrations simulated." },
+    { title: "One functional slice", chip: "the ask", sub: "Real Jira, Bitbucket, Jenkins and EKS for one domain, Dev only. Read-only first." },
+    { title: "Approved write actions", sub: "Re-run stages, open PRs, promote out of Dev, each with a person." },
+    { title: "More domains and environments", sub: "Each phase earns the next with evidence, not dates." },
+  ];
+  const GATES = [["4 decisions", "ctl"], ["evidence", "kno"], ["evidence", "kno"]];
+
+  /* ---------------- hero: the road ---------------- */
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g, t = s.t;
+    const small = W < 640;
+    const top = Math.max(42, g.safeTop + 10);
+    const px = small ? 14 : 18, gap = small ? 10 : 14;
+    const bw = (W - px * 2 - gap * 3) / 4;
+    const cx = [0, 1, 2, 3].map((i) => px + bw / 2 + i * (bw + gap));
+    const yL = top + (H - top) * 0.71, yR = top + (H - top) * 0.6;
+    const road = spline([[-30, yL + 6], [W * 0.3, yL], [W * 0.66, lerp(yL, yR, 0.72) + 3], [W + 30, yR]]);
+    const RW = (f) => lerp(36, 18, f);
+    drawRoad(g, road, RW);
+    const F = cx.map((x) => road.fx(x));
+    const G = [0, 1, 2].map((i) => (F[i] + F[i + 1]) / 2);
+    // label blocks along the top lane
+    const ts = small ? 17 : 19, ss = small ? 11 : 11.5;
+    PHASES.forEach((p, i) => {
+      const [x, y] = road.at(F[i]), r = lerp(14, 11, F[i]);
+      const bx = cx[i] - bw / 2;
+      let yy = top + 14;
+      yy = g.wrap(p.title.toUpperCase(), bx, yy, bw, { size: ts, font: "display", weight: 700, lh: ts * 1.02, color: i < 2 ? "ink" : "ink-2", maxLines: 2 });
+      if (p.chip) { g.chip(bx, yy + 4, p.chip, i === 0 ? "ink" : "exp", { size: 11 }); yy += 25; }
+      yy = g.wrap(p.sub, bx, yy + 6, bw, { size: ss, color: "ink-2", lh: ss * 1.36, maxLines: 5 });
+      g.line(cx[i], yy - 2, x, y - r - 5, { color: i === 0 ? "ink-3" : "hair", lw: 1.1, dash: i === 0 ? null : [3, 4] });
+      milestone(g, x, y, r, i);
+    });
+    // gates with their labels below the road
+    G.forEach((f, i) => {
+      const [x, y, a] = road.at(f), half = RW(f) / 2 + 7, [lbl, c] = GATES[i];
+      const pulse = i === 0 ? 0.65 + 0.35 * Math.sin(t * 2.4) : 1;
+      gateBar(g, x, y, a, half, c, pulse);
+      g.chip(x, y + RW(f) / 2 + 24, lbl, c, { size: 11.5, align: "center" });
+    });
+    // work moving from today toward the first gate, stopping there
+    const [x0, y0] = road.at(F[0]);
+    for (let k = 0; k < 4; k++) {
+      const u = (t * 0.3 + k / 4) % 1, [x, y] = road.at(lerp(F[0] + 0.02, G[0] - 0.012, u));
+      g.circle(x, y, 3.6, { fill: "exp", a: Math.sin(Math.PI * u) * 0.9 });
+    }
+    // marker at 0
+    const r0 = lerp(14, 11, F[0]);
+    g.circle(x0, y0, r0 + 6 + 2.5 * Math.sin(t * 3), { stroke: "exp", lw: 2, a: 0.75 });
+    g.text("you are here", x0, y0 + RW(F[0]) / 2 + 52, { size: 12.5, color: "exp", weight: 600, align: "center" });
+    g.dim(px + 4, W - px - 4, H - 22, "each phase earns the next with evidence, not dates", { size: small ? 10.5 : 11.5, color: "ink-3" });
+  }, { anim: true, restT: 2.2, zoom: 1.12, minW: 600, maxW: 900 });
+
+  /* ---------------- scrolly 1: what is real today ---------------- */
+  const VIEWS = [
+    ["Workspace", ["Overview", "Workbench", "Environments", "Enterprise graph", "Repository catalog"]],
+    ["AI engineering", ["Playground", "Agent studio", "Retrieval lab", "Tool registry", "Prompt library", "Artifact registry", "Model gateway"]],
+    ["Operations", ["Evaluations", "Datasets", "Traces & usage", "Releases", "Approval inbox", "Cost intelligence", "Knowledge sources"]],
+    ["Platform", ["Integrations", "Governance", "Architecture"]],
+  ];
+  function boxNote(g, x, y, w, h, title, sub, o = {}) {
+    const a = o.a === undefined ? 1 : o.a;
+    if (o.hatch) g.hatch(x, y, w, h, { color: "ink-3", a: a * 0.55, r: 8 });
+    else g.rect(x, y, w, h, { fill: "card", stroke: "hair", lw: 1.2, r: 8, a });
+    if (o.hatch) g.rect(x + 8, y + 8, w - 16, h - 16, { fill: "sheet", r: 6, a: a * 0.92 });
+    g.text(title, x + 14, y + 26, { size: 13.5, weight: 600, color: o.color || "ink", a, maxW: w - 28 });
+    g.wrap(sub, x + 14, y + 46, w - 28, { size: 11.5, color: "ink-2", lh: 15.5, a, maxLines: 3 });
+  }
+  function tCode(g, a, L) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    const th = tall ? 22 : 28, tg = 5;
+    const winH = 26 + 36 + 22 + 7 * (th + tg) + 14;
+    const boxH = tall ? 70 : 104, boxesH = tall ? boxH * 3 + 20 : boxH;
+    const total = winH + 18 + boxesH, oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+    const c = g.win(x0, oy, w, winH, { title: "Atlas · Enterprise AI Engineering Platform", a, caption: !tall, bar: 26 });
+    let rx = c.x + c.w - 10;
+    ["Sandbox context", "Demo data"].forEach((lbl) => {
+      const pw = g.tw(lbl, 10.5, "ui", 600) + 18;
+      g.rect(rx - pw, c.y + 9, pw, 19, { fill: "sheet", stroke: "hair", lw: 1, r: 9.5, a });
+      g.text(lbl, rx - pw / 2, c.y + 22.5, { size: 10.5, font: "ui", weight: 600, color: "ink-2", align: "center", a });
+      rx -= pw + 6;
+    });
+    g.text("22 views · /#overview … /#architecture", c.x + 12, c.y + 23, { size: 11.5, color: "ink-2", a, maxW: rx - c.x - 22 });
+    const cols = 4, gx = 10, gw = (c.w - 24 - gx * (cols - 1)) / cols, gy = c.y + 46;
+    VIEWS.forEach(([grp, vs], q) => {
+      const x = c.x + 12 + q * (gw + gx);
+      g.text(grp.toUpperCase(), x, gy + 8, { size: 10, color: "ink-3", ls: 0.6, a, maxW: gw });
+      vs.forEach((v, j) => {
+        const y = gy + 18 + j * (th + tg);
+        g.rect(x, y, gw, th, { fill: "card", stroke: "hair", lw: 1, r: 5, a });
+        g.text(v, x + 8, y + th / 2 + 4, { size: tall ? 10 : 11.5, font: "ui", weight: 500, color: "ink", a, maxW: gw - 14 });
+      });
+    });
+    const by = oy + winH + 18;
+    const items = [["/demo", "five-chapter story; plays independently of workflow state", {}], ["atlas-demo-v3", "browser storage key; one JSON record per browser profile", {}], ["Backend APIs: none", "API paths in the target architecture are proposals", { hatch: true, color: "ink-2" }]];
+    items.forEach(([tt, sub, o], i) => {
+      const bwid = tall ? w : (w - 24) / 3, x = tall ? x0 : x0 + i * (bwid + 12), y = tall ? by + i * (boxH + 10) : by;
+      boxNote(g, x, y, bwid, boxH, tt, sub, Object.assign({ a }, o));
+    });
+  }
+  function domainCounts() {
+    const D = ["Commerce", "Payments", "Customer", "Risk", "Operations", "Finance", "Workforce", "Infrastructure"];
+    const n = D.map(() => 0), anchors = { Commerce: 1, Customer: 2, Risk: 1, Payments: 1, Operations: 1 };
+    for (let i = 0; i < 954; i++) n[Math.floor(i / 4) % 8]++;
+    return D.map((d, k) => ({ d, gen: n[k], anc: anchors[d] || 0 }));
+  }
+  const DOMS = domainCounts();
+  function tEstate(g, a, L) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    const per = tall ? 4 : 8, bgap = tall ? 12 : 10, bw = (w - bgap * (per - 1)) / per;
+    const cols = tall ? 10 : 8, sp = Math.min(bw / cols, tall ? 13 : 12.5);
+    const rowsMax = Math.ceil(122 / cols), blockH = 22 + rowsMax * sp;
+    const headH = 64, footH = 74, total = headH + blockH * (tall ? 2 : 1) + (tall ? 18 : 0) + footH;
+    const oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+    g.text("960", x0, oy + 42, { size: 46, font: "display", weight: 800, a });
+    const nw = g.tw("960", 46, "display", 800) + 12;
+    g.text("synthetic repositories", x0 + nw, oy + 22, { size: 14, weight: 600, a });
+    g.text("6 named anchors + 954 generated by formula", x0 + nw, oy + 41, { size: 12, color: "ink-2", a, maxW: w - nw });
+    let anchorPos = null;
+    DOMS.forEach((dm, k) => {
+      const q = k % per, r = Math.floor(k / per), bx = x0 + q * (bw + bgap), by = oy + headH + r * (blockH + 18);
+      const nAll = dm.gen + dm.anc;
+      g.text(dm.d, bx, by + 10, { size: 11, color: "ink-2", weight: 600, a, maxW: bw - 30 });
+      g.text(String(nAll), bx + bw, by + 10, { size: 11, color: "ink-3", align: "right", a });
+      for (let i = 0; i < nAll; i++) {
+        const cx = bx + (i % cols) * sp + sp / 2, cy = by + 24 + Math.floor(i / cols) * sp + sp / 2;
+        const isA = i < dm.anc;
+        g.circle(cx, cy, isA ? sp * 0.36 : sp * 0.26, { fill: isA ? "kno" : "ink-3", a: a * (isA ? 1 : 0.55) });
+        if (isA && dm.d === "Commerce") anchorPos = [cx, cy];
+      }
+    });
+    const fy = oy + headH + blockH * (tall ? 2 : 1) + (tall ? 18 : 0) + 14;
+    g.circle(x0 + 5, fy + 1, 4.2, { fill: "kno", a }); g.text("named anchor, e.g. repo-0001 commerce/order-service", x0 + 16, fy + 5, { size: 11.5, color: "kno", weight: 600, a, maxW: w - 16 });
+    g.text("245 applications · 2,875 service instances (metadata, not graph nodes) · 8 domains", x0, fy + 28, { size: 11.5, color: "ink-2", a, maxW: w });
+    g.text("generated record i: application = floor(i / 4) + 1, domain = (application − 1) % 8", x0, fy + 50, { size: 11.5, color: "ink-3", a, maxW: w });
+    if (anchorPos) g.circle(anchorPos[0], anchorPos[1], sp * 0.36 + 4, { stroke: "kno", lw: 1.4, a });
+  }
+  const CONN = [
+    ["Models", [["OpenAI", 1], ["Google AI Studio", 1], ["Amazon Bedrock", 1], ["Azure AI Foundry", 1], ["Anthropic", 1], ["Vertex AI", 0], ["Hugging Face", 0], ["NVIDIA NIM", 1], ["vLLM", 1], ["Ollama", 0]]],
+    ["Developer tools", [["GitHub", 1], ["GitLab", 1], ["Bitbucket", 0], ["VS Code", 1], ["Cursor", 1], ["GitHub Copilot", 1], ["OpenAI Codex", 1], ["Azure DevOps", 0], ["Bitbucket Data Center", 0]]],
+    ["Agent frameworks", [["LangGraph", 1], ["LangChain", 1], ["Semantic Kernel", 0], ["CrewAI", 0], ["AutoGen", 0], ["MCP servers", 1]]],
+    ["Evaluation & telemetry", [["LangSmith", 1], ["Braintrust", 1], ["Promptfoo", 1], ["MLflow", 0], ["Weights & Biases", 0], ["OpenTelemetry", 1], ["Datadog", 1], ["Grafana", 0]]],
+    ["Data & knowledge", [["Snowflake", 1], ["Databricks", 1], ["Confluence", 1], ["SharePoint", 1], ["Amazon S3", 1], ["PostgreSQL", 1], ["Pinecone", 0], ["Elasticsearch", 0]]],
+    ["Business systems", [["Salesforce", 1], ["ServiceNow", 1], ["Jira", 1], ["SAP", 0], ["Workday", 0], ["Slack", 1], ["Microsoft Teams", 1]]],
+    ["Identity & infrastructure", [["Okta", 1], ["Microsoft Entra ID", 1], ["HashiCorp Vault", 1], ["Kubernetes", 1], ["Argo CD", 1], ["Terraform", 1], ["Apache Kafka", 1]]],
+    ["Delivery & discovery", [["Jenkins", 0], ["GitHub Actions", 0], ["GitLab CI", 0], ["Bitbucket Pipelines", 0], ["Helm", 0], ["Backstage", 0], ["OpenLineage", 0], ["Istio", 0], ["Kong Gateway", 0], ["Snyk", 0], ["Wiz", 0]]],
+  ];
+  const P1 = { Jira: 1, Bitbucket: 1, Jenkins: 1, Kubernetes: 1 };
+  function tConn(g, a, L) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    const labW = tall ? 150 : 178, cell = tall ? 17 : 19, cg = tall ? 4 : 5, rowH = tall ? 40 : 44;
+    const listW = labW + 11 * (cell + cg) + 46;
+    const sideW = tall ? w : Math.max(200, w - listW - 30);
+    const headH = 58, invH = tall ? 150 : 0, footH = 46;
+    const total = headH + 8 * rowH + footH + invH, oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+    g.text("66", x0, oy + 40, { size: 46, font: "display", weight: 800, a });
+    const nw = g.tw("66", 46, "display", 800) + 12;
+    g.text("integration descriptors in 8 categories", x0 + nw, oy + 20, { size: 14, weight: 600, a, maxW: w - nw });
+    g.text("39 start out marked configured", x0 + nw, oy + 39, { size: 12, color: "ink-2", a });
+    CONN.forEach(([cat, list], r) => {
+      const y = oy + headH + r * rowH + 14;
+      g.text(cat, x0, y + cell / 2 + 4, { size: 11.5, color: "ink-2", a, maxW: labW - 10 });
+      let on = 0;
+      list.forEach(([nm, cf], i) => {
+        const x = x0 + labW + i * (cell + cg);
+        g.rect(x, y, cell, cell, { fill: cf ? "ink-3" : "card", stroke: cf ? "ink-3" : "hair", lw: 1.1, r: 3.5, a: a * (cf ? 0.75 : 1) });
+        on += cf;
+        if (P1[nm]) {
+          g.rect(x - 4, y - 4, cell + 8, cell + 8, { stroke: "exp", lw: 2, r: 6, a });
+          g.text(nm, x + cell / 2, y - 8, { size: 10, color: "exp", weight: 600, align: "center", a });
+        }
+      });
+      g.text(`${on}/${list.length}`, x0 + labW + list.length * (cell + cg) + 6, y + cell / 2 + 4, { size: 11, color: "ink-3", a });
+    });
+    const ly = oy + headH + 8 * rowH + 10;
+    g.rect(x0, ly, 12, 12, { fill: "ink-3", r: 3, a: a * 0.75 }); g.text("marked configured", x0 + 18, ly + 10.5, { size: 11, color: "ink-2", a });
+    const lx2 = x0 + 18 + g.tw("marked configured", 11) + 18;
+    g.rect(lx2, ly, 12, 12, { fill: "card", stroke: "hair", lw: 1.1, r: 3, a }); g.text("not", lx2 + 18, ly + 10.5, { size: 11, color: "ink-2", a });
+    const lx3 = lx2 + 18 + g.tw("not", 11) + 18;
+    g.rect(lx3 - 2, ly - 2, 16, 16, { stroke: "exp", lw: 2, r: 4, a }); g.text("Phase 1 system (the catalog lists Kubernetes, not EKS)", lx3 + 20, ly + 10.5, { size: 11, color: "exp", a, maxW: x1 - lx3 - 20 });
+    // inventory panel
+    const inv = [["9", "model descriptors"], ["4", "tools: 2 read, 2 write"], ["6", "prompt templates, 1 executable"], ["8", "regression cases"]];
+    if (!tall) {
+      const sx = x1 - sideW, sy = oy + headH + 6, ih = (8 * rowH - 18) / 4;
+      inv.forEach(([n, l], i) => {
+        const y = sy + i * ih;
+        g.line(sx, y, x1, y, { color: "hair", lw: 1, a });
+        g.text(n, sx, y + 40, { size: 34, font: "display", weight: 800, a });
+        g.wrap(l, sx + 34, y + 26, sideW - 36, { size: 11.5, color: "ink-2", lh: 15, a, maxLines: 2 });
+      });
+      g.wrap("A green connector card proves nothing here: validation is a prefix and length check plus a delay.", sx, sy + 4 * ih + 6, sideW, { size: 11, color: "ink-3", lh: 15, a, maxLines: 4 });
+    } else {
+      const sy = ly + 30, iw = (w - 12) / 2;
+      inv.forEach(([n, l], i) => {
+        const x = x0 + (i % 2) * (iw + 12), y = sy + Math.floor(i / 2) * 56;
+        g.line(x, y, x + iw, y, { color: "hair", lw: 1, a });
+        g.text(n, x, y + 36, { size: 30, font: "display", weight: 800, a });
+        g.wrap(l, x + 30, y + 22, iw - 34, { size: 11, color: "ink-2", lh: 14, a, maxLines: 2 });
+      });
+      g.text("Configured is a display flag, not a connection.", x0, sy + 128, { size: 11, color: "ink-3", a, maxW: w });
+    }
+  }
+  const BOARDS = [
+    ["A", ["Home", "Threads", "Reviews", "CodeX"]],
+    ["B", ["Compute", "Clusters", "Pipelines", "GroundBridge", "Approvals"]],
+    ["C", ["Optimus Logger", "Traces", "Cost", "Sentinel"]],
+    ["D", ["Matrix", "Repositories", "Knowledge", "Retrieval"]],
+    ["E", ["AllSpark", "Agents", "Prompts", "Models", "Tools"]],
+    ["F", ["Evals", "Datasets", "Vault", "Bridge", "@B", "Architecture"]],
+  ];
+  function tDesign(g, a, L, t) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    const labW = 22, cols = 6, tgap = tall ? 7 : 10, tw = (w - labW - tgap * (cols - 1)) / cols, thh = tall ? 46 : 54, rgap = tall ? 12 : 14;
+    const headH = 58, footH = tall ? 112 : 84, total = headH + 7 * (thh + rgap) + footH;
+    const oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+    g.text("28 + 2", x0, oy + 40, { size: 46, font: "display", weight: 800, a });
+    const nw = g.tw("28 + 2", 46, "display", 800) + 12;
+    g.text("screens and diagrams on one shell", x0 + nw, oy + 20, { size: 14, weight: 600, a, maxW: w - nw });
+    g.text("every screen scoped to Dev, one ticket throughout", x0 + nw, oy + 39, { size: 12, color: "ink-2", a, maxW: w - nw });
+    const rows = BOARDS.concat([["·", ["Environment picker", "Environment flow"]]]);
+    const pos = (r, i) => [x0 + labW + i * (tw + tgap), oy + headH + r * (thh + rgap)];
+    // the scenario thread: snakes through all 28 screens, drawn under them
+    const centres = [];
+    BOARDS.forEach(([, names], r) => {
+      const idx = names.map((_, i) => i); if (r % 2) idx.reverse();
+      idx.forEach((i) => { const [x, y] = pos(r, i); centres.push([x + tw * 0.5, y + thh * 0.5]); });
+    });
+    g.poly(centres, { color: "exp", lw: 1.6, a: a * 0.55, dash: [4, 4] });
+    rows.forEach(([lt, names], r) => {
+      const y = pos(r, 0)[1];
+      g.text(lt, x0, y + thh / 2 + 5, { size: 12, color: "ink-3", weight: 600, a });
+      names.forEach((nm, i) => {
+        const x = pos(r, i)[0], diag = r === 6;
+        if (diag) {
+          g.rect(x, y, tw, thh, { fill: "sheet", stroke: "ink-3", lw: 1.1, r: 7, a });
+          g.wrap(nm, x + 8, y + 18, tw - 14, { size: tall ? 9 : 10.5, font: "ui", weight: 600, color: "ink-2", lh: 12, a, maxLines: 2 });
+          g.text("diagram", x + tw - 6, y + thh - 7, { size: 9, color: "ink-3", align: "right", a });
+        } else {
+          const c = g.win(x, y, tw, thh, { bar: 16, caption: false, a });
+          g.text(nm, x + 25, y + 12, { size: tall ? 8.5 : 10, font: "ui", weight: 600, a, maxW: tw - 30 });
+          for (let l = 0; l < 2; l++) g.rect(c.x + 6, c.y + 7 + l * 8, (c.w - 12) * (0.8 - l * 0.3), 3, { fill: "grid", r: 1.5, a });
+          g.chip(x + tw - 5, y + thh - 9, "DEV", "exp", { size: 7.5, align: "right", a });
+          g.circle(x + 9, y + thh - 9, 3, { fill: "exp", a: a * 0.8 });
+        }
+      });
+    });
+    {
+      const u = (t * 0.05) % 1, k = Math.floor(u * (centres.length - 1)), f = u * (centres.length - 1) - k;
+      const p0 = centres[k], p1 = centres[Math.min(centres.length - 1, k + 1)];
+      g.circle(lerp(p0[0], p1[0], f), lerp(p0[1], p1[1], f), 4.5, { fill: "exp", stroke: "#FFFFFF", lw: 1.5, a });
+    }
+    const fy = oy + headH + 7 * (thh + rgap) + 6;
+    g.text("COM-2841 · one scenario across every screen", x0, fy + 6, { size: 12, color: "exp", weight: 600, a, maxW: w });
+    const tools = ["Jira", "Bitbucket", "Jenkins", "Amazon EKS", "Confluence", "Teams"];
+    g.text("integrations in the design:", x0, fy + 34, { size: 11.5, color: "ink-2", a });
+    let tx = tall ? x0 : x0 + g.tw("integrations in the design:", 11.5) + 12, ty = tall ? fy + 60 : fy + 30;
+    tools.forEach((nm) => {
+      const pw = g.tw(nm, 11) + 20;
+      if (tx + pw > x1) { tx = x0; ty += 28; }
+      g.rect(tx, ty - 9, pw, 20, { fill: "card", stroke: "ink-3", lw: 1.1, r: 10, dash: [3, 3], a });
+      g.text(nm, tx + pw / 2, ty + 5, { size: 11, color: "ink-2", align: "center", a });
+      tx += pw + 6;
+    });
+    g.text("simulated", tx + 4, ty + 5, { size: 11.5, color: "ink-3", weight: 600, a });
+  }
+  const LABELS = [
+    ["Implemented", "present in the inspected code", ["22 views and /demo", "graph traversal and search ranking", "evaluation and release-gate predicates", "configuration fingerprint", "browser state atlas-demo-v3"], "solid"],
+    ["Fixture", "prepared or deterministic sample data", ["960 repositories", "66 connector cards, 39 configured", "9 model descriptors", "4 tools and 6 prompt templates", "fraud run fixed at score 0.91"], "fill"],
+    ["Proposed", "future design", ["backend APIs such as POST /v1/runs", "enterprise login and identity", "real connectors and inference", "deployments and rollback", "@B in Teams"], "dash"],
+  ];
+  function tLabels(g, a, L) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    if (!tall) {
+      const cg = 16, cw = (w - cg * 2) / 3, ih = 42, total = 70 + 5 * (ih + 8);
+      const oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+      LABELS.forEach(([name, def, items, sty], q) => {
+        const x = x0 + q * (cw + cg);
+        g.text(name.toUpperCase(), x, oy + 24, { size: 26, font: "display", weight: 800, a });
+        g.text(def, x, oy + 46, { size: 11.5, color: "ink-2", a, maxW: cw });
+        items.forEach((it, i) => {
+          const y = oy + 66 + i * (ih + 8);
+          g.rect(x, y, cw, ih, { fill: sty === "fill" ? "sheet" : "card", stroke: sty === "solid" ? "ink" : "ink-3", lw: sty === "solid" ? 1.4 : 1.1, r: 8, dash: sty === "dash" ? [5, 4] : null, a });
+          if (sty === "fill") g.rect(x + 1, y + 1, 5, ih - 2, { fill: "ink-3", r: 2, a: a * 0.6 });
+          g.wrap(it, x + 14, y + 18, cw - 24, { size: 12, color: sty === "dash" ? "ink-2" : "ink", lh: 15, a, maxLines: 2 });
+        });
+      });
+    } else {
+      const ih = 34, per = 2, iw = (w - 10) / per, block = 52 + 3 * (ih + 6), total = 3 * block + 2 * 14;
+      const oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+      LABELS.forEach(([name, def, items, sty], q) => {
+        const by = oy + q * (block + 14);
+        g.text(name.toUpperCase(), x0, by + 22, { size: 24, font: "display", weight: 800, a });
+        g.text(def, x0 + g.tw(name.toUpperCase(), 24, "display", 800) + 12, by + 21, { size: 11, color: "ink-2", a, maxW: w - 150 });
+        items.forEach((it, i) => {
+          const x = x0 + (i % per) * (iw + 10), y = by + 34 + Math.floor(i / per) * (ih + 6);
+          g.rect(x, y, iw, ih, { fill: sty === "fill" ? "sheet" : "card", stroke: sty === "solid" ? "ink" : "ink-3", lw: sty === "solid" ? 1.4 : 1.1, r: 7, dash: sty === "dash" ? [5, 4] : null, a });
+          g.text(it, x + 10, y + ih / 2 + 4, { size: 11, color: sty === "dash" ? "ink-2" : "ink", a, maxW: iw - 18 });
+        });
+      });
+    }
+  }
+  // crossfade helper: scene k is visible between its own beat and the next
+  function swapA(s, k, n) { return (k === 0 ? 1 : s.swapIn(k)) * (k === n - 1 ? 1 : s.swapOut(k + 1)); }
+  function layout(g) {
+    const tall = g.H > g.W * 0.95;
+    return { x0: 24, x1: g.W - 24, y0: Math.max(52, g.safeTop + 18), y1: g.H - 20, tall };
+  }
+  Field.scene("today", (g, s) => {
+    const L = layout(g), n = 5;
+    const A = [0, 1, 2, 3, 4].map((k) => swapA(s, k, n));
+    if (A[0] > 0.01) tCode(g, A[0], L);
+    if (A[1] > 0.01) tEstate(g, A[1], L);
+    if (A[2] > 0.01) tConn(g, A[2], L);
+    if (A[3] > 0.01) tDesign(g, A[3], L, s.t);
+    if (A[4] > 0.01) tLabels(g, A[4], L);
+  }, { anim: true, restT: 2, zoom: 1.2, minW: 620, maxW: 1000 });
+
+  /* ---------------- scrolly 2: the ask ---------------- */
+  const DOMAINS = ["Commerce", "Payments", "Customer", "Risk", "Operations", "Finance", "Workforce", "Infrastructure"];
+  const TOOLS = [["Jira", "Threads"], ["Bitbucket", "Reviews · Repositories"], ["Jenkins", "Pipelines"], ["Amazon EKS", "Clusters"]];
+  function sectionLabel(g, txt, x, y, a) { g.text(txt, x, y, { size: 10.5, color: "ink-3", ls: 1, a }); }
+  function aScope(g, a, L, t) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    let y = y0 + 6;
+    // environment row
+    sectionLabel(g, "ENVIRONMENT", x0, y + 4, a);
+    const ew = (w - 30) / 4;
+    ["Dev", "QA", "Stage", "Prod"].forEach((e, i) => {
+      const x = x0 + i * (ew + 10), by = y + 14;
+      if (i === 0) { g.rect(x, by, ew, 38, { fill: g.rgba("exp", 0.1), stroke: "exp", lw: 1.8, r: 8, a }); g.text("Dev", x + 12, by + 25, { size: 15, font: "ui", weight: 700, color: "exp", a }); g.text("read-only first", x + ew - 10, by + 24, { size: 10.5, color: "exp", align: "right", a, maxW: ew - 60 }); }
+      else { g.hatch(x, by, ew, 38, { color: "ink-3", a: a * 0.45, r: 8 }); g.rect(x + 6, by + 8, g.tw(e, 14, "ui", 600) + 14, 22, { fill: "sheet", r: 5, a }); g.text(e, x + 13, by + 24, { size: 14, font: "ui", weight: 600, color: "ink-3", a }); }
+    });
+    y += 70;
+    sectionLabel(g, "DOMAIN", x0, y + 4, a);
+    const dper = tall ? 4 : 8, dw = (w - 6 * (dper - 1)) / dper;
+    DOMAINS.forEach((d, i) => {
+      const x = x0 + (i % dper) * (dw + 6), by = y + 14 + Math.floor(i / dper) * 32;
+      const on = i === 0;
+      g.rect(x, by, dw, 26, { fill: on ? "card" : "sheet", stroke: on ? "ink" : "hair", lw: on ? 1.5 : 1, r: 13, dash: on ? [4, 3] : null, a });
+      g.text(d, x + dw / 2, by + 17, { size: 11, color: on ? "ink" : "ink-3", weight: on ? 600 : 500, align: "center", a, maxW: dw - 10 });
+    });
+    y += tall ? 94 : 60;
+    g.text("Commerce suggested · not yet decided", x0, y, { size: 11, color: "ink-2", a });
+    y += 22;
+    // main: tools → Vector
+    let wy = y1 - (tall ? 64 : 58);
+    const mainTop = y, mainBot = wy - 18;
+    let VB, toolBoxes = [];
+    if (!tall) {
+      const tw_ = Math.min(220, w * 0.27), th_ = Math.min(56, (mainBot - mainTop - 30) / 4);
+      const tg_ = (mainBot - mainTop - 4 * th_) / 3;
+      TOOLS.forEach(([nm, sub], i) => { toolBoxes.push({ x: x0, y: mainTop + i * (th_ + tg_), w: tw_, h: th_, nm, sub }); });
+      const vw = Math.min(230, w * 0.28), vh = 104;
+      VB = { x: x0 + tw_ + Math.max(90, w * 0.14), y: (mainTop + mainBot) / 2 - vh / 2 - 26, w: vw, h: vh };
+    } else {
+      const tw_ = (w - 30) / 4, th_ = 50;
+      TOOLS.forEach(([nm, sub], i) => { toolBoxes.push({ x: x0 + i * (tw_ + 10), y: mainTop, w: tw_, h: th_, nm, sub: sub.split(" · ")[0] }); });
+      VB = { x: x0, y: mainTop + th_ + 64, w: w * 0.52, h: 92 };
+    }
+    toolBoxes.forEach((b, i) => {
+      g.rect(b.x, b.y, b.w, b.h, { fill: "card", stroke: "ink", lw: 1.4, r: 9, a });
+      g.text(b.nm, b.x + 10, b.y + (tall ? 21 : 22), { size: tall ? 13 : 14, font: "ui", weight: 700, a, maxW: b.w - 20 });
+      g.text(tall ? b.sub : "real · " + b.sub, b.x + 10, b.y + (tall ? 39 : 41), { size: 10.5, color: "ink-2", a, maxW: b.w - 20 });
+      // read arrow into Vector
+      const sx = tall ? b.x + b.w / 2 : b.x + b.w + 4, sy = tall ? b.y + b.h + 3 : b.y + b.h / 2;
+      const ex = tall ? VB.x + VB.w * (0.14 + 0.24 * i) : VB.x - 6, ey = tall ? VB.y - 6 : VB.y + 26 + i * ((VB.h - 40) / 3);
+      const mid = tall ? [sx, (sy + ey) / 2 + 8] : [(sx + ex) / 2, sy];
+      g.curve([sx, sy], mid, [ex, ey], { color: "kno", lw: 1.5, head: 8, a });
+      for (let k = 0; k < 2; k++) { const u = (t * 0.45 + k / 2 + i * 0.17) % 1, p = g.bez([sx, sy], mid, [ex, ey], u); g.circle(p[0], p[1], 3.2, { fill: "kno", a: a * Math.sin(Math.PI * u) }); }
+    });
+    g.text("reads, with sources", tall ? x1 : toolBoxes[0].x + toolBoxes[0].w + 14, tall ? VB.y - 8 : toolBoxes[0].y - 8, { size: 11, color: "kno", weight: 600, a, align: tall ? "right" : "left" });
+    g.box(VB.x, VB.y, VB.w, VB.h, { color: "exp", wash: 0.08, a });
+    g.text("VECTOR", VB.x + 14, VB.y + 30, { size: 24, font: "display", weight: 800, a });
+    g.text("Phase 1 slice", VB.x + 14, VB.y + 50, { size: 12, color: "ink-2", a });
+    g.text("one domain · Dev", VB.x + 14, VB.y + 68, { size: 12, color: "exp", weight: 600, a, maxW: VB.w - 28 });
+    // model hosting decision
+    const MB = tall ? { x: VB.x + VB.w + 12, y: VB.y, w: w - VB.w - 12, h: VB.h } : { x: VB.x, y: VB.y + VB.h + 18, w: VB.w, h: 52 };
+    g.rect(MB.x, MB.y, MB.w, MB.h, { fill: "card", stroke: "ctl", lw: 1.3, r: 9, dash: [5, 4], a });
+    g.text("model hosting", MB.x + 12, MB.y + 21, { size: 11, color: "ctl", weight: 600, a, maxW: MB.w - 20 });
+    g.wrap("Bedrock or Azure · to decide", MB.x + 12, MB.y + 39, MB.w - 22, { size: 11, color: "ink-2", lh: 14, a, maxLines: 3 });
+    // not in Phase 1
+    const later = ["Confluence", "Teams", "Kafka", "ServiceNow", "LaunchDarkly"];
+    if (!tall) {
+      const rx = VB.x + VB.w + 40, rw = x1 - rx;
+      sectionLabel(g, "NOT IN PHASE 1", rx, mainTop + 8, a);
+      later.forEach((nm, i) => {
+        const by = mainTop + 22 + i * 34;
+        g.rect(rx, by, Math.min(rw, 170), 26, { fill: "sheet", stroke: "ink-3", lw: 1, r: 13, dash: [3, 3], a });
+        g.text(nm, rx + 14, by + 17, { size: 11.5, color: "ink-3", a, maxW: rw - 24 });
+      });
+      g.wrap("and the rest of Bridge's 66 connectors", rx, mainTop + 22 + 5 * 34 + 14, Math.min(rw, 190), { size: 11, color: "ink-3", lh: 15, a, maxLines: 2 });
+    } else {
+      const ly = VB.y + VB.h + 24;
+      sectionLabel(g, "NOT IN PHASE 1", x0, ly, a);
+      let tx = x0, ty = ly + 20;
+      later.concat(["+ the rest of 66"]).forEach((nm) => {
+        const pw = g.tw(nm, 11) + 22;
+        if (tx + pw > x1) { tx = x0; ty += 30; }
+        g.rect(tx, ty - 12, pw, 24, { fill: "sheet", stroke: "ink-3", lw: 1, r: 12, dash: [3, 3], a });
+        g.text(nm, tx + pw / 2, ty + 4, { size: 11, color: "ink-3", align: "center", a });
+        tx += pw + 6;
+      });
+      wy = Math.min(wy, ty + 40);
+    }
+    // writes held back
+    g.hatch(x0, wy, w, tall ? 54 : 44, { color: "exe", a: a * 0.5, r: 8 });
+    g.rect(x0 + 8, wy + 7, w - 16, (tall ? 54 : 44) - 14, { fill: "sheet", r: 6, a: a * 0.94 });
+    g.text("✕ writes", x0 + 18, wy + (tall ? 24 : 27), { size: 12.5, color: "exe", weight: 700, a });
+    g.wrap("re-run stages, open PRs, promote out of Dev: Phase 2, each with a person", x0 + 100, wy + (tall ? 24 : 27), w - 120, { size: 11.5, color: "ink-2", lh: 15, a, maxLines: 2 });
+  }
+  const DECS = [
+    ["First domain · Commerce suggested", "actual pain, measurable success, source availability", "product and application teams"],
+    ["Read access to sources in Dev", "provider permission behaviour, revocation latency, private network constraints", "IAM and repository owners"],
+    ["Model hosting · Bedrock or Azure", "approved deployments, capabilities, classification, cost and latency measurements", "AI platform, security, FinOps"],
+    ["Pilot team for @B", "Teams installation and consent, historical context, audience rules, supported SDK", "collaboration platform, IAM, product"],
+  ];
+  function aDec(g, a, L, t) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    const cw = tall ? w : w * 0.64, ch = tall ? 108 : 112, cg = tall ? 10 : 14;
+    const gateH = tall ? 124 : 176, total = tall ? 4 * ch + 3 * cg + 46 + gateH : 4 * ch + 3 * cg;
+    const oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+    const gate = tall ? { x: x0 + w * 0.12, y: oy + 4 * (ch + cg) + 36, w: w * 0.76, h: gateH } : { x: x0 + cw + w * 0.1, y: oy + total / 2 - gateH / 2, w: w - cw - w * 0.1, h: gateH };
+    if (tall) {
+      // one connector behind the cards, out of the last card into the gate
+      const yTop = oy + 4 * (ch + cg) - cg + 4;
+      g.line(x0 + 22, oy + ch, x0 + 22, yTop + 14, { color: "ctl", lw: 1.3, dash: [4, 4], a: a * 0.85 });
+      g.arrow(x0 + 22, yTop + 14, gate.x - 4, gate.y + gate.h / 2, { color: "ctl", lw: 1.3, head: 8, a: a * 0.85 });
+    }
+    DECS.forEach(([title, ev, who], i) => {
+      const y = oy + i * (ch + cg);
+      g.rect(x0, y, cw, ch, { fill: "card", stroke: "hair", lw: 1.2, r: 10, a });
+      g.rect(x0 + 14, y + 14, 16, 16, { fill: "card", stroke: "ink-3", lw: 1.4, r: 3.5, a });
+      g.text(title, x0 + 40, y + 27, { size: 14, font: "ui", weight: 600, a, maxW: cw - 54 });
+      g.text("EVIDENCE", x0 + 40, y + 50, { size: 9.5, color: "ink-3", ls: 0.8, a });
+      g.wrap(ev, x0 + 40, y + 66, cw - 54, { size: 11.5, color: "ink-2", lh: 15, a, maxLines: 2 });
+      g.text("WHO", x0 + 40, y + ch - 12, { size: 9.5, color: "ink-3", ls: 0.8, a });
+      g.text(who, x0 + 74, y + ch - 12, { size: 11.5, color: "ctl", weight: 600, a, maxW: cw - 90 });
+      // converge on the gate
+      const sx = tall ? x0 + 22 : x0 + cw + 4, sy = tall ? y + ch : y + ch / 2;
+      if (!tall) {
+        const ex = gate.x - 6, ey = gate.y + gate.h * (0.3 + 0.13 * i);
+        g.curve([sx, sy], [(sx + ex) / 2, sy], [ex, ey], { color: "ctl", lw: 1.3, head: 8, dash: [4, 4], a: a * 0.85 });
+      }
+    });
+    g.rect(gate.x, gate.y, gate.w, gate.h, { fill: g.rgba("ctl", 0.06), stroke: "ctl", lw: 1.8, r: 12, dash: [6, 5], a });
+    const gx = gate.x + 16;
+    g.text("PHASE 1 STARTS", gx, gate.y + (tall ? 32 : 40), { size: tall ? 22 : 26, font: "display", weight: 800, color: "ctl", a, maxW: gate.w - 30 });
+    g.wrap("when all four are decided", gx, gate.y + (tall ? 54 : 66), gate.w - 32, { size: 12, color: "ink-2", lh: 16, a, maxLines: 2 });
+    for (let k = 0; k < 4; k++) g.rect(gx + k * 26, gate.y + (tall ? 68 : 100), 18, 18, { fill: "card", stroke: "ctl", lw: 1.4, r: 4, a });
+    g.text("on the board: 0 of 4 checked", gx, gate.y + gate.h - (tall ? 14 : 22), { size: 11.5, color: "ctl", weight: 600, a, maxW: gate.w - 30 });
+    const pul = 0.5 + 0.5 * Math.sin(t * 2.2);
+    g.rect(gate.x - 3, gate.y - 3, gate.w + 6, gate.h + 6, { stroke: "ctl", lw: 1, r: 14, a: a * 0.25 * pul });
+  }
+  const MEAS = [["Task success", "work finished without rework"], ["Lead time", "ticket to running in Dev, then out of Dev"], ["Escaped defects", "found after promotion"], ["Evidence freshness", "age of sources behind answers"], ["Cost per task", "model and compute per finished task"]];
+  function aMeas(g, a, L) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    const rh = tall ? 108 : 92, total = 5 * rh + 48, oy = y0 + Math.max(0, (y1 - y0 - total) / 2);
+    MEAS.forEach(([nm, def], i) => {
+      const y = oy + i * rh;
+      g.line(x0, y, x1, y, { color: "hair", lw: 1, a });
+      g.rect(x0, y + 14, 4, tall ? 28 : rh - 28, { fill: "tel", r: 2, a });
+      g.text(nm.toUpperCase(), x0 + 16, y + 36, { size: tall ? 22 : 24, font: "display", weight: 800, a, maxW: tall ? w - 20 : w * 0.36 });
+      if (!tall) g.wrap(def, x0 + 16, y + 60, w * 0.36, { size: 12, color: "ink-2", lh: 16, a, maxLines: 2 });
+      else g.text(def, x0 + 16, y + 58, { size: 11.5, color: "ink-2", a, maxW: w - 20 });
+      const gx = tall ? x0 + 16 : x0 + w * 0.44, gw = tall ? w - 16 : w * 0.56, gy = tall ? y + 72 : y + 30;
+      g.rect(gx, gy, gw, 24, { fill: "sheet", stroke: "tel", lw: 1.2, r: 12, dash: [5, 4], a: a * 0.85 });
+      for (let k = 1; k < 10; k++) g.line(gx + (gw * k) / 10, gy + 24, gx + (gw * k) / 10, gy + 30, { color: "hair", lw: 1, a });
+      g.text("no value yet", gx + gw / 2, gy + 16, { size: 11, color: "tel", align: "center", a });
+    });
+    g.line(x0, oy + 5 * rh, x1, oy + 5 * rh, { color: "hair", lw: 1, a });
+    g.wrap("Handbook 1.9 adds operational recovery and counts cost per successful task.", x0, oy + 5 * rh + 26, w, { size: 11.5, color: "ink-3", lh: 15, a, maxLines: 2 });
+  }
+  const EXIT1 = ["reproducible authorized scenario", "denied-access tests", "failure recovery", "measured quality and cost"];
+  function aEarn(g, a, L, t) {
+    const { x0, x1, y0, y1, tall } = L, w = x1 - x0;
+    if (!tall) {
+      const ry = y0 + (y1 - y0) * 0.44;
+      const road = spline([[x0 - 10, ry + 8], [x0 + w * 0.35, ry], [x0 + w * 0.7, ry - 4], [x1 + 10, ry - 10]]);
+      drawRoad(g, road, () => 30, { a });
+      const cg = 16, bw = (w - cg * 3) / 4;
+      const xs = [0, 1, 2, 3].map((i) => x0 + bw / 2 + i * (bw + cg));
+      const F = xs.map((x) => road.fx(x)), G = [0, 1, 2].map((i) => (F[i] + F[i + 1]) / 2);
+      PHASES.forEach((p, i) => {
+        const [x, y] = road.at(F[i]);
+        const bx = x0 + i * (bw + cg);
+        let yy = y0 + 12;
+        yy = g.wrap(p.title.toUpperCase(), bx, yy, bw, { size: 19, font: "display", weight: 700, lh: 19, a, maxLines: 2, color: i < 2 ? "ink" : "ink-2" });
+        if (p.chip) { g.chip(bx, yy + 4, p.chip, i === 0 ? "ink" : "exp", { size: 10.5, a }); yy += 24; }
+        yy = g.wrap(p.sub, bx, yy + 6, bw, { size: 11.5, color: "ink-2", lh: 15.5, a, maxLines: 4 });
+        g.line(x, yy, x, y - 20, { color: i === 0 ? "ink-3" : "hair", lw: 1.1, dash: i === 0 ? null : [3, 4], a });
+        milestone(g, x, y, 14, i, a);
+      });
+      G.forEach((f, i) => {
+        const [x, y, ang] = road.at(f), [lbl, c] = GATES[i];
+        gateBar(g, x, y, ang, 22, c, a);
+        g.chip(x, y + 42, i === 1 ? "exit evidence" : lbl, c, { size: 11.5, align: "center", a });
+        if (i === 1) EXIT1.forEach((e, k) => { g.circle(x - 86, y + 70 + k * 21 - 4, 3, { fill: "kno", a }); g.text(e, x - 76, y + 70 + k * 21, { size: 11.5, color: "ink-2", a }); });
+        if (i === 0) g.wrap("domain, read access, model hosting, @B pilot team", x - 80, y + 70, 160, { size: 11, color: "ink-2", lh: 15, a, maxLines: 3 });
+        if (i === 2) g.text("earned in Phase 2", x, y + 70, { size: 11, color: "ink-2", align: "center", a });
+      });
+      g.text("handbook 14.12, functional slice", road.at(G[1])[0] - 86, road.at(G[1])[1] + 70 + 4 * 21 + 4, { size: 10.5, color: "ink-3", a });
+      const [mx, my] = road.at(F[0]);
+      g.circle(mx, my, 20 + 2.5 * Math.sin(t * 3), { stroke: "exp", lw: 2, a: a * 0.75 });
+      g.text("you are here", mx, my + 46, { size: 11.5, color: "exp", weight: 600, align: "center", a });
+      const hy = y1 - 64;
+      g.hatch(x0, hy, w, 56, { color: "ink-3", a: a * 0.45, r: 8 });
+      g.rect(x0 + 8, hy + 8, w - 16, 40, { fill: "sheet", r: 6, a: a * 0.94 });
+      g.text("DATES", x0 + 20, hy + 34, { size: 18, font: "display", weight: 800, color: "ink-3", a });
+      g.wrap("none set. Week and month ranges stay indicative until identity, network, data permissions, standards, procurement and staffing are resolved (handbook 14.12).", x0 + 84, hy + 25, w - 104, { size: 11, color: "ink-2", lh: 15, a, maxLines: 2 });
+    } else {
+      const rx = x0 + 26, top = y0 + 12, bot = y1 - 92;
+      const road = spline([[rx, top - 10], [rx + 6, top + (bot - top) * 0.33], [rx - 4, top + (bot - top) * 0.66], [rx, bot + 10]]);
+      drawRoad(g, road, () => 26, { a });
+      const ys = [0, 1, 2, 3].map((i) => top + 16 + i * ((bot - top - 32) / 3));
+      const yf = (yy) => { let lo = 0, hi = 1; for (let k = 0; k < 32; k++) { const md = (lo + hi) / 2; if (road.at(md)[1] < yy) lo = md; else hi = md; } return (lo + hi) / 2; };
+      const F = ys.map(yf), G = [0, 1, 2].map((i) => (F[i] + F[i + 1]) / 2);
+      PHASES.forEach((p, i) => {
+        const [x, y] = road.at(F[i]);
+        milestone(g, x, y, 13, i, a);
+        g.text(p.title.toUpperCase(), x + 30, y + 6, { size: 18, font: "display", weight: 700, a, maxW: w - 140, color: i < 2 ? "ink" : "ink-2" });
+        if (p.chip) g.chip(x1, y + 1, p.chip, i === 0 ? "ink" : "exp", { size: 10.5, align: "right", a });
+        if (i < 3) g.wrap(p.sub, x + 30, y + 26, w - 70, { size: 10.5, color: "ink-2", lh: 14, a, maxLines: 2 });
+      });
+      G.forEach((f, i) => {
+        const [x, y, ang] = road.at(f), [lbl, c] = GATES[i];
+        gateBar(g, x, y, ang, 20, c, a);
+        g.chip(x + 30, y + 1, i === 1 ? "exit evidence" : lbl, c, { size: 10.5, a });
+        const cwid = g.tw(i === 1 ? "exit evidence" : lbl, 10.5, "mono", 600) + 20;
+        const note = i === 0 ? "domain, read access, model hosting, @B pilot team" : i === 1 ? EXIT1.join(" · ") : "earned in Phase 2";
+        g.wrap(note, x + 30 + (i === 1 ? 0 : cwid + 10), y + (i === 1 ? 24 : 5), w - 70 - (i === 1 ? 0 : cwid + 10), { size: 10.5, color: "ink-2", lh: 14, a, maxLines: 3 });
+      });
+      const [mx, my] = road.at(F[0]);
+      g.circle(mx, my, 19 + 2.5 * Math.sin(t * 3), { stroke: "exp", lw: 2, a: a * 0.75 });
+      const hy = y1 - 74;
+      g.hatch(x0, hy, w, 70, { color: "ink-3", a: a * 0.45, r: 8 });
+      g.rect(x0 + 8, hy + 8, w - 16, 54, { fill: "sheet", r: 6, a: a * 0.94 });
+      g.text("DATES · none set", x0 + 18, hy + 30, { size: 15, font: "display", weight: 800, color: "ink-3", a });
+      g.text("ranges stay indicative (handbook 14.12)", x0 + 18, hy + 50, { size: 10.5, color: "ink-2", a, maxW: w - 36 });
+    }
+  }
+  Field.scene("ask", (g, s) => {
+    const L = layout(g), n = 4;
+    const A = [0, 1, 2, 3].map((k) => swapA(s, k, n));
+    if (A[0] > 0.01) aScope(g, A[0], L, s.t);
+    if (A[1] > 0.01) aDec(g, A[1], L, s.t);
+    if (A[2] > 0.01) aMeas(g, A[2], L);
+    if (A[3] > 0.01) aEarn(g, A[3], L, s.t);
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- lab: capacity envelope (handbook 14.11) ---------------- */
+  const CALLS = [1e5, 2.5e5, 5e5, 1e6, 2e6, 3e6, 5e6, 7.5e6, 1e7, 1.5e7, 2e7];
+  const fmtCalls = (v) => (v >= 1e6 ? (v / 1e6).toString().replace(/\.0$/, "") + "M" : (v / 1e3) + "k");
+  const fmtRate = (v) => (v < 10 ? v.toFixed(2) : v < 100 ? v.toFixed(1) : Math.round(v).toLocaleString("en-US"));
+  const fmtInt = (v) => Math.round(v).toLocaleString("en-US");
+  function compute(st) {
+    const calls = CALLS[Math.round(st.calls)] || 5e6, avg = calls / 86400, peak = avg * st.peak, conc = peak * st.dur;
+    return { calls, avg, peak, conc };
+  }
+  // illustrative day shape whose mean is the average and whose maximum is the peak
+  const shapeCache = {};
+  function dayShape(P) {
+    if (shapeCache[P]) return shapeCache[P];
+    const N = 480, hrs = (k) => (24 * k) / N;
+    let sig = 2.6, out = null;
+    for (let it = 0; it < 80; it++) {
+      const gfn = (h) => Math.exp(-0.5 * Math.pow((h - 10.5) / sig, 2)) + 0.72 * Math.exp(-0.5 * Math.pow((h - 15) / (sig * 1.25), 2));
+      const vals = []; let mx = 0, mean = 0;
+      for (let k = 0; k <= N; k++) { const v = gfn(hrs(k)); vals.push(v); mx = Math.max(mx, v); }
+      vals.forEach((v, k) => { vals[k] = v / mx; if (k < N) mean += vals[k] / N; });
+      const b = (P - 1) / (1 - mean), base = 1 - b * mean;   // in units of the average
+      out = vals.map((v, k) => [hrs(k), base + b * v]);
+      if (P <= 1 || base >= 0.12 || sig < 0.12) break;
+      sig *= 0.92;
+    }
+    if (P <= 1) out = out.map(([h]) => [h, 1]);
+    shapeCache[P] = out; return out;
+  }
+  function niceMax(v) { const e = Math.pow(10, Math.floor(Math.log10(v))), m = v / e; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * e; }
+  const fmtAxis = (v) => (v >= 1000 ? (v / 1000).toString().replace(/\.0+$/, "") + "k" : v >= 10 ? String(Math.round(v)) : v.toFixed(v < 1 ? 2 : 1).replace(/\.?0+$/, ""));
+  Field.scene("cap", (g, s) => {
+    const st = s.state; if (st.calls === undefined) return;
+    const { W, H, narrow } = g, t = s.t;
+    const tall = H > W * 0.95;
+    const R = compute(st);
+    const pad = 22, top = Math.max(48, g.safeTop + 16);
+    // ---- day curve ----
+    const chartH = tall ? (H - top) * 0.36 : (H - top) * 0.5;
+    const cx0 = pad + 52, cx1 = W - pad - (narrow ? 8 : 150), cy0 = top + 14, cy1 = top + chartH - 30;
+    const ymax = niceMax(R.peak * 1.14);
+    const shape = dayShape(st.peak).map(([h, v]) => [h, v * R.avg]);
+    const ch = g.chart({ x0: cx0, y0: cy0, x1: cx1, y1: cy1, xmax: 24, ymax, xticks: [0, 6, 12, 18, 24], yticks: [0, ymax / 2, ymax], fx: (v) => String(v).padStart(2, "0") + ":00", fy: fmtAxis, tsize: 11,
+      series: [{ pts: shape, color: "exe", lw: 2, area: true, dots: false }] });
+    const ya = ch.sy(R.avg), yp = ch.sy(R.peak);
+    g.line(cx0, ya, cx1, ya, { color: "ink-2", lw: 1.2, dash: [5, 4] });
+    g.line(cx0, yp, cx1, yp, { color: "ink", lw: 1.2, dash: [2, 3] });
+    const lx = narrow ? cx1 - 4 : cx1 + 10, la = narrow ? "right" : "left";
+    const close = Math.abs(ya - yp) < 44;
+    g.text(`peak ${fmtRate(R.peak)}/s`, lx, yp - 6, { size: 12, weight: 600, align: la });
+    if (!narrow && !close) g.text(`${st.peak}× average`, lx, yp + 10, { size: 10.5, color: "ink-3", align: la });
+    const yA = close ? yp + 14 : ya - 6;
+    g.text(`average ${fmtRate(R.avg)}/s`, narrow && close ? cx0 + 8 : lx, yA, { size: 12, color: "ink-2", weight: 600, align: narrow && close ? "left" : la });
+    if (!narrow) g.text(`${fmtCalls(R.calls)} ÷ 86,400 s`, lx, yA + 16, { size: 10.5, color: "ink-3", align: la });
+    g.text("requests per second over an illustrative day", cx0, cy0 - 4 - 6, { size: 11, color: "ink-3" });
+    // ---- streams strip: concurrency = peak rate × active duration ----
+    const sy0 = top + chartH + 14, sh = tall ? (H - top) * 0.32 : (H - top) * 0.5 - 30;
+    const sx0 = pad, sx1 = tall ? W - pad : W * 0.6;
+    const span = Math.max(st.dur * 2.6, 6), now = span * 0.72;
+    const lanes = tall ? 12 : 14, d = span / (lanes + 2);
+    const lt = sy0 + 30, lb = sy0 + sh - 40, lh = (lb - lt) / lanes;
+    const sx = (v) => sx0 + ((sx1 - sx0) * v) / span;
+    g.text("at the peak instant", sx0, sy0 + 10, { size: 11, color: "ink-3" });
+    // sample streams arriving at an even rate up to "now"; the ones still open cross the now line
+    for (let k = 0; k < lanes; k++) {
+      const start = now - (lanes - 1 - k) * d;
+      const st0 = Math.max(0, start), en = Math.min(span, start + st.dur);
+      if (en <= 0) continue;
+      const isOpen = start <= now && start + st.dur > now;
+      const y = lt + k * lh + lh / 2;
+      g.line(sx(st0), y, sx(en), y, { color: isOpen ? "exe" : "ink-3", lw: Math.min(6, lh * 0.55), a: isOpen ? 0.9 : 0.3 });
+    }
+    g.line(sx(now), lt - 8, sx(now), lb + 4, { color: "ink", lw: 1.4 });
+    g.text("now", sx(now), lt - 12, { size: 11, weight: 600, align: "center" });
+    g.dim(sx(now - st.dur), sx(now), lb + 18, `${st.dur} s active`, { size: 11, color: "exe" });
+    g.text("open now = arrivals in the last " + st.dur + " s", sx0, sy0 + sh - 2, { size: 11, color: "ink-2", maxW: sx1 - sx0 });
+    // ---- result + what is left out ----
+    const bx0 = tall ? pad : sx1 + 28, bx1 = W - pad, by0 = tall ? sy0 + sh + 10 : sy0 + 4;
+    g.text(fmtInt(R.conc), bx0, by0 + 40, { size: 42, font: "display", weight: 800, color: "exe", maxW: bx1 - bx0 });
+    g.wrap("concurrent streams at peak, before headroom", bx0, by0 + 60, bx1 - bx0, { size: 11.5, color: "ink-2", lh: 15, maxLines: 2 });
+    g.text(`${fmtRate(R.peak)}/s × ${st.dur} s`, bx0, by0 + 96, { size: 12, color: "exe", weight: 600, maxW: bx1 - bx0 });
+    const hb = by0 + 112, hh = tall ? H - hb - 14 : Math.min(150, H - hb - 18);
+    if (hh > 60) {
+      g.hatch(bx0, hb, bx1 - bx0, hh, { color: "ink-3", a: 0.45, r: 8 });
+      g.rect(bx0 + 7, hb + 7, bx1 - bx0 - 14, hh - 14, { fill: "sheet", r: 6, a: 0.94 });
+      g.text("NOT IN THIS ARITHMETIC", bx0 + 16, hb + 28, { size: 15, font: "display", weight: 800, color: "ink-3", maxW: bx1 - bx0 - 30 });
+      const items = ["token throughput", "long tails", "fan-out", "provider quotas", "regional constraints"];
+      if (tall) g.wrap(items.join(" · "), bx0 + 16, hb + 48, bx1 - bx0 - 32, { size: 11, color: "ink-2", lh: 15, maxLines: 3 });
+      else items.forEach((it, k) => { if (hb + 50 + k * 17 < hb + hh - 10) g.text("· " + it, bx0 + 16, hb + 50 + k * 17, { size: 11, color: "ink-2", maxW: bx1 - bx0 - 32 }); });
+    }
+  }, {
+    controls: "cap-ctl", anim: false, restT: 2, zoom: 1.3, minW: 620, maxW: 1000,
+    format: (id, v) => (id === "calls" ? fmtCalls(CALLS[Math.round(v)]) : id === "peak" ? v + "×" : v + " s"),
+    onState: (st) => {
+      const R = compute(st);
+      document.getElementById("o-avg").textContent = fmtRate(R.avg);
+      document.getElementById("o-peak").textContent = fmtRate(R.peak);
+      document.getElementById("o-conc").textContent = fmtInt(R.conc);
+      document.getElementById("o-sum").textContent = `${fmtInt(R.calls)} ÷ 86,400 = ${fmtRate(R.avg)} req/s · × ${st.peak} = ${fmtRate(R.peak)} req/s · × ${st.dur} s = ${fmtInt(R.conc)} open streams`;
+    },
+    onAction: (name) => {
+      if (name !== "example") return;
+      document.getElementById("calls").value = 6; document.getElementById("peak").value = 10; document.getElementById("dur").value = 4;
+    },
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3 roadmap", who: ["this design"], what: "Four phases on the Architecture board: prototype, one functional slice, approved write actions, more domains and environments. Four decisions start Phase 1. Five measures judge it: task success, lead time, escaped defects, evidence freshness and cost per task.", vs: "<b>The baseline for this chapter.</b> Each gate is evidence, no phase has a date, and the handbook's five-phase sequence gives the detailed exit evidence." },
+      { name: "Platform Engineering Maturity Model", who: ["CNCF", "TAG App Delivery"], what: "Describes platform programs at four levels (Provisional, Operational, Scalable, Optimizing) across five aspects: investment, adoption, interfaces, operations and measurement. Each aspect is evaluated and evolved on its own, and the authors say reaching the highest level should not be a goal in itself.", vs: "The model assesses a whole program; Vector's roadmap sequences scope. They fit together: the model could judge how each Vector phase is funded, adopted and measured. Vector's five measures map to its measurement aspect, whose third level ties feedback to chosen outcomes and metrics.", src: [["Platform Engineering Maturity Model", "https://tag-app-delivery.cncf.io/whitepapers/platform-eng-maturity-model/"]] },
+      { name: "Thinnest viable platform", who: ["Team Topologies"], what: "Build the smallest platform the teams need, possibly just a wiki page naming the cloud provider and services in use, and make it no thicker than necessary. Grow it as the organisation's needs grow, and run it as a product with development teams as its customers.", vs: "Phase 1 applies the same restraint: four systems, one domain, Dev, read-only. The cost is that Vector's design already draws 28 screens, so the slice will deliver far less than the pictures people have seen.", src: [["What is a Thinnest Viable Platform (TVP)?", "https://teamtopologies.com/key-concepts-content/what-is-a-thinnest-viable-platform-tvp"]] },
+      { name: "Backstage adoption", who: ["Spotify", "CNCF incubation"], what: "The adoption guide calls for a central team that owns the deployment and treats it like a product, treats contributing teams as customers, and spreads it with lunch-and-learns, embedding, hack days and show-and-tell. It suggests tracking onboarding time, merges per developer per day, deploys to production, MTTR, context switching, T-shapedness and eNPS.", vs: "Both measure outcomes for engineers. Backstage's list leans on delivery activity; Vector's adds evidence freshness and cost per task, because its answers cite sources and call models. Vector's first audience is one domain and one @B pilot team, where Backstage grows through many contributing teams.", src: [["Strategies for adopting", "https://backstage.io/docs/overview/adopting/"]] },
+      { name: "DORA metrics", who: ["DORA", "Google Cloud"], what: "Five software delivery metrics: change lead time (commit to deployed in production), deployment frequency, failed deployment recovery time, change fail rate and deployment rework rate. DORA applies them per application or service, to improve a team over time, and warns against comparing teams.", vs: "Vector's lead time starts earlier and stops sooner: ticket to running in Dev, then out of Dev. Escaped defects, found after promotion, sits near change fail rate. DORA has no counterpart for evidence freshness or cost per task, and Vector's board has none for recovery time, which handbook 1.9 adds as operational recovery.", src: [["DORA's software delivery performance metrics", "https://dora.dev/guides/dora-metrics/"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · Architecture board (roadmap, decisions, measures) and Home board (WJ-88, WJ-91, Phase 1 architecture sync)", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · README repository facts · 1.9 Success at each stage · 3.2 Every workspace route · 5.2 Repository estate generation", ""],
+      ["Atlas handbook · 14.11 Capacity and reliability assumptions · 14.12 Delivery sequence · 14.13 Technology decisions remain open", ""],
+      ["Atlas handbook · 15 @B open questions · 16.1 Boundaries · 16.2 Behaviour caveats · 16.5 Production decisions needing evidence · fixture catalogs", ""],
+      ["Vector, annotated (v3 explainer film) · chapter 09 The road", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+      ["Vector Sigma Films · Film 07 The Road to Cybertron", "https://claude.ai/artifact/W4XMFpXyBPrftXBEah4xzQ"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

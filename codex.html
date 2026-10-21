@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Code in Dev · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .qin { width: 100%; min-width: 0; font-family: var(--f-mono); font-size: 0.86rem; color: var(--ink); background: var(--sheet); border: 1px solid var(--hair); border-radius: 8px; padding: 9px 12px; }
+  .qin:focus { outline: 2px solid var(--exp); outline-offset: 1px; border-color: var(--exp); }
+  .sugg { display: grid; gap: 6px; }
+  .sugg .btn { text-align: left; line-height: 1.35; white-space: normal; }
+  .checks-lab .board { min-height: 380px; }
+  .proto-code { display: grid; gap: 16px; min-width: 0; }
+  .notdone { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .notdone li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; font-size: 0.98rem; line-height: 1.45; color: var(--ink-2); }
+  .notdone li::before { content: "✕"; font-family: var(--f-mono); font-size: 0.8rem; color: var(--bad); line-height: 1.8; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev" aria-current="page">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">07</span> Build and run · CodeX and Compute</span>
+        <h1>Code in <em>Dev</em></h1>
+        <p class="dek">CodeX, the IDE, opens a cloud workspace that Compute runs beside the Dev cluster. Its terminals and its code assistant work against Dev, and the review in Bitbucket answers from the same sources.</p>
+        <div class="files">
+          <span class="tag t-exp"><i></i>v3 · CodeX</span>
+          <span class="tag t-exe"><i></i>v3 · Compute</span>
+          <span class="tag t-exp"><i></i>v3 · Reviews</span>
+          <span class="tag t-kno"><i></i>Matrix · impact</span>
+          <span class="tag">handbook 4.2–4.8</span>
+          <span class="tag">handbook 14.8</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="A sketch of the CodeX window: a file tree with the workspace card, the confirm() method with its four added lines highlighted, and two terminals, each labelled DEV, that print mvn verify results and the crash-looping loyalty-consumer pods. A dimension line under the window reads bound to nsx-dev-use1 / commerce.">
+        <span class="ruler">CodeX · ws-vt-01 · bound to Dev</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="workspace">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Compute, the workspace host</span>
+        <h2>A workspace that lives in Dev</h2>
+        <p class="lede">Compute describes its workspaces in one line: "Cloud workspaces bound to Dev. They run beside nsx-dev-use1 and see Dev services, flags and secrets." Here is what that means for Venkatesh's workspace, ws-vt-01.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">1 · New workspace, step 4 of 4</span><h4>Created from Bitbucket, inside Dev's network</h4><p>The wizard takes <code>commerce/order-service</code> from Bitbucket Data Center. The region, us-east-1 private VPC, is locked and marked "set by Dev". ws-vt-01 is the Large size, 8 vCPU and 16 GB, which the wizard lists at $0.48 an hour, and it binds to <code>nsx-dev-use1 / commerce</code> with read and write.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">2 · Bindings in Bridge</span><h4>Five bindings, the same for every workspace</h4><p>A Dev workspace connects to the cluster with read and write, to Kafka <code>msk-dev-use1</code> to read, to the <code>launchdarkly:dev</code> flags, and to <code>vault:secret/dev/commerce</code> through workload identity with no static secrets. Models come from Bedrock in us-east-1 on Dev's quota.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">3 · Sleep, expiry and spend</span><h4>Idle workspaces go to sleep</h4><p>A running workspace sleeps after 60 minutes idle and wakes from Compute. The wizard also offers an ephemeral switch that deletes the workspace when its branch merges. Venkatesh has 4 of the 6 workspaces he is allowed, and Compute shows $3.84 spent today. The design's prices are illustrative.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">4 · Main against Dev</span><h4>The one value that differs</h4><p>Compute compares the configuration in main with what runs in the commerce namespace. Four of five keys agree. <code>LOYALTY_TOPIC</code> is <code>order.confirmed.v2</code> in main and <code>order.confirmed.v1</code> in Dev, from configmap loyalty-cfg, and that retired topic is why loyalty-consumer is crash-looping. R-2207 redeploys 1.9.0.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">5 · CodeX terminals</span><h4>Every terminal says where it runs</h4><p>The v2 screens gave CodeX a terminal per environment. In v3 both terminals are Dev's. The workspace shell runs <code>mvn -q verify</code> with 43 tests and "Same result as Jenkins #419". The kubectl tab, labelled <code>nsx-dev-use1 / commerce</code> with read and write, shows the two crash-looping pods and the log line naming the v1 topic.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="ws" data-label="Top: Bitbucket feeds workspace ws-vt-01, which sits inside the us-east-1 private VPC beside the nsx-dev-use1 commerce namespace and its five services. Below, a panel changes per step: the new-workspace wizard, the five bindings, the workspace list and sleep rule, the main-versus-Dev configuration with LOYALTY_TOPIC pointing at the crash-looping consumer, and the two Dev terminals."><span class="ruler">Compute · ws-vt-01 in Dev</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="change">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">CodeX and Reviews</span>
+        <h2>The change and its review</h2>
+        <p class="lede">The code assistant in CodeX and the reviewers on the Bitbucket pull request draw on the same sources: the ticket, the event contract, ADR-031, the builds and Matrix, the enterprise graph. Each answer names where it came from.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">1 · The diff</span><h4>Four lines before payment</h4><p>In <code>confirm()</code>, four added lines ask <code>fraudRisk.assess</code> for a decision and return <code>pendingReview</code> when it requires review, before <code>payments.authorize</code> runs. Above the event line, CodeX shows what Matrix knows about the topic: "order.confirmed.v2 · 8 consumers · 1 conflicting edge · ADR-031".</p></div></div>
+          <div class="beat"><div class="card"><span class="k">2 · Code Assistant</span><h4>An answer with its citations</h4><p>Asked why the contract test fails here but not on main, the assistant says line 48 added <code>riskDecision</code> to the v2 event, whose schema forbids extra fields. It cites <code>order-events.yaml:14</code>, ADR-031 and COM-2841, and its suggested fix, keeping the decision internal, reads "Applied in 5c0d7e1".</p></div></div>
+          <div class="beat"><div class="card"><span class="k">3 · Priya Raman's review</span><h4>A question becomes a test</h4><p>Priya asks what happens when <code>assess</code> times out and wants a test for that path before the merge. Venkatesh answers that it fails closed, so the order waits for review, and adds <code>timeoutGoesToReview()</code> to OrderServiceTest.java. She approves at 14:40.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">4 · @B review</span><h4>Eight consumers read v2</h4><p>@B reviews "from Matrix, contracts and build #418". It says the change adds a field to <code>order.confirmed.v2</code>, which forbids extra properties, that 8 consumers read v2, and that ADR-031 asks for a v3 topic. Venkatesh applied its suggestion at 10:48 in 5c0d7e1, and the contract tests pass.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">5 · The merge rule</span><h4>Two approvals, a green build, no blocking comments</h4><p>@B sits in the reviewer list with its own count of blocking comments, and the merge rule needs that count at zero. Maya Chen and Priya Raman have approved, Jenkins #419 passed every Dev stage, and @B shows 0 blocking. The side panel adds what this branch runs in Dev: 2.14.0-rc2 from build #419.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="review" data-label="Left: the confirm() diff with its four added lines and the Matrix note above the event line. Below it a panel changes per step: the inline note and contract banner, the Code Assistant's answer with citations, Priya's timeout question answered by a test, @B's review with the eight consumers of order.confirmed.v2, and the three merge conditions. Right: six sources, COM-2841, the event contract, ADR-031, Matrix and builds 418 and 419, which light up when an answer cites them."><span class="ruler">PR #214 · what each answer cites</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Three boards, one workspace</h2>
+        <p class="lede">CodeX is where the change is written, Compute is where its workspace runs, and Reviews is where it is judged. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/CodeX.webp" data-w="1600" data-h="1000" data-crop="227,75,1373,925" data-title="CodeX — the IDE bound to Dev (v3)">
+          <span class="pin c-exe" data-x="440" data-y="146">1</span>
+          <span class="pin c-bad" data-x="410" data-y="708">2</span>
+          <span class="pin" data-x="1250" data-y="425">3</span>
+          <span class="pin c-kno" data-x="1110" data-y="513">4</span>
+          <span class="pin c-exe" data-x="680" data-y="920">5</span>
+          <span class="pin c-exe" data-x="1095" data-y="925">6</span>
+          <span class="pin c-kno" data-x="1316" data-y="237">7</span>
+          <span class="ring" data-box="466,395,812,88"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 07.1 · CodeX</span>
+          <h3>The IDE, bound to Dev</h3>
+          <ol class="pins">
+            <li><span><b>The workspace.</b> order-service runs in ws-vt-01, 8 vCPU and 16 GB, "Bound to nsx-dev-use1 / commerce" and set to sleep after 60 minutes idle.</span></li>
+            <li><span><b>Services in this namespace.</b> Beside the files: order-service 2.14.0-rc2 at 2/2, and loyalty-consumer 1.8.2 at 0/2 in CrashLoop.</span></li>
+            <li><span><b>The change.</b> Four added lines in <code>confirm()</code> hold a risky order for review before payment is authorized.</span></li>
+            <li><span><b>Matrix, inline.</b> "order.confirmed.v2 · 8 consumers · 1 conflicting edge · ADR-031" sits above the event line. Under line 48, the contract test passes in build #419, deployed to Dev 11:09.</span></li>
+            <li><span><b>Workspace terminal.</b> <code>ws-vt-01 · ~/order-service</code> runs <code>mvn -q verify</code> with 43 tests, 0 failures and "Same result as Jenkins #419".</span></li>
+            <li><span><b>Cluster terminal.</b> <code>nsx-dev-use1 / commerce</code>, kubectl, read and write. Two pods in CrashLoopBackOff, and "Fix proposed by @B: R-2207 · waiting for Sam Patel".</span></li>
+            <li><span><b>Code Assistant.</b> Its context (COM-2841, OrderService.java, Matrix · 13 entities, Build #419), the answer with three citations, and the suggested fix "Applied in 5c0d7e1".</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Compute.webp" data-w="1600" data-h="1000" data-crop="236,88,1352,900" data-title="Compute — workspaces bound to Dev (v3)">
+          <span class="pin c-exe" data-x="960" data-y="158">1</span>
+          <span class="pin c-tel" data-x="592" data-y="206">2</span>
+          <span class="pin c-exe" data-x="1264" data-y="284">3</span>
+          <span class="pin" data-x="1240" data-y="425">4</span>
+          <span class="pin c-exe" data-x="772" data-y="491">5</span>
+          <span class="pin c-bad" data-x="878" data-y="813">6</span>
+          <span class="pin c-exe" data-x="1502" data-y="525">7</span>
+          <span class="ring" data-box="256,793,878,40"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 07.2 · Compute</span>
+          <h3>Where workspaces run</h3>
+          <ol class="pins">
+            <li><span><b>The promise.</b> "Cloud workspaces bound to Dev. They run beside nsx-dev-use1 and see Dev services, flags and secrets."</span></li>
+            <li><span><b>Quota and spend.</b> "4 of 6 allowed · $3.84 today", all in us-east-1 private VPC. The amounts are illustrative.</span></li>
+            <li><span><b>ws-vt-01.</b> Large, running, stops after 60 minutes idle, $2.10 today. ws-vt-03 is billed to Wheeljack.</span></li>
+            <li><span><b>ws-vt-04.</b> Restricted with no egress, stopped and "deleted in 22 h".</span></li>
+            <li><span><b>Bindings.</b> Cluster, Kafka, flags, secrets and models, "the same for every workspace above", managed in Bridge.</span></li>
+            <li><span><b>Main against Dev.</b> One key differs. <code>LOYALTY_TOPIC</code> runs as <code>order.confirmed.v1</code> in Dev, and the line under the table links to R-2207.</span></li>
+            <li><span><b>New workspace.</b> Bitbucket source, a region "set by Dev", three sizes priced per hour, sleep after 60 minutes, an ephemeral switch, and "About $3.80 a working day".</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Reviews.webp" data-w="1600" data-h="1000" data-crop="236,88,1352,900" data-title="Reviews — pull request #214 (v3)">
+          <span class="pin c-exp" data-x="906" data-y="134">1</span>
+          <span class="pin" data-x="1000" data-y="489">2</span>
+          <span class="pin" data-x="342" data-y="690">3</span>
+          <span class="pin c-ctl" data-x="1410" data-y="359">4</span>
+          <span class="pin c-exe" data-x="1520" data-y="563">5</span>
+          <span class="pin c-kno" data-x="1556" data-y="700">6</span>
+          <span class="pin c-ctl" data-x="1550" data-y="862">7</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 07.3 · Reviews</span>
+          <h3>Pull request #214</h3>
+          <ol class="pins">
+            <li><span><b>The pull request.</b> "COM-2841: Fraud review before payment authorization", feature/fraud-review into main, 3 commits, 3 files, +130 −3.</span></li>
+            <li><span><b>Priya's question.</b> The timeout question and Venkatesh's reply with <code>timeoutGoesToReview()</code>, resolved.</span></li>
+            <li><span><b>@B review.</b> Marked "from Matrix, contracts and build #418", with the comment, the suggested change, and "Applied by Venkatesh · 10:48 · contract tests pass".</span></li>
+            <li><span><b>Reviewers.</b> Maya Chen and Priya Raman approved; "@B review · 0 blocking".</span></li>
+            <li><span><b>Checks.</b> Jenkins #419, SonarQube, Evals on 5c0d7e1 at 8 of 8, a clean secrets scan, and "Running in Dev from this branch: 2.14.0-rc2 · build #419".</span></li>
+            <li><span><b>Impact from Matrix.</b> 2 callers, 8 dependents, 1 conflict. Below it, the PR links COM-2841, ADR-031 and the workspace ws-vt-01.</span></li>
+            <li><span><b>The merge rule.</b> "Merge needs 2 approvals, a green build and no blocking review comments. All three are met."</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prototype">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>Workbench, the stand-in for CodeX</h2>
+        <p class="lede">Atlas has no cloud workspace. Its Workbench screen plays the part of CodeX with fixed Commerce files, a prepared change and checks that look for strings. Knowing exactly what it does keeps a demo honest.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p>The repository header always shows <code>commerce/order-service</code>, branch <code>feature/fraud-review</code> and snapshot <code>8a7f1c2</code>. The editor is a textarea, and only OrderService.java can be edited. A renderer numbers the lines, colours comments, strings, some Java keywords and annotations with regular expressions, and highlights any line containing <code>fraudRisk</code>. It is not Monaco, a Java parser or a language server (handbook 4.3).</p>
+          <p><b>Apply proposed change</b> replaces the marker comment <code>// Risk assessment belongs before payment authorization.</code> with the prepared lines. It sets <code>applied</code>, clears <code>tested</code> and the evaluations, and adds an audit entry. Editing the source by hand also clears <code>tested</code> and changes the configuration fingerprint (4.3, 4.5).</p>
+          <p><b>Run checks</b> sets <code>tested</code> from the predicate on the right and prints <code>3 / 3 local scenario checks passed</code>. The terminal's three lines describe assessment before payment, review handling and event compatibility, which is more than the predicate tests (4.6).</p>
+          <p>Onboarding checks only that the repository identifier matches <code>^[\w.-]+/[\w.-]+$</code>, so <code>commerce/order-service</code> passes and a full HTTPS URL fails. It saves provider, repository, region and tier as metadata, and Workbench keeps showing the Commerce fixture (4.2).</p>
+          <span class="k-label">What it does not prove</span>
+          <ul class="notdone">
+            <li>The check never looks at call order or control flow, so it cannot show that the assessment runs before payment.</li>
+            <li>Nothing compiles the Java. The insertion has no <code>fraudRisk</code> field, client or timeout handler.</li>
+            <li>Nothing validates the event against the <code>order.confirmed.v2</code> schema.</li>
+            <li>No model answers. The assistant waits 550 ms and returns prepared text.</li>
+          </ul>
+        </div>
+        <div class="proto-code">
+          <div class="code"><div class="hd"><span>handbook 4.5 · the prepared addition</span><span>OrderService.java</span></div><pre><span class="add">    var decision = fraudRisk.assess(request, customer);
+    if (decision.requiresReview()) {
+        return OrderConfirmation.pendingReview(request.id());
+    }</span>
+<span class="c">    // Fail closed on timeout; preserve event contract v2.</span></pre></div>
+          <div class="code"><div class="hd"><span>handbook 4.6 · Run checks, exactly</span><span>sets tested</span></div><pre><span class="k">applied</span>
+AND code contains <span class="s">"fraudRisk.assess"</span>
+AND code contains <span class="s">"pendingReview"</span>
+AND code contains <span class="s">"order.confirmed.v2"</span></pre></div>
+          <div class="code"><div class="hd"><span>handbook 4.4 · answerQuestion, in order</span><span>lowercased, substring</span></div><pre><span class="c">1</span>  schema|event|break|blast|downstream   → <span class="k">impact</span>
+<span class="c">2</span>  customer|data come                     → <span class="k">context</span>
+<span class="c">3</span>  library|pattern                        → <span class="k">library</span>
+<span class="c">4</span>  none of fraud|risk|detect|agent        → <span class="k">unknown</span>
+<span class="c">5</span>  anything left                          → <span class="k">fraud</span></pre></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Ask the prototype's assistant</h2>
+        <p class="lede">Atlas's Workbench assistant never calls a model. It lowercases your question and runs five substring checks in order, and the first that passes picks one of five prepared answers. Type a question or pick one, and watch which check wins.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="ask-ctl">
+          <div class="ctl"><label for="q">Your question</label>
+            <input type="text" class="qin" id="q" value="How do I add fraud detection before payment?" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="ctl"><span class="lbl">Suggested questions</span>
+            <div class="sugg">
+              <button type="button" class="btn" data-act="s0">How do I add fraud detection before payment?</button>
+              <button type="button" class="btn" data-act="s1">What breaks downstream if the order event changes?</button>
+              <button type="button" class="btn" data-act="s2">Where does customer data come from?</button>
+              <button type="button" class="btn" data-act="s3">Which library should handle credentials?</button>
+            </div>
+          </div>
+          <div class="readout">
+            <div><b id="o-kind">–</b><span>prepared answer</span></div>
+            <div><b id="o-check">–</b><span>winning check</span></div>
+          </div>
+          <p class="logline" id="o-ask" aria-live="polite"></p>
+          <p class="note">This is the Atlas prototype's routing from handbook 4.4: the same patterns, in the same order, as substring tests. Try "How do I prevent fraud?". The word <code>prevent</code> contains <code>event</code>, so check 1 wins. The handbook does not quote the prototype's own suggested questions, so these four are written to reach its four supported answers. The v3 design proposes a real assistant that answers from the ticket, the contract, ADR-031 and the build, and cites them.</p>
+        </div>
+        <div class="board" data-stage="router" data-label="The question in lowercase with the matched text highlighted, a 550 millisecond pause bar, then five checks lighting in order: schema or event words, customer words, library words, the absence of fraud words, and everything else. The first passing check is marked and a card summarises the prepared answer it returns."><span class="ruler">answerQuestion · five checks</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="checks">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it · Run checks</span>
+        <h2>Four terms make a green check</h2>
+        <p class="lede">Workbench's Run checks button sets the shared <code>tested</code> flag that the release screen later reads. Switch the four terms of its predicate and see what passes, and what was never examined.</p>
+      </header>
+      <div class="lab checks-lab">
+        <div class="controls" id="chk-ctl">
+          <label class="switch">applied (Apply proposed change was clicked) <input type="checkbox" id="c-applied" checked></label>
+          <label class="switch">code contains "fraudRisk.assess" <input type="checkbox" id="c-assess" checked></label>
+          <label class="switch">code contains "pendingReview" <input type="checkbox" id="c-pending" checked></label>
+          <label class="switch">code contains "order.confirmed.v2" <input type="checkbox" id="c-v2" checked></label>
+          <div class="btnrow">
+            <button type="button" class="btn" data-act="neg">Remove pendingReview</button>
+            <button type="button" class="btn" data-act="reset">All four true</button>
+          </div>
+          <div class="readout">
+            <div><b id="o-tested">–</b><span>tested</span></div>
+            <div><b id="o-gate">–</b><span>release source gate</span></div>
+          </div>
+          <p class="logline" id="o-chk" aria-live="polite"></p>
+          <p class="note">Prototype logic, quoted from handbook 4.6. "Remove pendingReview" is the handbook's own negative test (13): tested turns false and the release source gate fails. A term can be satisfied by a comment or a string anywhere in the file, because the check reads the file as plain text.</p>
+        </div>
+        <div class="board" data-stage="checks" data-label="Four boxes joined by AND: applied, and the code containing fraudRisk.assess, pendingReview and order.confirmed.v2. An arrow leads to the result, either 3 of 3 local scenario checks passed or a failed source check, and a row of hatched chips lists what the predicate never examines."><span class="ruler">Run checks · one predicate</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>60 min</b><span>idle before a Dev workspace sleeps</span></div>
+        <div><b>5</b><span>bindings every Dev workspace gets: cluster, Kafka, flags, secrets, models</span></div>
+        <div><b>43</b><span>tests in the workspace, "same result as Jenkins #419"</span></div>
+        <div><b>8</b><span>consumers of <code>order.confirmed.v2</code>, according to Matrix</span></div>
+        <div><b>3</b><span>merge conditions: 2 approvals, a green build, no blocking comments</span></div>
+        <div><b>$3.84</b><span>spent today on 4 of 6 allowed workspaces (illustrative)</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>Workbench shows fixed Commerce files in a textarea editor. Apply is a string replacement, Run checks tests four terms, and the assistant picks one of five prepared answers by substring after 550 ms. Onboarding saves metadata only. There is no workspace, terminal, Git operation or pull request.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>CodeX: ws-vt-01 bound to <code>nsx-dev-use1 / commerce</code>, terminals labelled with their environment, an assistant that cites</li><li>Compute: 4 of 6 workspaces, five bindings, sleep and ephemeral rules, main against Dev</li><li>Reviews: PR #214 with @B's review from Matrix, contracts and build #418, and the merge rule</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>Reuse a mature, supported editor and extension environment with language and debug protocols, Git, terminals and isolated remote workspaces. Workers hold short-lived, narrow grants instead of ambient administrative credentials (handbook 14.8).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same jobs, other tools</h2>
+        <p class="lede">Cloud workspaces and AI code review both exist as products today. Vector's design ties the two to one environment and one graph, which is also the part it would have to build.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="knowledge.html"><span>← Chapter 06</span><b>Answers with sources</b></a>
+    <a class="fwd" href="pipelines.html"><span>Chapter 08 →</span><b>Builds that explain themselves</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp } = Field;
+
+  /* ---------------- shared data ---------------- */
+  // confirm() in OrderService.java as CodeX shows it (lines 37–51), one indent level removed
+  const SRC = [
+    [37, "@Transactional", ""],
+    [38, "public OrderConfirmation confirm(OrderRequest request) {", ""],
+    [39, "    var customer = customers.load(request.customerId());", ""],
+    [40, "    inventory.reserve(request.items());", ""],
+    [41, "", ""],
+    [42, "    var decision = fraudRisk.assess(request, customer);", "add"],
+    [43, "    if (decision.requiresReview()) {", "add"],
+    [44, "        return OrderConfirmation.pendingReview(request.id());", "add"],
+    [45, "    }", "add"],
+    [46, "    var payment = payments.authorize(request, customer);", ""],
+    [0, "order.confirmed.v2 · 8 consumers · 1 conflicting edge · ADR-031", "note"],
+    [47, "    var event = OrderConfirmed.v2(request, payment);", ""],
+    [48, "    // riskDecision stays internal; v3 tracked in COM-2867", "chg"],
+    [49, "    events.publish(\"order.confirmed.v2\", event);", ""],
+    [50, "    return OrderConfirmation.confirmed(request.id(), payment.id());", ""],
+    [51, "}", ""],
+  ];
+  const SRC_SHORT = SRC.filter((r) => r[0] === 0 || (r[0] >= 41 && r[0] <= 49));
+  const MAXCH = 67;
+  const PODS = [["order-service", "2.14.0-rc2", "2/2", "ok"], ["loyalty-consumer", "1.8.2", "0/2 CrashLoop", "bad"], ["fraud-risk-api", "2.4.0", "2/2", "ok"], ["customer-profile-api", "5.2.0", "2/2", "ok"], ["payments-gateway", "8.0.2", "2/2", "ok"]];
+  const TERM_WS = [["fraud-review % mvn -q verify", "ink"], ["Tests run: 43, Failures: 0", "ink-2"], ["BUILD SUCCESS", "ok"], ["Same result as Jenkins #419", "exe"]];
+  const TERM_K8S = [["% kubectl get pods -l app=loyalty-consumer", "ink"], ["NAME                          STATUS            RESTARTS", "ink-3"], ["loyalty-consumer-7d9f6-kx2lq  CrashLoopBackOff  214", "bad"], ["loyalty-consumer-7d9f6-p8w3n  CrashLoopBackOff  209", "bad"], ["% kubectl logs loyalty-consumer-7d9f6-kx2lq --tail=2", "ink"], ["WARN  Topic order.confirmed.v1 not present…", "kno"], ["ERROR Consumer exited with code 1", "bad"], ["Fix proposed by @B: R-2207 · waiting for Sam Patel", "ink-3"]];
+
+  /* ---------------- helpers ---------------- */
+  function fit(g, str, size, maxW, font = "mono", weight = 500) {
+    str = String(str);
+    if (g.tw(str, size, font, weight) <= maxW) return str;
+    let lo = 0, hi = str.length;
+    while (lo < hi) { const m = (lo + hi + 1) >> 1; if (g.tw(str.slice(0, m) + "…", size, font, weight) <= maxW) lo = m; else hi = m - 1; }
+    return str.slice(0, lo) + "…";
+  }
+  // one line of Java, lightly tokenised: keywords bold, string literals as knowledge (a topic name), comments faint
+  function javaLine(g, txt, x, y, size, a = 1) {
+    if (!txt) return;
+    if (txt.trim().startsWith("//")) { g.text(txt, x, y, { size, color: "ink-3", a }); return; }
+    let cx = x;
+    txt.split(/(\b(?:public|var|if|return)\b|"[^"]*"|@Transactional)/).forEach((p) => {
+      if (!p) return;
+      const kw = /^(public|var|if|return)$/.test(p), str = p[0] === '"', ann = p === "@Transactional";
+      const wt = kw ? 600 : 500;
+      g.text(p, cx, y, { size, weight: wt, color: str ? "kno" : kw ? "ink" : ann ? "ink-3" : "ink-2", a });
+      cx += g.tw(p, size, "mono", wt);
+    });
+  }
+  // the code rows of an editor; returns the y of each source line number
+  function drawCode(g, rows, x, y, w, rowH, o = {}) {
+    const gut = o.gutter || 34, size = clamp(Math.min(rowH * 0.7, (w - gut - 10) / (MAXCH * 0.6)), 7.5, o.maxSize || 10.5);
+    const ys = {};
+    rows.forEach(([n, txt, kind], i) => {
+      const ry = y + i * rowH, base = ry + rowH * 0.68;
+      if (kind === "add" || kind === "chg") {
+        g.rect(x, ry, w, rowH, { fill: g.rgba("ok", kind === "add" ? 0.1 : 0.05) });
+        g.rect(x + gut - 6, ry, 2, rowH, { fill: "ok" });
+      }
+      if (kind === "note") {
+        const ns = Math.max(7, size - 1);
+        g.circle(x + gut + 3, ry + rowH / 2, 2.4, { fill: "kno" });
+        g.text(fit(g, txt, ns, w - gut - 14), x + gut + 10, base, { size: ns, color: "kno", weight: 500 });
+        ys.note = ry;
+        return;
+      }
+      g.text(String(n), x + gut - 12, base, { size: size - 0.5, color: "ink-3", align: "right" });
+      if (kind === "add") g.text("+", x + gut - 1, base, { size: size - 0.5, color: "ok", weight: 600 });
+      javaLine(g, txt, x + gut + 6, base, size);
+      ys[n] = ry;
+    });
+    return { ys, size, cw: size * 0.6, codeX: x + gut + 6 };
+  }
+  function term(g, x, y, w, h, title, chip, lines, shown, o = {}) {
+    g.rect(x, y, w, h, { fill: "card", stroke: o.stroke || "hair", lw: o.lw || 1.1, r: 7 });
+    const hs = o.hsize || 9.5, ls = o.size || 9.5, lh = o.lh || 13;
+    const cw_ = g.chip(x + w - 7, y + 12, chip, "exp", { size: 8.5, align: "right" });
+    g.text(fit(g, title, hs, w - cw_ - 24), x + 9, y + 15.5, { size: hs, color: "ink-2", weight: 500 });
+    g.line(x, y + 24, x + w, y + 24, { color: "grid", lw: 1 });
+    let last = -1;
+    lines.forEach(([t, c], i) => {
+      const a = shown[i] === undefined ? 1 : shown[i];
+      if (a <= 0.01) return;
+      const ly = y + 38 + i * lh;
+      if (ly > y + h - 4) return;
+      g.text(fit(g, t, ls, w - 16), x + 9, ly, { size: ls, color: c, a });
+      if (a > 0.5) last = i;
+    });
+    return last;
+  }
+  function wrapCount(g, s, maxW, size, font = "mono", weight = 500) {
+    let line = "", n = 0;
+    String(s).split(/\s+/).forEach((w) => { const t = line ? line + " " + w : w; if (g.tw(t, size, font, weight) > maxW && line) { n++; line = w; } else line = t; });
+    return n + (line ? 1 : 0);
+  }
+  function toggle(g, x, y, on, a = 1) {
+    g.rect(x, y - 8, 28, 16, { fill: on ? "exe" : "hair", r: 8, a });
+    g.circle(on ? x + 20 : x + 8, y, 6, { fill: "#FFFFFF", a });
+  }
+
+  /* ---------------- hero: the CodeX window ---------------- */
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g;
+    const per = 10, ph = (s.t % per) / per;
+    const wx = 14, wy = Math.max(34, g.safeTop + 4), ww = W - 28, wh = H - wy - 64;
+    const c = g.win(wx, wy, ww, wh, { title: "CodeX", env: "Dev us-east-1", bar: 28, tsize: 13 });
+    // status bar
+    const sbH = 18, sbY = c.y + c.h - sbH, ss = 9.5;
+    g.rect(c.x, sbY, c.w, sbH, { fill: "#F2F2F5" });
+    g.line(c.x, sbY, c.x + c.w, sbY, { color: "hair", lw: 1 });
+    let sx = c.x + 10;
+    g.text("feature/fraud-review", sx, sbY + 12.5, { size: ss, color: "ink-2" }); sx += g.tw("feature/fraud-review", ss) + 14;
+    g.circle(sx + 2, sbY + 9, 2.6, { fill: "ok" }); g.text("0 errors", sx + 9, sbY + 12.5, { size: ss, color: "ink-2" }); sx += g.tw("0 errors", ss) + 24;
+    g.text("nsx-dev-use1 / commerce", sx, sbY + 12.5, { size: ss, color: "exp", weight: 600 }); sx += g.tw("nsx-dev-use1 / commerce", ss, "mono", 600);
+    if (c.x + c.w - 10 - g.tw("Ln 48, Col 9 · Java 21", ss) > sx + 16) g.text("Ln 48, Col 9 · Java 21", c.x + c.w - 10, sbY + 12.5, { size: ss, color: "ink-3", align: "right" });
+    // file tree with the workspace card
+    const tw = Math.round(clamp(W * 0.21, 120, 168)), tH = sbY - c.y;
+    g.rect(c.x, c.y, tw, tH, { fill: "#FAFAFC" });
+    g.line(c.x + tw, c.y, c.x + tw, sbY, { color: "hair", lw: 1 });
+    const kx = c.x + 8, ky = c.y + 8, kw = tw - 16, kh = 50;
+    g.rect(kx, ky, kw, kh, { fill: "card", stroke: "hair", lw: 1, r: 6 });
+    g.circle(kx + 10, ky + 13, 3, { fill: "ok" });
+    g.text(fit(g, "order-service", 10.5, kw - 26, "ui", 600), kx + 18, ky + 17, { size: 10.5, font: "ui", weight: 600 });
+    g.text("ws-vt-01", kx + 8, ky + 31, { size: 8.8, color: "exe", weight: 600 });
+    g.text(fit(g, "8 vCPU · 16 GB", 8.8, kw - 14), kx + 8, ky + 43, { size: 8.8, color: "ink-3" });
+    let fy = ky + kh + 18;
+    g.text("FILES", c.x + 10, fy, { size: 8.5, color: "ink-3", ls: 0.8 });
+    g.text(fit(g, "fraud-review", 8.5, tw - 60), c.x + tw - 8, fy, { size: 8.5, color: "ink-3", align: "right" });
+    fy += 8;
+    const files = [["orders", 0, "dir"], ["OrderService.java", 1, "M"], ["FraudRiskClient.java", 1, "A"], ["resources", 0, "dir"], ["order-events.yaml", 1, ""], ["test", 0, "dir"], ["OrderServiceTest.java", 1, "M"], ["Jenkinsfile", 0, ""], ["values-dev.yaml", 0, ""], ["pom.xml", 0, ""]];
+    const frh = Math.min(16, (sbY - fy - 6) / files.length);
+    files.forEach(([n, ind, badge], i) => {
+      const y = fy + i * frh, x = c.x + 10 + ind * 11;
+      if (n === "OrderService.java") g.rect(c.x + 4, y + 1, tw - 8, frh - 1, { fill: g.rgba("exp", 0.1), r: 4 });
+      const dir = badge === "dir";
+      if (dir) g.text("▾", x, y + frh * 0.72, { size: 8, color: "ink-3", font: "ui" });
+      const bw = badge && !dir ? 12 : 0;
+      g.text(fit(g, n, 9.8, c.x + tw - 10 - bw - (x + (dir ? 10 : 0)), "ui", 500), x + (dir ? 10 : 0), y + frh * 0.72, { size: 9.8, font: "ui", color: n === "OrderService.java" ? "exp" : "ink", weight: n === "OrderService.java" ? 600 : 500 });
+      if (badge && !dir) g.text(badge, c.x + tw - 10, y + frh * 0.72, { size: 9, color: "ink-3", weight: 600, align: "right" });
+    });
+    // editor: tab strip
+    const ex = c.x + tw + 1, ew = c.w - tw - 1, tabH = 22;
+    g.rect(ex, c.y, ew, tabH, { fill: "#FAFAFC" });
+    g.line(ex, c.y + tabH, ex + ew, c.y + tabH, { color: "hair", lw: 1 });
+    const tabs = ["OrderService.java", "order-events.yaml", "FraudRiskClient.java"];
+    let tx = ex;
+    tabs.forEach((t_, i) => {
+      const w_ = g.tw(t_, 10, "ui", 600) + 20;
+      if (tx + w_ > ex + ew - 4) return;
+      if (i === 0) { g.rect(tx, c.y, w_, tabH, { fill: "card" }); g.rect(tx, c.y + tabH - 2, w_, 2, { fill: "exp" }); }
+      g.text(t_, tx + 10, c.y + 15, { size: 10, font: "ui", weight: i === 0 ? 600 : 500, color: i === 0 ? "ink" : "ink-3" });
+      tx += w_;
+    });
+    // terminal panel
+    const tpH = Math.round(clamp(tH * 0.36, 98, 134)), tpY = sbY - tpH;
+    g.line(ex, tpY, ex + ew, tpY, { color: "hair", lw: 1 });
+    // code
+    const caY = c.y + tabH + 5, caH = tpY - caY - 4;
+    const rows = caH / SRC.length >= 13 ? SRC : SRC_SHORT;
+    const rowH = Math.min(15, caH / rows.length);
+    const code = drawCode(g, rows, ex, caY, ew, rowH, { gutter: 32 });
+    // the four added lines: bracket on the right when there is room
+    const y42 = code.ys[42], y45 = code.ys[45] + rowH;
+    const longest = code.codeX + 57 * code.cw;
+    if (longest + 66 < ex + ew) {
+      const bx = ex + ew - 50;
+      g.line(bx, y42 + 2, bx + 5, y42 + 2, { color: "ok", lw: 1.2 }); g.line(bx + 5, y42 + 2, bx + 5, y45 - 2, { color: "ok", lw: 1.2 }); g.line(bx, y45 - 2, bx + 5, y45 - 2, { color: "ok", lw: 1.2 });
+      g.text("+4", bx + 11, (y42 + y45) / 2 + 4, { size: 11, color: "ok", weight: 600 });
+    }
+    // caret at line 48, column 9
+    if (code.ys[48] !== undefined && s.t % 1.1 < 0.6) g.rect(code.codeX + 4 * code.cw, code.ys[48] + 2, 1.4, rowH - 4, { fill: "exp" });
+    // terminals: each one names its environment
+    const tg = 8, tX = ex + tg, tY = tpY + 7, tW = ew - 2 * tg, tHh = tpH - 14;
+    const lW = Math.round(tW * 0.41), rW = tW - lW - tg;
+    const fade = 1 - ramp(ph, 0.95, 0.04);
+    const shownL = [0.03, 0.12, 0.18, 0.25].map((t0) => ramp(ph, t0, 0.04) * fade);
+    const shownR = [0.38, 0.47, 0.54, 0.61].map((t0) => ramp(ph, t0, 0.04) * fade);
+    const lh = Math.min(15, (tHh - 36) / 4);
+    term(g, tX, tY, lW, tHh, "ws-vt-01 · ~/order-service", "DEV", TERM_WS, shownL, { lh, size: 9 });
+    const k8s = [TERM_K8S[0], ["kx2lq  CrashLoopBackOff  214", "bad"], ["p8w3n  CrashLoopBackOff  209", "bad"], TERM_K8S[5]];
+    term(g, tX + lW + tg, tY, rW, tHh, "nsx-dev-use1 / commerce · kubectl", "DEV", k8s, shownR, { lh, size: 9 });
+    // below the window: the binding
+    const ay = wy + wh + 20;
+    g.dim(wx + 6, wx + ww - 6, ay, "bound to nsx-dev-use1 / commerce", { color: "exe", size: 11.5 });
+    g.text(fit(g, "ws-vt-01 · 8 vCPU · 16 GB · sleeps after 60 min idle", 11, W - 40), W / 2, ay + 29, { size: 11, color: "ink-2", align: "center" });
+  }, { anim: true, restT: 8, zoom: 1.25, minW: 600, maxW: 900 });
+
+  /* ---------------- scrolly 1: the workspace in Dev ---------------- */
+  Field.scene("ws", (g, s) => {
+    const { W, H } = g, tall = H > W * 0.95, pad = 22;
+    const top0 = Math.max(46, g.safeTop + 14);
+    const wt = [0, 1, 2, 3, 4].map((i) => s.solo(i, 0.3));
+    // ---- topology: Bitbucket → workspace, inside the VPC beside the namespace ----
+    let SRCB, V;
+    if (!tall) {
+      const sw = Math.round(clamp(W * 0.2, 150, 196)), bandH = Math.round(H * 0.36);
+      V = { x: pad + sw + 46, y: top0, w: W - pad * 2 - sw - 46, h: bandH };
+      SRCB = { x: pad, y: top0 + bandH / 2 - 43, w: sw, h: 86 };
+    } else {
+      SRCB = { x: pad, y: top0, w: W - pad * 2, h: 46 };
+      V = { x: pad, y: top0 + 46 + 34, w: W - pad * 2, h: Math.round(H * 0.33) };
+    }
+    g.rect(V.x, V.y, V.w, V.h, { fill: g.rgba("ink", 0.025), stroke: "hair", lw: 1.3, r: 12 });
+    g.text("us-east-1 · private VPC", V.x + 14, V.y + 22, { size: 11.5, color: "ink-2", weight: 600 });
+    g.chip(V.x + V.w - 12, V.y + 18, "set by Dev", "exp", { size: 10, align: "right" });
+    const inY = V.y + 36, inH = V.h - 50, gap = 88;
+    const wsW = Math.round((V.w - 28) * 0.37);
+    const WS = { x: V.x + 14, y: inY, w: wsW, h: inH };
+    const CL = { x: WS.x + wsW + gap, y: inY, w: V.w - 28 - wsW - gap, h: inH };
+    // source
+    g.rect(SRCB.x, SRCB.y, SRCB.w, SRCB.h, { fill: "card", stroke: "hair", lw: 1.3, r: 10 });
+    if (!tall) {
+      g.text("Bitbucket Data Center", SRCB.x + 12, SRCB.y + 24, { size: 11.5, font: "ui", weight: 600, maxW: SRCB.w - 20 });
+      g.text(fit(g, "commerce/order-service", 10.5, SRCB.w - 22), SRCB.x + 12, SRCB.y + 46, { size: 10.5, color: "ink" });
+      g.text(fit(g, "feature/fraud-review", 10.5, SRCB.w - 22), SRCB.x + 12, SRCB.y + 66, { size: 10.5, color: "ink-3" });
+      g.arrow(SRCB.x + SRCB.w + 4, SRCB.y + SRCB.h / 2, WS.x - 4, SRCB.y + SRCB.h / 2, { color: wt[0] > 0.3 ? "exe" : "ink-3", lw: 1.5, head: 8 });
+      g.text("source", (SRCB.x + SRCB.w + WS.x) / 2, SRCB.y + SRCB.h / 2 - 9, { size: 10, color: "ink-3", align: "center" });
+    } else {
+      g.text("Bitbucket Data Center", SRCB.x + 12, SRCB.y + 19, { size: 11.5, font: "ui", weight: 600 });
+      g.text(fit(g, "commerce/order-service · feature/fraud-review", 10.5, SRCB.w - 24), SRCB.x + 12, SRCB.y + 36, { size: 10.5, color: "ink-2" });
+      g.arrow(WS.x + WS.w / 2, SRCB.y + SRCB.h + 4, WS.x + WS.w / 2, WS.y - 4, { color: wt[0] > 0.3 ? "exe" : "ink-3", lw: 1.5, head: 8 });
+      g.text("source", WS.x + WS.w / 2 + 10, SRCB.y + SRCB.h + 24, { size: 10, color: "ink-3" });
+    }
+    // workspace box
+    const hiWS = Math.max(wt[0], wt[1], wt[2], wt[4]);
+    g.box(WS.x, WS.y, WS.w, WS.h, { color: "exe", wash: 0.05 + 0.05 * hiWS, lw: 1.3 + 0.7 * hiWS });
+    g.text("ws-vt-01", WS.x + 12, WS.y + 26, { size: 15, font: "ui", weight: 700 });
+    g.text(fit(g, "Large · 8 vCPU · 16 GB", 10.5, WS.w - 22), WS.x + 12, WS.y + 46, { size: 10.5, color: "ink-2" });
+    const sleeping = wt[2] > 0.3 && (s.t % 6) > 3.6;
+    g.circle(WS.x + 16, WS.y + 66, 3.4, { fill: sleeping ? "ink-3" : "ok" });
+    g.text(sleeping ? "Sleeping · wake from Compute" : "Running", WS.x + 25, WS.y + 70, { size: 10.5, font: "ui", color: "ink-2", maxW: WS.w - 34 });
+    g.text(fit(g, "CodeX · feature/fraud-review", 9.8, WS.w - 22), WS.x + 12, WS.y + 92, { size: 9.8, color: "ink-3" });
+    if (WS.h > 140) g.text(fit(g, "sleeps after 60 min idle", 9.8, WS.w - 22), WS.x + 12, WS.y + 110, { size: 9.8, color: wt[2] > 0.3 ? "exe" : "ink-3", weight: wt[2] > 0.3 ? 600 : 500 });
+    // cluster box with its services
+    g.box(CL.x, CL.y, CL.w, CL.h, { color: "exe", wash: 0.03, lw: 1.3 });
+    g.text(fit(g, "nsx-dev-use1 / commerce", 11.5, CL.w - 22, "mono", 600), CL.x + 12, CL.y + 24, { size: 11.5, weight: 600 });
+    g.text("EKS · services in this namespace", CL.x + 12, CL.y + 41, { size: 10, font: "ui", color: "ink-3", maxW: CL.w - 22 });
+    const prh = Math.min(28, (CL.h - 56) / PODS.length);
+    const podY = {};
+    PODS.forEach(([n, v, st_, oc], i) => {
+      const y = CL.y + 54 + i * prh, isL = n === "loyalty-consumer";
+      podY[n] = y + prh / 2;
+      if (isL) g.rect(CL.x + 6, y, CL.w - 12, prh - 2, { fill: g.rgba("bad", 0.06 + 0.08 * wt[3]), r: 5 });
+      g.circle(CL.x + 16, y + prh / 2 - 1, 3.2, { fill: oc });
+      const nw = g.tw(n, 10.5, "ui", 600);
+      g.text(n, CL.x + 25, y + prh / 2 + 3, { size: 10.5, font: "ui", weight: 600 });
+      g.text(v, CL.x + 31 + nw, y + prh / 2 + 3, { size: 9, color: "ink-3" });
+      g.text(st_, CL.x + CL.w - 12, y + prh / 2 + 3, { size: 9.5, color: oc === "bad" ? "bad" : "ink-2", weight: oc === "bad" ? 600 : 500, align: "right" });
+    });
+    // the binding between workspace and namespace
+    const my = WS.y + WS.h * 0.42;
+    g.arrow(WS.x + WS.w + 4, my, CL.x - 4, my, { color: "exe", lw: 1.6, head: 7 });
+    g.arrow(CL.x - 4, my, WS.x + WS.w + 4, my, { color: "exe", lw: 1.6, head: 7 });
+    g.text("read & write", WS.x + WS.w + gap / 2, my - 9, { size: 10, color: "exe", align: "center", weight: 600 });
+    g.text("beside", WS.x + WS.w + gap / 2, my + 18, { size: 10, color: "ink-3", align: "center" });
+
+    // ---- the changing panel ----
+    const P = { x: pad, y: V.y + V.h + 24, w: W - pad * 2 };
+    P.h = H - P.y - pad;
+    g.rect(P.x, P.y, P.w, P.h, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    const L = P.x + 16, R = P.x + P.w - 16;
+    const title = (t1, t2, a, c2) => { g.text(t1, L, P.y + 26, { size: 13, font: "ui", weight: 700, a }); if (t2) g.text(fit(g, t2, 10.5, R - L - g.tw(t1, 13, "ui", 700) - 16), R, P.y + 26, { size: 10.5, color: c2 || "ink-3", align: "right", a }); };
+
+    // 0 · wizard
+    let a = wt[0];
+    if (a > 0.01) {
+      title("New workspace", "Step 4 of 4", a);
+      const kw = tall ? 92 : 112, y0 = P.y + 54, rg = 24;
+      const kv = (k, v, y, o = {}) => { g.text(k, L, y, { size: 10.5, color: "ink-3", a }); g.text(v, L + kw, y, { size: 11, font: o.font || "mono", color: o.color || "ink", a }); return L + kw + g.tw(v, 11, o.font || "mono"); };
+      kv("Source", "Bitbucket Data Center", y0, { font: "ui" });
+      kv("Repository", "commerce/order-service", y0 + rg);
+      const rx = kv("Region", "us-east-1 · private VPC", y0 + rg * 2);
+      g.chip(rx + 12, y0 + rg * 2 - 4, "set by Dev", "exp", { size: 9.5, a });
+      g.text("Size", L, y0 + rg * 3 + 22, { size: 10.5, color: "ink-3", a });
+      const sizes = [["Standard", "4 vCPU · 8 GB", "$0.24 / h"], ["Large", "8 vCPU · 16 GB", "$0.48 / h"], ["Restricted", "No outbound", "$0.24 / h"]];
+      const cw_ = Math.min(150, (R - L - kw - 16) / 3), cy = y0 + rg * 3 - 4;
+      sizes.forEach(([n, d, p], i) => {
+        const x = L + kw + i * (cw_ + 8), on = i === 1;
+        g.rect(x, cy, cw_, 52, { fill: on ? g.rgba("exe", 0.08) : "card", stroke: on ? "exe" : "hair", lw: on ? 1.8 : 1.1, r: 8, a });
+        g.text(n, x + cw_ / 2, cy + 17, { size: 11, font: "ui", weight: 700, align: "center", a });
+        g.text(d, x + cw_ / 2, cy + 32, { size: 9.5, color: "ink-3", align: "center", a });
+        g.text(p, x + cw_ / 2, cy + 46, { size: 10, color: "tel", weight: 600, align: "center", a });
+      });
+      const by = cy + 52 + 24;
+      const bx = kv("Binds to", "nsx-dev-use1 / commerce", by);
+      g.text("read & write", Math.max(bx + 14, R - g.tw("read & write", 10.5)), by, { size: 10.5, color: "exe", weight: 600, a, align: bx + 14 > R - g.tw("read & write", 10.5) ? "left" : "left" });
+      toggle(g, L, by + 26, true, a); g.text("Sleep after 60 minutes idle", L + 38, by + 30, { size: 11, font: "ui", a });
+      toggle(g, L, by + 50, false, a); g.text("Ephemeral — delete on branch merge", L + 38, by + 54, { size: 11, font: "ui", color: "ink-2", a });
+      g.text("About $3.80 a working day", L, by + 84, { size: 11, color: "tel", weight: 600, a });
+      g.text("illustrative", L + g.tw("About $3.80 a working day", 11, "mono", 600) + 10, by + 84, { size: 10, color: "ink-3", a });
+    }
+    // 1 · bindings
+    a = wt[1];
+    if (a > 0.01) {
+      title("What a Dev workspace connects to", tall ? "Bindings in Bridge" : "Bindings in Bridge · same for every workspace", a, "exp");
+      const B = [["Cluster", "nsx-dev-use1 / commerce", "read & write"], ["Kafka", "msk-dev-use1", "read"], ["Flags", "launchdarkly:dev", "feature flags"], ["Secrets", "vault:secret/dev/commerce", "workload identity, no static secrets"], ["Models", "bedrock us-east-1", "Dev quota"]];
+      const rh = Math.min(50, (P.h - 60) / 5), y0 = P.y + 44;
+      const tx = L + (tall ? 104 : 122);
+      // one trunk from the workspace, a spine down the panel's margin, a tick into each binding
+      const spX = P.x + 9, trX = WS.x + 34, jogY = P.y - 11;
+      const lastCy = y0 + 4 * rh + rh / 2;
+      g.poly([[trX, WS.y + WS.h + 2], [trX, jogY], [spX, jogY], [spX, lastCy]], { color: "exe", lw: 1.4, a: a * 0.85 });
+      g.circle(trX, WS.y + WS.h + 2, 3, { fill: "exe", a });
+      B.forEach(([n, t_, m], i) => {
+        const y = y0 + i * rh, cy = y + rh / 2;
+        if (i < 4) g.line(L + 18, y + rh, R, y + rh, { color: "grid", lw: 1, a });
+        g.arrow(spX, cy, L + 14, cy, { color: "exe", lw: 1.3, head: 6, a: a * 0.85 });
+        g.circle(L + 20, cy, 4.5, { fill: "card", stroke: "exe", lw: 1.6, a });
+        g.text(n, L + 32, cy + 4, { size: 11.5, font: "ui", weight: 600, a });
+        g.text(t_, tx, cy + 4, { size: 11, color: "ink", a });
+        const mw = R - (tx + g.tw(t_, 11) + 16);
+        g.text(fit(g, m, 10, mw), R, cy + 4, { size: 10, color: "exe", align: "right", a });
+      });
+    }
+    // 2 · workspaces and sleep
+    a = wt[2];
+    if (a > 0.01) {
+      title("Your workspaces", "4 of 6 allowed · $3.84 today", a, "tel");
+      const WSS = [["ws-vt-01", "commerce/order-service", "Large · 8 vCPU · 16 GB", "Running", "after 60 min idle", "$2.10", "ok"], ["ws-vt-02", "risk/fraud-risk-api", "Standard · 4 vCPU · 8 GB", "Sleeping", "—", "$0.96", "ink-3"], ["ws-vt-03", "platform/vector-shell", "Standard · 4 vCPU · 8 GB", "Running", "after 60 min idle", "billed to Wheeljack", "ok"], ["ws-vt-04", "wheeljack/teams-bee", "Restricted · no egress", "Stopped", "deleted in 22 h", "$0.78", "hair"]];
+      const cols = tall ? { st: 168, stop: 262 } : { size: 200, st: 400, stop: 510 };
+      const hy = P.y + 50;
+      g.text("WORKSPACE", L, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      if (cols.size) g.text("SIZE", L + cols.size, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      g.text("STATUS", L + cols.st, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      g.text("STOPS", L + cols.stop, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      g.text("TODAY", R, hy, { size: 9, color: "ink-3", ls: 0.8, align: "right", a });
+      const rh = 36;
+      WSS.forEach(([n, repo, size, st_, stop, cost, dot], i) => {
+        const y = hy + 10 + i * rh;
+        g.line(L, y, R, y, { color: "grid", lw: 1, a });
+        if (i === 0) g.rect(L - 6, y + 1, R - L + 12, rh - 2, { fill: g.rgba("exe", 0.06), r: 4, a });
+        g.text(n, L, y + 16, { size: 11, weight: 600, a });
+        g.text(fit(g, repo, 9.5, (cols.size || cols.st) - 12), L, y + 30, { size: 9.5, color: "ink-3", a });
+        if (cols.size) g.text(size, L + cols.size, y + 22, { size: 10.5, font: "ui", color: "ink-2", a });
+        g.circle(L + cols.st + 4, y + 18, 3.2, { fill: dot, a });
+        g.text(st_, L + cols.st + 12, y + 22, { size: 10.5, font: "ui", color: "ink-2", a });
+        g.text(stop, L + cols.stop, y + 22, { size: 10, color: "ink-2", a });
+        g.text(cost, R, y + 22, { size: cost.startsWith("$") ? 10.5 : 9.5, color: cost.startsWith("$") ? "tel" : "ink-3", align: "right", weight: cost.startsWith("$") ? 600 : 500, a });
+      });
+      // lifecycle strip
+      const ly = hy + 10 + 4 * rh + 30;
+      if (ly + 40 < P.y + P.h) {
+        g.text("LIFECYCLE", L, ly, { size: 9, color: "ink-3", ls: 0.8, a });
+        const x0 = L, x3 = R, x1 = lerp(x0, x3, 0.42), x2 = lerp(x0, x3, 0.72), yb = ly + 22;
+        g.rect(x0, yb - 5, x1 - x0, 10, { fill: g.rgba("exe", 0.5), r: 5, a });
+        g.text("in use", x0 + 8, yb + 22, { size: 10, color: "exe", a });
+        g.line(x1, yb, x2, yb, { color: "ink-3", lw: 1.4, dash: [3, 4], a });
+        g.dim(x1, x2, yb - 16, "60 min idle", { color: "ink-2", size: 10, a });
+        g.rect(x2, yb - 11, x3 - x2, 22, { fill: "card", stroke: "ink-3", lw: 1.2, r: 11, a });
+        g.text("sleeps · Wake", (x2 + x3) / 2, yb + 4, { size: 10, color: "ink-2", align: "center", a });
+        if (ly + 66 < P.y + P.h) g.text(fit(g, "Optional: ephemeral, deleted on branch merge. Prices illustrative.", 10, R - L), L, yb + 40, { size: 10, color: "ink-3", a });
+      }
+    }
+    // 3 · configuration, main vs Dev
+    a = wt[3];
+    if (a > 0.01) {
+      title("Configuration · main vs running in Dev", tall ? "" : "namespace commerce", a);
+      g.chip(L + g.tw("Configuration · main vs running in Dev", 13, "ui", 700) + 14, P.y + 22, "1 differs", "bad", { size: 9.5, a });
+      const CFG = [["FRAUD_REVIEW_ENABLED", "true", "true", "feature flag · LaunchDarkly"], ["FRAUD_REVIEW_THRESHOLD", "0.80", "0.80", "values-dev.yaml"], ["LOYALTY_TOPIC", "order.confirmed.v2", "order.confirmed.v1", "configmap loyalty-cfg"], ["PAYMENTS_TIMEOUT_MS", "1500", "1500", "helm values"], ["REPLICAS", "2", "2", "HPA min"]];
+      const cx = tall ? { main: 162, dev: 292, src: 420 } : { main: 200, dev: 370, src: 552 };
+      const showSrc = L + cx.src + g.tw("feature flag · LaunchDarkly", 9.5, "ui") < R;
+      const hy = P.y + 52;
+      g.text("KEY", L, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      g.text("IN MAIN", L + cx.main, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      g.text("RUNNING IN DEV", L + cx.dev, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      if (showSrc) g.text("SOURCE", L + cx.src, hy, { size: 9, color: "ink-3", ls: 0.8, a });
+      const rh = 34;
+      let rowMid = null;
+      CFG.forEach(([k, m, d, src_], i) => {
+        const y = hy + 10 + i * rh, diff = m !== d, by_ = y + rh / 2 + 4;
+        g.line(L, y, R, y, { color: "grid", lw: 1, a });
+        if (diff) { g.rect(L - 6, y + 2, R - L + 12, rh - 4, { fill: g.rgba("bad", 0.07), r: 4, a }); rowMid = y + rh / 2; }
+        const ks = tall ? 9.5 : 10.5;
+        g.text(fit(g, k, ks, cx.main - 8), L, by_, { size: ks, a, weight: diff ? 600 : 500 });
+        g.text(m, L + cx.main, by_, { size: 10, color: "ink-2", a });
+        g.text(d, L + cx.dev, by_, { size: 10, color: diff ? "bad" : "ink-2", weight: diff ? 600 : 500, a });
+        if (showSrc) g.text(src_, L + cx.src, by_, { size: 9.5, font: "ui", color: "ink-3", a });
+      });
+      const ny = hy + 10 + 5 * rh + 26;
+      g.wrap("“LOYALTY_TOPIC in Dev still points at the retired v1 topic — that's why loyalty-consumer is crash-looping. R-2207 redeploys 1.9.0.”", L, ny, R - L, { size: 10.5, font: "ui", color: "ink-2", lh: 15, a, maxLines: 3 });
+      if (rowMid !== null) {
+        // around the right-hand margin, up to the crash-looping pod
+        const ex_ = W - 10, ty_ = podY["loyalty-consumer"];
+        g.poly([[R + 7, rowMid], [ex_, rowMid], [ex_, ty_]], { color: "bad", lw: 1.5, a });
+        g.arrow(ex_, ty_, CL.x + CL.w + 3, ty_, { color: "bad", lw: 1.5, head: 7, a });
+      }
+    }
+    // 4 · terminals
+    a = wt[4];
+    if (a > 0.01) {
+      title("Two terminals, both in Dev", tall ? "" : "zsh · kubectl · spring-boot:run · psql orders", a);
+      const ty = P.y + 42;
+      let T1, T2;
+      if (!tall) {
+        const w1 = Math.round((R - L - 12) * 0.4);
+        T1 = { x: L, y: ty, w: w1, h: 4 * 15 + 46 };
+        T2 = { x: L + w1 + 12, y: ty, w: R - L - w1 - 12, h: Math.min(P.y + P.h - 14 - ty, 8 * 15 + 46) };
+      } else {
+        T1 = { x: L, y: ty, w: R - L, h: 4 * 14 + 44 };
+        T2 = { x: L, y: ty + T1.h + 10, w: R - L, h: Math.min(P.y + P.h - 12 - (ty + T1.h + 10), 8 * 14 + 44) };
+      }
+      const lhT = tall ? 14 : 15;
+      term(g, T1.x, T1.y, T1.w, T1.h, "ws-vt-01 · ~/order-service", "DEV", TERM_WS, TERM_WS.map(() => a), { size: 10, lh: lhT, hsize: 10, stroke: "exe", lw: 1.3 });
+      term(g, T2.x, T2.y, T2.w, T2.h, "nsx-dev-use1 / commerce · kubectl · read & write", "DEV", TERM_K8S, TERM_K8S.map(() => a), { size: 10, lh: lhT, hsize: 10, stroke: "exe", lw: 1.3 });
+      const cy_ = Math.max(T1.y + T1.h, T2.y + T2.h) + 30;
+      if (cy_ < P.y + P.h - 8) {
+        g.text("v2 screens: one terminal per environment", L, cy_, { size: 10, color: "ink-3", a });
+        g.text("v3: every terminal carries the window's environment", L, cy_ + 17, { size: 10, color: "exp", weight: 600, a });
+      }
+      // which box each terminal belongs to
+      g.curve([T1.x + T1.w * 0.5, T1.y - 4], [T1.x + T1.w * 0.5, WS.y + WS.h + 10], [WS.x + WS.w * 0.5, WS.y + WS.h + 3], { color: "exe", lw: 1.2, head: 6, a: a * 0.8 });
+      if (!tall) {
+        const t2x = T2.x + T2.w * 0.6;
+        g.curve([t2x, T2.y - 4], [t2x, CL.y + CL.h + 12], [CL.x + CL.w * 0.6, CL.y + CL.h + 3], { color: "exe", lw: 1.2, head: 6, a: a * 0.8 });
+      } else {
+        // stacked terminals: go round the right-hand margin so the line never crosses the first terminal
+        const ex_ = W - 10, y1 = T2.y + 12, y2 = CL.y + CL.h - 18;
+        g.poly([[T2.x + T2.w + 3, y1], [ex_, y1], [ex_, y2]], { color: "exe", lw: 1.2, a: a * 0.8 });
+        g.arrow(ex_, y2, CL.x + CL.w + 3, y2, { color: "exe", lw: 1.2, head: 6, a: a * 0.8 });
+      }
+    }
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- scrolly 2: the change and its review ---------------- */
+  const SOURCES = [
+    { id: "jira", label: "COM-2841", kind: "Jira", gist: "leave the event contract unchanged", c: "exp" },
+    { id: "contract", label: "order-events.yaml:14", kind: "contract", gist: "v2 forbids extra properties", c: "kno" },
+    { id: "adr", label: "ADR-031", kind: "decision", gist: "new fields go on a v3 topic", c: "kno" },
+    { id: "matrix", label: "Matrix", kind: "graph", gist: "8 consumers · 1 conflicting edge", c: "kno" },
+    { id: "b418", label: "Build #418", kind: "Jenkins", gist: "failed at contract tests", c: "exe", out: "bad" },
+    { id: "b419", label: "Build #419", kind: "Jenkins", gist: "passed · deployed to Dev 11:09", c: "exe", out: "ok" },
+  ];
+  const LIT = [{ matrix: 1, adr: 1, b419: 1 }, { contract: 1, adr: 1, jira: 1, b419: 0.4, matrix: 0.4 }, {}, { matrix: 1, contract: 1, b418: 1, adr: 1 }, { b419: 1 }];
+  const HL = [[42, 43, 44, 45, 0], [48, 0], [42, 43, 44, 45], [48, 49, 0], []];
+
+  Field.scene("review", (g, s) => {
+    const { W, H } = g, tall = H > W * 0.95, pad = 22;
+    const top0 = Math.max(46, g.safeTop + 14);
+    const wt = [0, 1, 2, 3, 4].map((i) => s.solo(i, 0.3));
+    const lit = (id) => Math.min(1, LIT.reduce((acc, L_, i) => acc + (L_[id] || 0) * wt[i], 0));
+    // regions
+    let D, S, srcX = 0, srcW = 0, chipY = 0, chipH = 30;
+    const rows = tall ? SRC_SHORT : SRC, rowH = tall ? 16 : 18;
+    if (!tall) {
+      srcW = Math.round(clamp(W * 0.27, 200, 262)); srcX = W - pad - srcW;
+      D = { x: pad, y: top0, w: srcX - 40 - pad, h: 30 + rows.length * rowH + 8 };
+    } else {
+      D = { x: pad, y: top0, w: W - pad * 2, h: 30 + rows.length * rowH + 8 };
+      chipY = H - pad - 2 * chipH - 8;
+    }
+    S = { x: D.x, y: D.y + D.h + 14, w: D.w };
+    S.h = (tall ? chipY - 34 : H - pad) - S.y;
+    // ---- diff panel ----
+    g.rect(D.x, D.y, D.w, D.h, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    g.text(fit(g, "orders › OrderService.java › confirm(OrderRequest)", 10.5, D.w - 110, "ui"), D.x + 12, D.y + 19, { size: 10.5, font: "ui", color: "ink-2" });
+    g.chip(D.x + D.w - 10, D.y + 15, "+6 vs main", "ok", { size: 9.5, align: "right" });
+    g.line(D.x, D.y + 28, D.x + D.w, D.y + 28, { color: "grid", lw: 1 });
+    const code = drawCode(g, rows, D.x + 1, D.y + 32, D.w - 2, rowH, { gutter: 36, maxSize: 11 });
+    // highlight the lines each step talks about
+    HL.forEach((ln, i) => {
+      if (wt[i] < 0.01 || !ln.length) return;
+      const ys = ln.map((n) => (n === 0 ? code.ys.note : code.ys[n])).filter((v) => v !== undefined);
+      if (!ys.length) return;
+      // contiguous groups
+      ys.sort((p, q) => p - q);
+      let gs = ys[0], ge = ys[0];
+      const flush = () => g.rect(D.x + 4, gs - 1, D.w - 8, ge - gs + rowH + 2, { stroke: "exp", lw: 1.6, r: 4, a: wt[i] });
+      ys.slice(1).forEach((y) => { if (y - ge < rowH * 1.5) ge = y; else { flush(); gs = ge = y; } });
+      flush();
+    });
+    // markers at the right edge of the diff for the review comments
+    if (wt[2] > 0.02 && code.ys[45] !== undefined) { const y = (code.ys[42] + code.ys[45] + rowH) / 2; g.circle(D.x + D.w - 20, y, 9, { fill: "exp", a: wt[2] }); g.text("PR", D.x + D.w - 20, y + 3.2, { size: 8, weight: 700, color: "#FFFFFF", align: "center", a: wt[2] }); }
+    if (wt[3] > 0.02 && code.ys[48] !== undefined) g.bee(D.x + D.w - 20, code.ys[48] + rowH / 2, 17, { a: wt[3] });
+    if (wt[1] > 0.02 && code.ys[48] !== undefined) g.text("✦", D.x + D.w - 20, code.ys[48] + rowH / 2 + 5, { size: 14, color: "exp", align: "center", a: wt[1] });
+
+    // ---- sources ----
+    const cards = {};
+    if (!tall) {
+      g.text("WHAT THE ANSWERS DRAW ON", srcX, top0 + 8, { size: 9.5, color: "ink-3", ls: 0.8 });
+      const sgap = 12, ch = Math.min(84, (H - pad - (top0 + 22) - 5 * sgap) / 6);
+      SOURCES.forEach((src, i) => {
+        const y = top0 + 22 + i * (ch + sgap), l = lit(src.id), a = 0.5 + 0.5 * l;
+        cards[src.id] = { x: srcX, y, w: srcW, h: ch, cy: y + ch / 2 };
+        g.rect(srcX, y, srcW, ch, { fill: l > 0.05 ? g.rgba(src.c, 0.07 * l) : "card", stroke: l > 0.05 ? src.c : "hair", lw: 1.1 + l * 0.9, r: 8 });
+        g.rect(srcX, y + 10, 3, ch - 20, { fill: src.c, a });
+        const t0 = y + ch / 2 - (ch > 60 ? 10 : 4);
+        g.text(fit(g, src.label, 12, srcW - 84, "mono", 600), srcX + 14, t0, { size: 12, weight: 600, a });
+        g.text(src.kind, srcX + srcW - 10, t0, { size: 9.5, font: "ui", color: "ink-3", align: "right", a });
+        if (src.out) g.circle(srcX + srcW - 16 - g.tw(src.kind, 9.5, "ui"), t0 - 3.5, 3, { fill: src.out, a });
+        if (ch > 44) g.text(fit(g, src.gist, 11, srcW - 26, "ui"), srcX + 14, t0 + 21, { size: 11, font: "ui", color: "ink-2", a });
+      });
+    } else {
+      g.text("WHAT THE ANSWERS DRAW ON", pad, chipY - 12, { size: 9.5, color: "ink-3", ls: 0.8 });
+      const cw_ = (W - pad * 2 - 16) / 3;
+      SOURCES.forEach((src, i) => {
+        const x = pad + (i % 3) * (cw_ + 8), y = chipY + Math.floor(i / 3) * (chipH + 8), l = lit(src.id), a = 0.5 + 0.5 * l;
+        cards[src.id] = { x, y, w: cw_, h: chipH, cx: x + cw_ / 2 };
+        g.rect(x, y, cw_, chipH, { fill: l > 0.05 ? g.rgba(src.c, 0.08 * l) : "card", stroke: l > 0.05 ? src.c : "hair", lw: 1.1 + l * 0.9, r: 8 });
+        g.rect(x, y + 7, 3, chipH - 14, { fill: src.c, a });
+        g.text(fit(g, src.label, 10.5, cw_ - 22, "mono", 600), x + 12, y + 19.5, { size: 10.5, weight: 600, a });
+      });
+    }
+    // connector from an anchor in the panel to a source card
+    const link = (id, ax, ay, a) => {
+      const C = cards[id], l = a; if (!C || l < 0.02) return;
+      const col = SOURCES.find((x) => x.id === id).c;
+      // on phones the lit chips carry the meaning; leader lines would cross the other chips
+      if (!tall) g.curve([ax, ay], [(ax + C.x) / 2 + 10, ay], [C.x - 3, C.cy], { color: col, lw: 1.2, head: 6, a: l * 0.85 });
+    };
+
+    // ---- the changing panel ----
+    g.rect(S.x, S.y, S.w, S.h, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    const L = S.x + 16, R = S.x + S.w - 16, RE = S.x + S.w;
+    const head = (t, a) => g.text(t, L, S.y + 24, { size: 9.5, color: "ink-3", ls: 0.8, a });
+
+    // 0 · inline note and contract banner
+    let a = wt[0];
+    if (a > 0.01) {
+      head("WHAT CODEX SHOWS INLINE", a);
+      let y = S.y + 40;
+      g.rect(L, y, R - L, 58, { fill: g.rgba("kno", 0.06), stroke: "kno", lw: 1.2, r: 8, a });
+      g.text(fit(g, "order.confirmed.v2 · 8 consumers · 1 conflicting edge · ADR-031", 10.5, R - L - 24), L + 12, y + 22, { size: 10.5, color: "kno", weight: 600, a });
+      g.text(fit(g, "above line 47, where the v2 event is built", 10.5, R - L - 24, "ui"), L + 12, y + 42, { size: 10.5, font: "ui", color: "ink-2", a });
+      link("matrix", RE, y + 20, a); link("adr", RE, y + 36, a);
+      y += 72;
+      g.rect(L, y, R - L, 58, { fill: g.rgba("ok", 0.06), stroke: "ok", lw: 1.2, r: 8, a });
+      g.text(fit(g, "✓ Contract test passes · build #419 · deployed to Dev 11:09", 10.5, R - L - 24, "ui", 600), L + 12, y + 22, { size: 10.5, font: "ui", weight: 600, color: "ok", a });
+      g.text(fit(g, "order.confirmed.v2 is unchanged. Applied in 5c0d7e1", 10, R - L - 24), L + 12, y + 42, { size: 10, color: "ink-2", a });
+      link("b419", RE, y + 29, a);
+      y += 84;
+      if (y + 50 < S.y + S.h) {
+        g.text("SERVICES IN THIS NAMESPACE", L, y, { size: 9, color: "ink-3", ls: 0.8, a });
+        [["order-service 2.14.0-rc2", "2/2", "ok"], ["loyalty-consumer 1.8.2", "0/2 CrashLoop", "bad"]].forEach(([n, st_, c], i) => {
+          const yy = y + 22 + i * 20;
+          g.circle(L + 4, yy - 4, 3.2, { fill: c, a });
+          g.text(n, L + 14, yy, { size: 10.5, font: "ui", a });
+          g.text(st_, R, yy, { size: 10, color: c === "bad" ? "bad" : "ink-2", align: "right", weight: c === "bad" ? 600 : 500, a });
+        });
+      }
+    }
+    // 1 · Code Assistant
+    a = wt[1];
+    if (a > 0.01) {
+      head("CODE ASSISTANT · CONTEXT", a);
+      let cx = L, y = S.y + 44;
+      ["COM-2841", "OrderService.java", "Matrix · 13 entities", "Build #419"].forEach((t) => {
+        const w_ = g.tw(t, 9.5, "ui", 500) + 16;
+        if (cx + w_ > R) return;
+        g.pill(cx, y, t, { size: 9.5, font: "ui", h: 20, pad: 8, a, lw: 1 }); cx += w_ + 6;
+      });
+      y += 22;
+      const q = "Why does the contract test fail here but not on main?";
+      const qw = Math.min(R - L - 40, g.tw(q, 11, "ui", 500) + 24), qx = R - qw;
+      const qLines = g.tw(q, 11, "ui", 500) + 24 > qw ? 2 : 1, qh = qLines * 15 + 14;
+      g.rect(qx, y, qw, qh, { fill: "exp", r: 10, a });
+      g.wrap(q, qx + 12, y + 18, qw - 24, { size: 11, font: "ui", color: "#FFFFFF", lh: 15, a });
+      y += qh + 20;
+      y = g.wrap("Line 48 added riskDecision to the v2 event. The v2 schema forbids extra fields, so the contract test rejected it. Main never set that field.", L, y, R - L, { size: 11, font: "ui", color: "ink", lh: 15.5, a });
+      y = g.wrap("ADR-031, updated today, puts new fields on a v3 topic. COM-2841 also asked to leave the event contract unchanged.", L, y + 4, R - L, { size: 11, font: "ui", color: "ink", lh: 15.5, a });
+      cx = L; y += 6;
+      const cites = [["order-events.yaml:14", "contract"], ["ADR-031", "adr"], ["COM-2841", "jira"]];
+      cites.forEach(([t, id]) => { const w_ = g.pill(cx, y, t, { size: 9.5, h: 20, pad: 8, color: "kno", stroke: "kno", lw: 1.1, a }); cx += w_ + 6; void id; });
+      link("contract", RE, y, a); link("adr", RE, y, a); link("jira", RE, y, a);
+      link("b419", RE, S.y + 44, a * 0.4); link("matrix", RE, S.y + 44, a * 0.4);
+      y += 22;
+      if (y + 54 < S.y + S.h) {
+        g.text("Suggested fix", L, y + 4, { size: 10.5, font: "ui", weight: 700, a });
+        g.chip(L + g.tw("Suggested fix", 10.5, "ui", 700) + 12, y, "Applied in 5c0d7e1", "ok", { size: 9, a });
+        g.text(fit(g, "− event.put(\"riskDecision\", decision.label());", 9.8, R - L), L, y + 24, { size: 9.8, color: "bad", a });
+        g.text(fit(g, "+ // riskDecision stays internal; v3 tracked in COM-2867", 9.8, R - L), L, y + 39, { size: 9.8, color: "ok", a });
+        if (y + 62 < S.y + S.h) g.text("Kept v2 intact · 10:48", L, y + 58, { size: 9.8, color: "ink-3", a });
+      }
+    }
+    // 2 · Priya's question becomes a test
+    a = wt[2];
+    if (a > 0.01) {
+      head("REVIEW COMMENT ON LINES 41–44 OF THE PR", a);
+      let y = S.y + 40;
+      const q1 = "What happens when assess times out? I'd like a test for that path before this merges.", q2 = "Fails closed — order waits for review. Added timeoutGoesToReview().";
+      const cardH = 62 + (wrapCount(g, q1, R - L - 52, 11, "ui") + wrapCount(g, q2, R - L - 52, 11, "ui")) * 15.5;
+      g.rect(L, y, R - L, cardH, { fill: "card", stroke: "hair", lw: 1.2, r: 8, a });
+      g.circle(L + 20, y + 20, 10, { fill: "exp", a }); g.text("PR", L + 20, y + 23.5, { size: 8.5, weight: 700, color: "#FFFFFF", align: "center", a });
+      g.text("Priya Raman", L + 38, y + 24, { size: 11.5, font: "ui", weight: 700, a });
+      g.chip(L + 46 + g.tw("Priya Raman", 11.5, "ui", 700), y + 20, "Resolved", "ok", { size: 9, a });
+      if (R - L > 380) g.text("approved 14:40", R - 12, y + 24, { size: 10, color: "ink-3", align: "right", a });
+      let yy = g.wrap(q1, L + 38, y + 46, R - L - 52, { size: 11, font: "ui", color: "ink", lh: 15.5, a });
+      g.line(L + 12, yy - 4, R - 12, yy - 4, { color: "grid", lw: 1, a });
+      yy += 16;
+      g.circle(L + 20, yy - 4, 10, { fill: "ink", a }); g.text("VT", L + 20, yy - 0.5, { size: 8.5, weight: 700, color: "#FFFFFF", align: "center", a });
+      yy = g.wrap(q2, L + 38, yy, R - L - 52, { size: 11, font: "ui", color: "ink", lh: 15.5, a });
+      const ty = y + cardH + 40;
+      if (ty + 44 < S.y + S.h) {
+        g.arrow(L + 60, y + cardH + 4, L + 60, ty - 4, { color: "exe", lw: 1.4, head: 7, a });
+        g.text("answered with a test", L + 72, y + cardH + 24, { size: 10, color: "ink-3", a });
+        g.rect(L, ty, Math.min(R - L, 330), 44, { fill: g.rgba("exe", 0.06), stroke: "exe", lw: 1.3, r: 8, a });
+        g.text("OrderServiceTest.java", L + 12, ty + 18, { size: 10.5, weight: 600, a });
+        g.text("+35 −3", L + Math.min(R - L, 330) - 12, ty + 18, { size: 10, color: "ink-3", align: "right", a });
+        g.text("timeoutGoesToReview()", L + 12, ty + 35, { size: 10, color: "exe", a });
+        if (ty + 90 < S.y + S.h) g.wrap("Nothing on the right lights up here. A person asked, and a test is the answer.", L, S.y + S.h - 34, R - L, { size: 10, color: "ink-3", lh: 14, a, maxLines: 2 });
+      }
+    }
+    // 3 · @B review
+    a = wt[3];
+    if (a > 0.01) {
+      let y = S.y + 16;
+      g.bee(L + 10, y + 12, 20, { a });
+      g.text("@B review", L + 28, y + 17, { size: 12, font: "ui", weight: 700, a });
+      const cw0 = g.chip(L + 36 + g.tw("@B review", 12, "ui", 700), y + 12, "Resolved · applied in 5c0d7e1", "ok", { size: 9, a });
+      void cw0;
+      g.text(fit(g, "from Matrix, contracts and build #418", 10, R - L), L, y + 40, { size: 10, color: "ink-3", a });
+      link("matrix", RE, y + 36, a); link("contract", RE, y + 36, a); link("b418", RE, y + 36, a);
+      y = g.wrap("This adds a field to order.confirmed.v2, which forbids extra properties. 8 consumers read v2, and ADR-031 asks for a v3 topic for new fields. Keep the decision internal for this release.", L, y + 62, R - L, { size: 11, font: "ui", color: "ink", lh: 15.5, a });
+      link("adr", RE, y - 20, a);
+      g.rect(L, y, R - L, 40, { fill: g.rgba("ink", 0.03), r: 6, a });
+      g.text(fit(g, "− event.put(\"riskDecision\", decision.label());", 9.8, R - L - 16), L + 8, y + 16, { size: 9.8, color: "bad", a });
+      g.text(fit(g, "+ // riskDecision stays internal; v3 tracked in COM-2867", 9.8, R - L - 16), L + 8, y + 32, { size: 9.8, color: "ok", a });
+      y += 58;
+      g.text(fit(g, "Applied by Venkatesh · 10:48 · contract tests pass", 10, R - L), L, y, { size: 10, color: "ink-2", a });
+      // the consumers Matrix counts
+      const fy = y + 20, fh = S.y + S.h - fy - 12;
+      if (fh > 70) {
+        const tx = L, ty = fy + fh / 2;
+        const tw_ = g.pill(tx, ty, "order.confirmed.v2", { size: 10.5, color: "kno", stroke: "kno", lw: 1.3, a });
+        const names = ["loyalty-consumer", "notification-service", "analytics-ingest"];
+        const x1 = tx + tw_ + 36, n = 8, colW = (R - x1);
+        for (let k = 0; k < n; k++) {
+          const u = n === 1 ? 0.5 : k / (n - 1), y1 = fy + 8 + u * (fh - 16);
+          const conflict = k === 0;
+          g.line(tx + tw_ + 2, ty, x1 - 5, y1, { color: conflict ? "bad" : "kno", lw: 1.1, dash: conflict ? [4, 3] : null, a: a * 0.8 });
+          g.circle(x1, y1, 4, { fill: conflict ? "card" : "kno", stroke: conflict ? "bad" : null, lw: 1.4, a });
+          if (k < 3 && colW > 160) g.text(names[k] + (conflict ? " · conflicting edge" : ""), x1 + 10, y1 + 4, { size: 9.5, color: conflict ? "bad" : "ink-2", a, maxW: colW - 14 });
+          if (k === 3 && colW > 160) g.text("+5 more · 8 consumers read v2", x1 + 10, y1 + 4, { size: 9.5, color: "ink-3", a });
+        }
+      }
+    }
+    // 4 · the merge rule
+    a = wt[4];
+    if (a > 0.01) {
+      head("MERGE NEEDS ALL THREE", a);
+      const gates = [["2 approvals", "Maya Chen · Priya Raman 14:40"], ["A green build", "Jenkins #419 · all Dev stages passed"], ["No blocking review comments", "@B review · 0 blocking"]];
+      const gh = Math.min(52, (S.h - 120) / 3);
+      gates.forEach(([t, sub], i) => {
+        const y = S.y + 36 + i * (gh + 8);
+        g.rect(L, y, R - L, gh, { fill: g.rgba("ctl", 0.05), stroke: "ctl", lw: 1.2, r: 8, a });
+        g.circle(L + 18, y + gh / 2, 9, { fill: "ok", a }); g.text("✓", L + 18, y + gh / 2 + 4, { size: 11, color: "#FFFFFF", weight: 700, align: "center", a });
+        g.text(t, L + 36, y + gh / 2 - 3, { size: 11.5, font: "ui", weight: 700, a });
+        let sx = L + 36;
+        if (i === 2) { g.bee(sx + 7, y + gh / 2 + 11, 13, { a }); sx += 18; }
+        g.text(fit(g, sub, 10, R - sx - 12), sx, y + gh / 2 + 14, { size: 10, color: "ink-2", a });
+        if (i === 1) link("b419", RE, y + gh / 2, a);
+      });
+      const by = S.y + 36 + 3 * (gh + 8) + 8;
+      if (by + 70 < S.y + S.h) {
+        g.text(fit(g, "SonarQube passed · Evals on 5c0d7e1 8 of 8 · Secrets scan clean", 9.8, R - L), L, by + 4, { size: 9.8, color: "ink-3", a });
+        g.rect(L, by + 20, 86, 30, { fill: "exp", r: 8, a });
+        g.text("Merge", L + 43, by + 39.5, { size: 12, font: "ui", weight: 700, color: "#FFFFFF", align: "center", a });
+        g.wrap("Running in Dev from this branch: 2.14.0-rc2 · build #419", L + 102, by + 32, R - L - 102, { size: 10, color: "exp", lh: 14, a, maxLines: 2 });
+      }
+    }
+  }, { anim: false, restT: 1, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- lab 1: the prototype's assistant router ---------------- */
+  const CHECKS = [
+    { re: /schema|event|break|blast|downstream/, pat: "schema|event|break|blast|downstream", kind: "impact" },
+    { re: /customer|data come/, pat: "customer|data come", kind: "context" },
+    { re: /library|pattern/, pat: "library|pattern", kind: "library" },
+    { re: /fraud|risk|detect|agent/, pat: "fraud|risk|detect|agent", kind: "unknown", neg: true },
+    { re: null, pat: "anything left", kind: "fraud" },
+  ];
+  const ANS = {
+    impact: { lines: ["three event consumers", "a compatibility warning", "keep v2, or add v3 alongside it"], acts: ["Graph link"] },
+    context: { lines: ["the Customer Profile call", "aliases and owner", "source evidence"], acts: [] },
+    library: { lines: ["reuse workload-identity-client 2.8.1", "a scoped credential pattern"], acts: [] },
+    unknown: { lines: ["reports that no local scenario matches"], acts: [] },
+    fraud: { lines: ["reuse the Fraud Risk API", "insert the assessment before payment", "preserve the event contract", "route risk and failure to review"], acts: ["Review integration diff", "Create experiment"] },
+  };
+  const SUGG = ["How do I add fraud detection before payment?", "What breaks downstream if the order event changes?", "Where does customer data come from?", "Which library should handle credentials?"];
+  function wordAt(t, i, len) {
+    let a = i, b = i + len;
+    while (a > 0 && /[a-z0-9_-]/.test(t[a - 1])) a--;
+    while (b < t.length && /[a-z0-9_-]/.test(t[b])) b++;
+    return t.slice(a, b);
+  }
+  function route(q) {
+    const t = String(q || "").toLowerCase();
+    if (!t.trim()) return { empty: true, t, rows: [], win: -1 };
+    const rows = CHECKS.map((c) => {
+      const m = c.re ? t.match(c.re) : null;
+      const pass = c.re ? (c.neg ? !m : !!m) : true;
+      return { pass, m: m ? { i: m.index, s: m[0], w: wordAt(t, m.index, m[0].length) } : null };
+    });
+    const win = rows.findIndex((r) => r.pass);
+    return { empty: false, t, rows, win, kind: CHECKS[win].kind };
+  }
+  function rowText(r, c) {
+    if (c.neg) return r.m ? `found "${r.m.s}"${r.m.w !== r.m.s ? ` in "${r.m.w}"` : ""}, so it fails` : "none found, so it passes";
+    if (!c.re) return "always passes";
+    return r.m ? `matched "${r.m.s}"${r.m.w !== r.m.s ? ` inside "${r.m.w}"` : ""}` : "no match";
+  }
+  Field.scene("router", (g, s) => {
+    const st = s.state; if (st.q === undefined) return;
+    const { W, H } = g, tall = H > W * 0.95, pad = 24;
+    const top0 = Math.max(46, g.safeTop + 12);
+    const R_ = route(st.q);
+    const el = (performance.now() - (st._since || 0)) / 1000;
+    const think = clamp(el / 0.55), T0 = 0.6, STEP = 0.32;
+    // question
+    g.text("QUESTION, LOWERCASED", pad, top0 + 6, { size: 9.5, color: "ink-3", ls: 0.8 });
+    const qs = tall ? 13 : 14.5, maxW = W - pad * 2;
+    let shown = R_.t || "", off = 0;
+    // the decisive match: the winner's own match, or for the fraud answer the fraud word check 4 found
+    const hitRow = R_.win === 4 ? 3 : R_.win;
+    const hit = R_.win >= 0 && R_.rows[hitRow].m && !(CHECKS[R_.win].neg) ? R_.rows[hitRow].m : null;
+    if (g.tw(`"${shown}"`, qs) > maxW) {
+      const n = Math.floor(maxW / (qs * 0.6)) - 4;
+      const centre = hit ? hit.i : 0;
+      off = Math.max(0, Math.min(shown.length - n, centre - Math.floor(n / 3)));
+      shown = (off > 0 ? "…" : "") + shown.slice(off, off + n) + (off + n < R_.t.length ? "…" : "");
+      off = off - (off > 0 ? 1 : 0);
+    }
+    const qy = top0 + 32;
+    if (R_.empty) g.text("(empty: the prototype ignores it)", pad, qy, { size: qs, color: "ink-3" });
+    else {
+      if (hit && think >= 1) {
+        const pre = `"` + shown.slice(0, hit.i - off), hx = pad + g.tw(pre, qs), hw = g.tw(hit.s, qs);
+        const ra = ramp(el, T0 + hitRow * STEP, 0.2);
+        g.rect(hx - 2, qy - qs, hw + 4, qs * 1.35, { fill: g.rgba("kno", 0.2), r: 3, a: ra });
+      }
+      g.text(`"${shown}"`, pad, qy, { size: qs, color: "ink" });
+    }
+    // 550 ms pause bar
+    const by = qy + 20;
+    g.rect(pad, by, 140, 6, { fill: "grid", r: 3 });
+    g.rect(pad, by, 140 * think, 6, { fill: "ink-3", r: 3 });
+    g.text(think < 1 ? "550 ms pause" : "then the checks run, in order", pad + 152, by + 6, { size: 10, color: "ink-3" });
+    // rows
+    const rw = tall ? W - pad * 2 : Math.round(W * 0.56);
+    const ry0 = by + 30;
+    const ansH = tall ? 230 : 0, stripH = tall ? 118 : 96;
+    const rgap = tall ? 8 : 12;
+    const rh = clamp((H - ry0 - pad - stripH - (tall ? ansH + 16 : 0) - 4 * rgap) / 5, 42, tall ? 54 : 100);
+    CHECKS.forEach((c, i) => {
+      const y = ry0 + i * (rh + rgap), r = R_.rows[i];
+      const tEval = T0 + i * STEP, ev = !R_.empty && think >= 1 ? ramp(el, tEval, 0.15) : 0;
+      const reached = !R_.empty && i <= R_.win, win = i === R_.win;
+      const col = !reached ? "ink-3" : win ? "ok" : "ink-3";
+      const a = reached ? 0.45 + 0.55 * ev : 0.35;
+      g.rect(pad, y, rw, rh, { fill: win && ev > 0.5 ? g.rgba("ok", 0.07) : "card", stroke: win && ev > 0.5 ? "ok" : "hair", lw: win && ev > 0.5 ? 1.8 : 1.1, r: 9, a: Math.max(a, 0.5) });
+      g.circle(pad + 20, y + rh / 2, 11, { fill: win && ev > 0.5 ? "ok" : "card", stroke: win && ev > 0.5 ? "ok" : "ink-3", lw: 1.2, a });
+      g.text(String(i + 1), pad + 20, y + rh / 2 + 4, { size: 11, weight: 700, color: win && ev > 0.5 ? "#FFFFFF" : "ink-2", align: "center", a });
+      const pat = c.neg ? "none of " + c.pat : c.re ? c.pat : c.pat;
+      const kindW = g.tw("→ " + c.kind, 11, "mono", 600) + 14;
+      g.text(fit(g, pat, tall ? 11 : 12, rw - 58 - kindW), pad + 42, y + rh / 2 - 3, { size: tall ? 11 : 12, weight: 600, color: c.re ? "ink" : "ink-2", a });
+      let sub = "not reached", sc = "ink-3";
+      if (R_.empty) sub = "not run";
+      else if (reached && ev > 0.4) { sub = rowText(r, c); sc = r.pass ? "ok" : "ink-3"; }
+      else if (reached) sub = "…";
+      g.text(fit(g, sub, 10, rw - 58 - kindW), pad + 42, y + rh / 2 + 14, { size: 10, color: sc, a: reached ? 1 : 0.6, weight: r && r.pass && reached ? 600 : 500 });
+      g.text("→ " + c.kind, pad + rw - 12, y + rh / 2 + 4, { size: 11, weight: 600, color: win && ev > 0.5 ? "ok" : "ink-3", align: "right", a });
+      if (i < 4) g.line(pad + 20, y + rh / 2 + 12, pad + 20, y + rh + rgap + rh / 2 - 12, { color: "hair", lw: 1.2 });
+    });
+    // every pattern word, lit where it occurs anywhere in the text
+    {
+      const sy = H - pad - stripH + 28;
+      g.text("PATTERN WORDS FOUND ANYWHERE IN THE TEXT · THE EARLIEST CHECK WINS", pad, sy, { size: 9.5, color: "ink-3", ls: 0.8, maxW: W - pad * 2 });
+      const words = [[1, "schema"], [1, "event"], [1, "break"], [1, "blast"], [1, "downstream"], [2, "customer"], [2, "data come"], [3, "library"], [3, "pattern"], [4, "fraud"], [4, "risk"], [4, "detect"], [4, "agent"]];
+      let cx = pad, cy = sy + 24;
+      words.forEach(([n, w]) => {
+        const found = !R_.empty && R_.t.includes(w), lab = n + "  " + w;
+        const ww = g.tw(lab, 10.5) + 22;
+        if (cx + ww > W - pad) { cx = pad; cy += 30; }
+        g.pill(cx, cy, lab, { size: 10.5, h: 24, pad: 11, color: found ? "kno" : "ink-3", stroke: found ? "kno" : "hair", fill: found ? g.rgba("kno", 0.12) : "card", lw: found ? 1.4 : 1, weight: found ? 600 : 500 });
+        cx += ww + 7;
+      });
+    }
+    // answer card
+    const ax = tall ? pad : pad + rw + 26, aw = tall ? W - pad * 2 : W - pad - (pad + rw + 26);
+    const ay = tall ? ry0 + 5 * (rh + rgap) + 6 : ry0, ah = tall ? H - pad - stripH - 4 - (ry0 + 5 * (rh + rgap) + 6) : 5 * rh + 4 * rgap;
+    const aa = R_.empty ? 1 : ramp(el, T0 + Math.max(0, R_.win) * STEP + 0.3, 0.3);
+    const unk = R_.kind === "unknown" || R_.empty;
+    g.rect(ax, ay, aw, ah, { fill: "card", stroke: unk ? "ink-3" : "kno", lw: 1.4, r: 10, dash: unk ? [5, 4] : null, a: Math.max(0.35, aa) });
+    g.text("PREPARED ANSWER", ax + 16, ay + 24, { size: 9.5, color: "ink-3", ls: 0.8, a: Math.max(0.35, aa) });
+    let yEnd = ay + 90;
+    if (R_.empty) {
+      g.wrap("Empty or whitespace input is ignored. Nothing is routed.", ax + 16, ay + 56, aw - 32, { size: 11.5, font: "ui", color: "ink-2", lh: 16 });
+    } else {
+      const A = ANS[R_.kind];
+      g.text(R_.kind.toUpperCase(), ax + 16, ay + 58, { size: tall ? 26 : 30, font: "display", weight: 800, color: unk ? "ink-3" : "kno", a: aa });
+      let y = ay + (tall ? 84 : 92);
+      A.lines.forEach((l) => { g.circle(ax + 20, y - 4, 2.4, { fill: unk ? "ink-3" : "kno", a: aa }); y = g.wrap(l, ax + 30, y, aw - 46, { size: 11.5, font: "ui", color: "ink", lh: 15.5, a: aa }) + 3; });
+      y += 6;
+      let cx = ax + 16;
+      A.acts.forEach((t) => { const w_ = g.tw(t, 10, "ui", 600) + 20; if (cx + w_ > ax + aw - 12) { cx = ax + 16; y += 28; } g.pill(cx, y + 6, t, { size: 10, font: "ui", weight: 600, color: "exp", stroke: "exp", lw: 1.1, h: 22, pad: 10, a: aa }); cx += w_ + 8; });
+      if (A.acts.length) y += 30;
+      y = g.wrap("No model request. Choosing another model leaves this text unchanged.", ax + 16, y + 8, aw - 32, { size: 10, color: "ink-3", lh: 14, a: aa, maxLines: 2 });
+      yEnd = y;
+    }
+    // the design's answer, for contrast
+    const v3 = "In the v3 design, the Code Assistant answers from COM-2841, the event contract, ADR-031 and build #419, and cites each one.";
+    const vn = wrapCount(g, v3, aw - 32, 10.5, "ui"), vy = ay + ah - 22 - vn * 15;
+    if (vy - 22 > Math.max(yEnd, ay + (tall ? 190 : 240))) {
+      g.line(ax + 16, vy - 10, ax + aw - 16, vy - 10, { color: "grid", lw: 1 });
+      g.text("V3 DESIGN, PROPOSED", ax + 16, vy + 6, { size: 9.5, color: "exp", ls: 0.8, weight: 600 });
+      g.wrap(v3, ax + 16, vy + 24, aw - 32, { size: 10.5, font: "ui", color: "ink-2", lh: 15 });
+    }
+  }, {
+    controls: "ask-ctl", anim: true, restT: 4, zoom: 1.3, minW: 620, maxW: 1000,
+    onAction: (name) => { const n = +name.slice(1); const inp = document.getElementById("q"); if (inp && SUGG[n] !== undefined) inp.value = SUGG[n]; },
+    onState: (st) => {
+      const R_ = route(st.q);
+      const key = R_.empty ? "empty" : R_.rows.map((r) => (r.pass ? 1 : 0) + (r.m ? r.m.i + r.m.s : "")).join("|") + R_.t.length;
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      document.getElementById("o-kind").textContent = R_.empty ? "none" : R_.kind;
+      document.getElementById("o-check").textContent = R_.empty ? "–" : `check ${R_.win + 1}`;
+      let msg = "";
+      if (R_.empty) msg = "Empty input is ignored.";
+      else {
+        const c = CHECKS[R_.win], r = R_.rows[R_.win];
+        if (c.neg) msg = `Checks 1–3 found nothing and no fraud word appears, so the prototype answers that no local scenario matches.`;
+        else if (!c.re) msg = `Checks 1–3 failed and check 4 found "${R_.rows[3].m.s}", so the fraud answer is returned.`;
+        else msg = `Check ${R_.win + 1} matched "${r.m.s}"${r.m.w !== r.m.s ? ` inside "${r.m.w}"` : ""}. A substring, not an intent.`;
+      }
+      document.getElementById("o-ask").textContent = msg;
+    },
+  });
+
+  /* ---------------- lab 2: Run checks ---------------- */
+  const TERMS = [["c-applied", "flag", "applied"], ["c-assess", "code contains", '"fraudRisk.assess"'], ["c-pending", "code contains", '"pendingReview"'], ["c-v2", "code contains", '"order.confirmed.v2"']];
+  Field.scene("checks", (g, s) => {
+    const st = s.state; if (st["c-applied"] === undefined) return;
+    const { W, H } = g, tall = H > W * 0.95, pad = 24;
+    const top0 = Math.max(46, g.safeTop + 12);
+    const vals = TERMS.map(([id]) => !!st[id]), pass = vals.every(Boolean);
+    const el = (performance.now() - (st._since || 0)) / 1000;
+    g.text("RUN CHECKS = ALL FOUR TERMS", pad, top0 + 6, { size: 9.5, color: "ink-3", ls: 0.8 });
+    // terms
+    const boxes = [];
+    if (!tall) {
+      const andW = 46, bw = (W - pad * 2 - andW * 3) / 4, by = top0 + 22, bh = 70;
+      TERMS.forEach((t, i) => boxes.push({ x: pad + i * (bw + andW), y: by, w: bw, h: bh }));
+    } else {
+      const bw = W - pad * 2, bh = 46, gap = 24;
+      TERMS.forEach((t, i) => boxes.push({ x: pad, y: top0 + 22 + i * (bh + gap), w: bw, h: bh }));
+    }
+    TERMS.forEach(([id, k, v], i) => {
+      const B = boxes[i], on = vals[i], c = on ? "ok" : "bad";
+      const a = ramp(el, i * 0.12, 0.2) * 0.6 + 0.4;
+      g.rect(B.x, B.y, B.w, B.h, { fill: g.rgba(c, 0.07), stroke: c, lw: 1.5, r: 9, a });
+      if (!tall) {
+        g.text(k, B.x + 12, B.y + 22, { size: 10, font: "ui", color: "ink-3", a });
+        g.text(fit(g, v, 11.5, B.w - 22, "mono", 600), B.x + 12, B.y + 42, { size: 11.5, weight: 600, a });
+        g.text(on ? "true" : "false", B.x + B.w - 12, B.y + B.h - 10, { size: 10.5, color: c, weight: 700, align: "right", a });
+        if (i < 3) g.text("AND", B.x + B.w + 23, B.y + B.h / 2 + 4, { size: 11, color: "ink-3", weight: 600, align: "center" });
+      } else {
+        g.text(k, B.x + 12, B.y + 18, { size: 10, font: "ui", color: "ink-3", a });
+        g.text(v, B.x + 12, B.y + 35, { size: 11.5, weight: 600, a });
+        g.text(on ? "true" : "false", B.x + B.w - 12, B.y + B.h / 2 + 4, { size: 11, color: c, weight: 700, align: "right", a });
+        if (i < 3) g.text("AND", B.x + 30, B.y + B.h + 16, { size: 10.5, color: "ink-3", weight: 600, align: "center" });
+      }
+    });
+    // vertical rhythm: result, where the flag goes, what is never examined
+    const last = boxes[3], first = boxes[0];
+    const termsBottom = tall ? last.y + last.h : first.y + first.h;
+    const rh = tall ? 168 : 116, rw = W - pad * 2;
+    const need = (tall ? 30 + rh + 26 + 72 + 26 + 82 : 40 + rh + 34 + 56 + 30 + 44);
+    const extra = clamp((H - pad - termsBottom - need) / 3, 0, 48);
+    const ry = termsBottom + (tall ? 30 : 40) + extra;
+    const ra = ramp(el, 0.5, 0.3);
+    if (!tall) { g.arrow(W / 2, first.y + first.h + 8, W / 2, ry - 6, { color: "ink-3", lw: 1.4, head: 8 }); }
+    else g.arrow(pad + 60, last.y + last.h + 6, pad + 60, ry - 6, { color: "ink-3", lw: 1.4, head: 8 });
+    const rc = pass ? "ok" : "bad";
+    g.rect(pad, ry, rw, rh, { fill: g.rgba(rc, 0.07), stroke: rc, lw: 1.8, r: 10, a: Math.max(0.4, ra) });
+    g.text(pass ? "3 / 3 local scenario checks passed" : "Source check fails", pad + 16, ry + 32, { size: tall ? 20 : 24, font: "display", weight: 800, color: rc, a: ra });
+    g.text(pass ? "tested = true · the release source gate is satisfied" : "tested = false · Releases shows the workspace gate pending", pad + 16, ry + 54, { size: 10.5, color: "ink-2", a: ra, maxW: rw - 32 });
+    if (pass) {
+      const lines = ["assessment before payment", "review handling", "event compatibility"];
+      const lx = tall ? pad + 28 : pad + rw * 0.56, ly = tall ? ry + 76 : ry + 24;
+      g.text("the terminal then prints lines about", lx, ly, { size: 9.5, color: "ink-3", a: ra });
+      lines.forEach((l, i) => g.text("✓ " + l, lx, ly + 17 + i * 15, { size: 10, color: "ok", a: ra }));
+      g.line(lx - 12, ly + 7, lx - 12, ly + 51, { color: "kno", lw: 1.4, a: ra });
+      g.text("more than the predicate tests", lx, ly + 72, { size: 9.5, color: "kno", weight: 600, a: ra });
+    } else {
+      const off = TERMS.filter((t, i) => !vals[i]).map((t) => t[2]).join(", ");
+      g.wrap("False: " + off, pad + 16, ry + 80, rw - 32, { size: 10.5, color: "bad", lh: 15, a: ra, maxLines: tall ? 3 : 2 });
+    }
+    // where the flag goes
+    const fy = ry + rh + (tall ? 26 : 34) + extra;
+    g.text("WHERE TESTED GOES", pad, fy, { size: 9.5, color: "ink-3", ls: 0.8 });
+    const fby = fy + 12, fbh = 32;
+    const b1w = g.tw("Run checks", 11, "ui", 600) + 28;
+    g.rect(pad, fby, b1w, fbh, { fill: g.rgba("exe", 0.07), stroke: "exe", lw: 1.3, r: 8 });
+    g.text("Run checks", pad + b1w / 2, fby + 20, { size: 11, font: "ui", weight: 600, align: "center" });
+    const px_ = pad + b1w + 40;
+    g.arrow(pad + b1w + 4, fby + fbh / 2, px_ - 4, fby + fbh / 2, { color: "ink-3", lw: 1.3, head: 7 });
+    const pw_ = g.pill(px_, fby + fbh / 2, "tested = " + (pass ? "true" : "false"), { size: 10.5, weight: 600, color: pass ? "ok" : "bad", stroke: pass ? "ok" : "bad", lw: 1.3, h: 26 });
+    const gx_ = px_ + pw_ + 40, gt = "Releases · source gate " + (pass ? "met" : "pending");
+    g.arrow(px_ + pw_ + 4, fby + fbh / 2, gx_ - 4, fby + fbh / 2, { color: "ink-3", lw: 1.3, head: 7 });
+    const gw_ = Math.min(W - pad - gx_, g.tw(gt, 11, "ui", 600) + 28);
+    g.rect(gx_, fby, gw_, fbh, { fill: g.rgba("ctl", 0.06), stroke: "ctl", lw: 1.3, r: 8, dash: pass ? null : [5, 4] });
+    g.text(fit(g, gt, 11, gw_ - 20, "ui", 600), gx_ + gw_ / 2, fby + 20, { size: 11, font: "ui", weight: 600, align: "center" });
+    g.text(fit(g, "cleared again by Apply proposed change and by any edit to OrderService.java", 9.8, rw), pad, fby + fbh + 20, { size: 9.8, color: "ink-3" });
+    // not checked
+    const ny = fby + fbh + 20 + (tall ? 26 : 30) + extra;
+    if (ny + 40 < H) {
+      g.text("NEVER EXAMINED BY THE PREDICATE", pad, ny, { size: 9.5, color: "ink-3", ls: 0.8 });
+      const items = ["call order", "Java syntax", "control flow", "schema validity", "runtime behaviour"];
+      let cx = pad, cy = ny + 14;
+      items.forEach((t) => {
+        const w_ = g.tw(t, 10.5) + 22;
+        if (cx + w_ > W - pad) { cx = pad; cy += 34; }
+        g.hatch(cx, cy, w_, 26, { color: "ink-3", a: 0.5, r: 6 });
+        g.rect(cx + 3, cy + 5, w_ - 6, 16, { fill: "sheet", r: 4 });
+        g.text(t, cx + w_ / 2, cy + 17, { size: 10.5, color: "ink-2", align: "center" });
+        cx += w_ + 8;
+      });
+    }
+  }, {
+    controls: "chk-ctl", anim: true, restT: 3, zoom: 1.3, minW: 620, maxW: 1000,
+    onAction: (name) => {
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.checked = v; };
+      if (name === "neg") { set("c-applied", true); set("c-assess", true); set("c-pending", false); set("c-v2", true); }
+      if (name === "reset") TERMS.forEach(([id]) => set(id, true));
+    },
+    onState: (st) => {
+      const vals = TERMS.map(([id]) => !!st[id]), pass = vals.every(Boolean);
+      const key = vals.join("");
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      document.getElementById("o-tested").textContent = pass ? "true" : "false";
+      document.getElementById("o-gate").textContent = pass ? "met" : "pending";
+      document.getElementById("o-chk").textContent = pass ? "All four terms are true, so Run checks prints 3 / 3 local scenario checks passed." : "At least one term is false, so tested stays false and the release screen's workspace gate stays pending.";
+    },
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3", who: ["this design"], what: "Compute runs CodeX workspaces inside Dev's private VPC beside <code>nsx-dev-use1</code>, with five bindings from Bridge: cluster, Kafka, flags, secrets through workload identity, and Dev's model quota. The code assistant and @B's review cite the ticket, the contract, ADR-031, the builds and Matrix, and @B's blocking comments count in the merge rule.", vs: "<b>The baseline for this chapter.</b> Design only. Every binding and every citation depends on Bridge connectors and a current Matrix, and Atlas has neither." },
+      { name: "GitHub Codespaces", who: ["GitHub"], what: "Each codespace is hosted by GitHub in a Docker container on a virtual machine, set up from dev container configuration in the repository. It times out after 30 minutes of inactivity by default, inactive codespaces are deleted after 30 days, and a stopped codespace costs only storage. By default it can reach the public internet but not private networks; GitHub suggests a VPN for those.", vs: "The same lifecycle ideas as Compute's sleep and delete rules. Codespaces runs on GitHub's side and reaches a private cluster through a VPN. Vector's design puts the workspace inside Dev's network, which means running that fleet yourself.", src: [["Codespace lifecycle", "https://docs.github.com/en/codespaces/about-codespaces/understanding-the-codespace-lifecycle"], ["What are codespaces", "https://docs.github.com/en/codespaces/about-codespaces/what-are-codespaces"], ["Private networks", "https://docs.github.com/en/codespaces/developing-in-a-codespace/connecting-to-a-private-network"]] },
+      { name: "Coder", who: ["Coder", "self-hosted"], what: "Self-hosted cloud development environments. Templates are written in Terraform and define the infrastructure workspaces run on, with starter templates for AWS, Kubernetes and Docker. Autostop and an inactivity timeout stop idle workspaces, and dormancy deletes workspaces left unused.", vs: "The closest model to Compute, with workspaces on your own infrastructure next to your services. Coder leaves the environment wiring to each template. Vector's design takes it from the env registry, so every Dev workspace gets the same five bindings.", src: [["Templates", "https://coder.com/docs/admin/templates"], ["Workspace scheduling", "https://coder.com/docs/user-guides/workspace-scheduling"]] },
+      { name: "Dev Container spec", who: ["open specification"], what: "\"An open specification for enriching containers with development specific content and settings.\" VS Code, Visual Studio, IntelliJ IDEA, the Dev Container CLI, GitHub Codespaces, DevPod and Ona (formerly Gitpod) support it, and a dev container can run locally or remotely.", vs: "It describes what goes inside a workspace. Vector's design describes what the workspace is bound to. The v3 boards do not say how a CodeX workspace image is defined, so whether it would use this spec is open.", src: [["containers.dev", "https://containers.dev/"], ["Supporting tools", "https://containers.dev/supporting"]] },
+      { name: "GitHub Copilot code review", who: ["GitHub"], what: "You request a review from Copilot, or set it to review every pull request. By default it leaves a Comment review, so it does not count toward required approvals; approving reviews can be switched on. Suggested changes apply in a couple of clicks, and it can use repository instructions and configured MCP servers for context such as issue keys.", vs: "Advisory by default. Vector's design gives @B a count of blocking comments that the merge rule reads, which makes the quality of @B's comments part of the gate, and a false alarm holds a merge.", src: [["Using Copilot code review", "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review"]] },
+      { name: "CodeRabbit", who: ["CodeRabbit"], what: "AI code review on GitHub, GitLab, Azure DevOps and Bitbucket, with Jira and Linear connected for issue context, learning from a team's feedback. With its request-changes workflow on, a review with actionable inline comments is submitted as changes requested, and it approves once the latest commit is reviewed and required threads are resolved.", vs: "The nearest match to @B's review, Bitbucket included. @B's design draws on Matrix, the enterprise graph, so it can count consumers in other services. That only holds while Matrix's Kafka and Git edges are current.", src: [["CodeRabbit docs", "https://docs.coderabbit.ai/"], ["Request changes workflow", "https://docs.coderabbit.ai/pr-reviews/request-changes-workflow"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · CodeX, Compute and Reviews boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · 4.2 Environments · 4.3 Workbench layout · 4.4 Assistant routing · 4.5 Proposed change · 4.6 Run checks · 4.8 · 13 Verification · 14.8 Durable agents and workspaces", ""],
+      ["Vector, annotated (v3 explainer film) · chapter 04 CodeX and the build", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

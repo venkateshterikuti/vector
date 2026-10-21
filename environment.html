@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>One environment · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .scope-lists { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .scope-lists > div { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+  .scope-lists h4 { font-family: var(--f-display); font-weight: 700; font-size: 1.35rem; text-transform: uppercase; line-height: 1; }
+  .scope-lists .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .scope-lists p { font-size: 0.95rem; color: var(--ink-2); }
+  @media (max-width: 760px) { .scope-lists { grid-template-columns: minmax(0, 1fr); } }
+  .rules { counter-reset: rule; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0; border-top: 1px solid var(--hair); }
+  .rules li { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--hair); display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .rules li::before { counter-increment: rule; content: "Rule " counter(rule); font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--exp); }
+  .rules b { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; line-height: 1.05; }
+  .rules span { font-size: 0.95rem; color: var(--ink-2); line-height: 1.45; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment" aria-current="page">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">04</span> Foundations · the v3 rule</span>
+        <h1>One <em>environment</em> per window</h1>
+        <p class="dek">You pick Dev once, in the title bar. From then on every screen, terminal, agent and @B run in that window is about Dev, and nothing on screen offers a second environment.</p>
+        <div class="files">
+          <span class="tag t-exp"><i></i>v3 · Environment picker</span>
+          <span class="tag t-exp"><i></i>v3 · Environment flow</span>
+          <span class="tag t-ctl"><i></i>Sentinel · gateway</span>
+          <span class="tag">handbook 14.9</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="A Vector window whose title-bar picker cycles through Dev, QA, Stage and Prod. All 28 screen tiles below reload together and always show the same environment.">
+        <span class="ruler">one picker · 28 screens follow it</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Why the rule exists</span>
+        <h2>Every screen had its own answer</h2>
+        <p class="lede">The first screen set let each screen choose its own environment. Version three removed every one of those controls and kept a single picker.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Before v3 · the 28-screen set</span><h4>Four screens, four answers</h4><p>Clusters opened on "All" and showed five clusters side by side behind Dev, QA, Stage and Prod tabs. Pipelines ran one track from Dev through Stage to Prod. Optimus Logger opened on Prod while Traces showed Dev, and CodeX had a terminal for each environment. Nothing told you which environment a fact came from.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Rule 1 · one picker</span><h4>Chosen once, in the title bar</h4><p>The environment lives only in the title bar, beside the application picker. No screen has its own tab, slider, list or badge for it. Each window tells you its environment in one place, and every screen reads it from there.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Rule 2 · it lives in the URL</span><h4>Links and refreshes stay put</h4><p>The address carries <code>/env/dev/…</code>, so reloading a page or opening a link a colleague pasted lands in the same environment it was copied from.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Rule 5 · switching resets</span><h4>Change it, and everything reloads</h4><p>Picking QA clears every screen's state and caches, then reloads them in QA. Nothing from Dev survives the switch, so no screen can keep showing stale Dev data under a QA label.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="before" data-label="Four mini Vector windows from the 28-screen set. First each shows a different environment or several at once; then one title-bar picker scopes them all to Dev; then a URL keeps /env/dev; then switching to QA resets every window."><span class="ruler">same afternoon · four screens</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="before-plate">
+    <div class="wrap">
+      <div class="plate">
+        <figure class="shot" data-src="screens/v2/Clusters.webp" data-w="1600" data-h="1000" data-crop="80,60,1520,640" data-title="Clusters in the 28-screen set (Oct 13, before v3)">
+          <span class="pin c-bad" data-x="1452" data-y="128">1</span>
+          <span class="pin" data-x="560" data-y="176">2</span>
+          <span class="pin" data-x="656" data-y="339">3</span>
+          <span class="pin c-bad" data-x="790" data-y="640">4</span>
+          <span class="ring" data-box="1336,113,236,30"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 04.0 · before the rule</span>
+          <h3>Clusters, in the first screen set</h3>
+          <ol class="pins">
+            <li><span><b>Its own environment tabs</b>, set to All.</span></li>
+            <li><span><b>Five clusters at once:</b> Dev, QA, Stage and two Prod regions, 212 of 213 pods.</span></li>
+            <li><span><b>One column per environment</b> in the pod grid.</span></li>
+            <li><span><b>The incident lived on Stage</b> in this set. In v3 the same story moved into Dev, the only environment a v3 window shows.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="flow">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The flow</span>
+        <h2>How a request stays in Dev</h2>
+        <p class="lede">The picker is only the visible end. Underneath, the environment travels with every call, the API checks it, and one registry turns the word "Dev" into real accounts, clusters and topics.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">1 · Vector app</span><h4>EnvContext holds one value</h4><p>The picker writes <code>env = "dev"</code> into EnvContext. The 27 screens and @B all read it. None of them has an environment control of its own.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">2 · Rule 3 · every call carries it</span><h4>X-Vector-Env: dev</h4><p>Every request the app makes sends the header <code>X-Vector-Env: dev</code>. A request without it, or with a different value from the window it came from, is a bug the gateway can catch.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">3 · Control plane</span><h4>The gateway and Sentinel check it</h4><p>The API gateway asks Sentinel whether your role allows this action in Dev, and rejects any resource ID that belongs to another environment. A Prod pod name pasted into a Dev window is refused there.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">4 · Rule 4 · one registry defines it</span><h4>"Dev" becomes real targets</h4><p>The env registry is the one place Dev is defined: AWS account <code>northstar-dev</code>, cluster <code>nsx-dev-use1/commerce</code>, Jenkins folder <code>commerce/dev</code>, Kafka <code>msk-dev-use1</code>, flags, secrets and the model region. Screens never hard-code any of them.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">5 · Plane services</span><h4>Every record comes back tagged</h4><p>Each plane resolves its systems through the registry and answers as Dev: Jenkins and EKS for execution, Kafka and Git edges observed on <code>msk-dev-use1</code> for knowledge, and logs, traces and the AWS bill tagged <code>env=dev</code> for telemetry.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="flow" data-label="Four rows: the Vector app (picker, EnvContext, screens), the control plane (gateway with Sentinel, env registry), the plane services, and what Dev resolves to. A request packet carries the X-Vector-Env header down through them."><span class="ruler">environment flow · v3</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="shared">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">Rule 7 · shared tools still show</span>
+        <h2>Scoped screens and shared screens</h2>
+        <p class="lede">Jira, Bitbucket, Confluence and Teams are not per environment, so their screens appear in every window. Any runtime fact on them, such as the running version, its pods or its last deploy, is Dev's.</p>
+      </header>
+      <div class="scope-lists">
+        <div>
+          <span class="k-label">Scoped to Dev · 17</span>
+          <h4>Everything they show is Dev</h4>
+          <div class="tags">
+            <span class="tag t-exe">Compute</span><span class="tag t-exe">Clusters</span><span class="tag t-exe">Pipelines</span><span class="tag t-exe">GroundBridge</span><span class="tag t-ctl">Approvals</span><span class="tag t-tel">Optimus Logger</span><span class="tag t-tel">Traces</span><span class="tag t-tel">Cost</span><span class="tag t-ctl">Sentinel decisions</span><span class="tag t-exe">Agents</span><span class="tag t-exe">Tools sandbox</span><span class="tag t-exe">AllSpark</span><span class="tag t-tel">Evals</span><span class="tag t-tel">Datasets</span><span class="tag t-kno">Vault usage</span><span class="tag">Bridge bindings</span><span class="tag t-exp">@B runs</span>
+          </div>
+          <p>Switch to QA and each of these reloads with QA's builds, pods, runs and spend.</p>
+        </div>
+        <div>
+          <span class="k-label">Shared, with Dev runtime facts · 8</span>
+          <h4>Same records everywhere</h4>
+          <div class="tags">
+            <span class="tag t-exp">Threads</span><span class="tag t-exp">Reviews</span><span class="tag t-kno">Repositories</span><span class="tag t-kno">Knowledge</span><span class="tag t-kno">Matrix</span><span class="tag t-kno">Retrieval</span><span class="tag t-exe">Prompts</span><span class="tag t-exe">Models</span>
+          </div>
+          <p>PR #214 is the same pull request in every window. In Dev, its side panel says "Running in Dev from this branch: 2.14.0-rc2 · build #419".</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="promotion">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">Rule 6 · promotion is an action, not a view</span>
+        <h2>The only way out of Dev</h2>
+        <p class="lede">Because a window shows one environment, moving a release forward cannot be a matter of looking at two environments side by side. GroundBridge files a request instead, and the run shows up when you switch to the next environment.</p>
+      </header>
+      <figure>
+        <div class="board fig-board short" data-stage="ladder" data-label="Four environments in a row, Dev, QA, Stage and Prod, each with its permission. A sealed bundle waits in Dev for two signatures, then moves to QA unchanged."><span class="ruler">promotion path · v3 picker</span></div>
+        <figcaption>Permissions come from the environment picker: Dev read and write, QA read and exec, Stage and Prod read only. In the design, order-service 2.14.0-rc2 waits in Dev with Maya Chen's approval and Lena Fischer's still pending; the drawing then plays what happens after both sign. Chapter 11 covers the bundle and its gates.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where you see it on screen</h2>
+        <p class="lede">Three boards from the v3 canvas carry the rule: the title bar on every screen, the open picker, and the flow diagram. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Main.webp" data-w="1600" data-h="1000" data-crop="0,0,1600,330" data-title="Home — the title bar and environment strip (v3)">
+          <span class="pin c-exp" data-x="1339" data-y="24">1</span>
+          <span class="pin c-exp" data-x="34" data-y="61">2</span>
+          <span class="pin" data-x="1490" data-y="61">3</span>
+          <span class="pin" data-x="1185" data-y="24">4</span>
+          <span class="ring" data-box="1266,8,146,32"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 04.1 · every screen's title bar</span>
+          <h3>The picker and the strip</h3>
+          <ol class="pins">
+            <li><span><b>The picker.</b> "Dev us-east-1", tinted blue, sits beside the application picker. It is the only environment control in the app.</span></li>
+            <li><span><b>The environment strip.</b> A thin bar under the title bar spells out what Dev resolves to: AWS account, EKS namespace, Jenkins folder, Kafka cluster, flags, secrets and model region.</span></li>
+            <li><span><b>What you may do.</b> "Read &amp; write · promotions go to QA" states your rights in this environment and where releases go next.</span></li>
+            <li><span><b>Application, separately.</b> Commerce Orders scopes by team. Application and environment are the two pickers, and both are global.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/EnvMenu.webp" data-w="720" data-h="690" data-title="Environment picker — open (v3)">
+          <span class="pin c-exp" data-x="333" data-y="114">1</span>
+          <span class="pin" data-x="512" data-y="173">2</span>
+          <span class="pin" data-x="512" data-y="353">3</span>
+          <span class="pin" data-x="333" data-y="432">4</span>
+          <span class="pin" data-x="360" data-y="595">5</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 04.2 · the picker, open</span>
+          <h3>The only list of environments</h3>
+          <ol class="pins">
+            <li><span><b>Scope of the choice.</b> "Applies to every screen, terminal, agent and @B run."</span></li>
+            <li><span><b>Rights per environment.</b> Dev is read and write, QA is read and exec. Each row names its AWS account and cluster.</span></li>
+            <li><span><b>Prod spans two regions</b> (<code>nsx-prod-use1</code>, <code>euw1</code>) and is read only.</span></li>
+            <li><span><b>The promise.</b> "No screen ever shows two environments at once. This menu is the only place they're listed."</span></li>
+            <li><span><b>Strip previews.</b> The strip under the title bar follows the selection, including where promotions go next.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/EnvFlow.webp" data-w="1600" data-h="1072" data-title="Environment flow — how Dev scopes everything (v3)">
+          <span class="pin c-exp" data-x="200" data-y="256">1</span>
+          <span class="pin" data-x="936" data-y="560">2</span>
+          <span class="pin c-ctl" data-x="936" data-y="480">3</span>
+          <span class="pin c-ctl" data-x="376" data-y="480">4</span>
+          <span class="pin" data-x="600" data-y="928">5</span>
+          <span class="pin" data-x="1360" data-y="230">6</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 04.3 · the flow board</span>
+          <h3>Four rows and seven rules</h3>
+          <ol class="pins">
+            <li><span><b>Picker → EnvContext → screens.</b> One per window, kept in the URL.</span></li>
+            <li><span><b>The header</b> <code>X-Vector-Env: dev</code> on every request.</span></li>
+            <li><span><b>API gateway and Sentinel</b> check your role in Dev and reject resource IDs from other environments.</span></li>
+            <li><span><b>The env registry</b>, the one place Dev is defined.</span></li>
+            <li><span><b>What Dev resolves to</b> for each plane, with every record tagged <code>env=dev</code>.</span></li>
+            <li><span><b>The seven rules</b>, plus the lists of scoped and shared screens shown above.</span></li>
+          </ol>
+        </div>
+      </div>
+      <ol class="rules">
+        <li><b>One picker</b><span>Chosen only in the title bar. No screen has its own environment tab, slider, list or badge.</span></li>
+        <li><b>It lives in the URL</b><span>Refreshes and shared links stay in Dev.</span></li>
+        <li><b>Every call carries it</b><span>The app sends <code>X-Vector-Env</code>; the gateway rejects resources from another environment.</span></li>
+        <li><b>One registry defines it</b><span>Screens never hard-code accounts, clusters, folders or topics.</span></li>
+        <li><b>Switching resets</b><span>Every screen's state and caches clear, then reload.</span></li>
+        <li><b>Promotion is an action</b><span>GroundBridge requests Dev → QA. That run appears when you switch to QA.</span></li>
+        <li><b>Shared tools still show</b><span>Jira, Bitbucket, Confluence and Teams appear everywhere, with Dev's runtime facts.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Send a request from one window</h2>
+        <p class="lede">Pick the window's environment and a request. Watch where the request goes, which check stops it, and what the registry resolves it to.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="env-ctl">
+          <div class="ctl"><span class="lbl">This window's environment</span>
+            <div class="seg" id="env" role="group" aria-label="Environment">
+              <button type="button" value="dev" aria-pressed="true">Dev</button><button type="button" value="qa" aria-pressed="false">QA</button><button type="button" value="stage" aria-pressed="false">Stage</button><button type="button" value="prod" aria-pressed="false">Prod</button>
+            </div>
+          </div>
+          <div class="ctl"><label for="req">Request</label>
+            <select class="sel" id="req">
+              <option value="read">List pods for order-service</option>
+              <option value="exec">Open a kubectl terminal in the namespace</option>
+              <option value="redeploy">Redeploy loyalty-consumer 1.9.0 (R-2207)</option>
+              <option value="promote">Promote order-service 2.14.0-rc2</option>
+              <option value="foreign">Open a pod by ID from nsx-prod-use1</option>
+            </select>
+          </div>
+          <div class="readout">
+            <div><b id="o-perm" style="font-size:1.25rem">–</b><span>rights here</span></div>
+            <div><b id="o-next" style="font-size:1.25rem">–</b><span>promotions go to</span></div>
+          </div>
+          <p class="logline" id="o-why" aria-live="polite"></p>
+          <p class="note">Dev's bindings are the v3 design's. For QA, Stage and Prod the picker lists only the account, cluster and Jenkins folder, so that is all the lab shows. Verdicts follow the picker's rights and the rule that write actions need a person.</p>
+        </div>
+        <div class="board" data-stage="envlab" data-label="A request path: picker, EnvContext, X-Vector-Env header, gateway with Sentinel, env registry, target. Each step lights in turn and the step that stops the request turns red or waits; a registry card shows the selected environment's bindings."><span class="ruler">one request · one window</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>1</b><span>environment picker in the whole app, in the title bar</span></div>
+        <div><b>4</b><span>environments: Dev, QA, Stage, Prod</span></div>
+        <div><b>7</b><span>rules on the environment flow board</span></div>
+        <div><b>17 / 8</b><span>screens scoped to Dev / shared with Dev runtime facts</span></div>
+        <div><b>1</b><span>header on every call: <code>X-Vector-Env</code></span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>The header shows a fixed "Sandbox context" label. The Environments view is repository onboarding: provider, repository, region and compute tier saved as metadata. Nothing is scoped by environment.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>Title-bar picker and environment strip on all 28 screens</li><li>EnvContext, URL, <code>X-Vector-Env</code>, gateway, registry</li><li>17 scoped and 8 shared screens; promotion as a GroundBridge action</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>Attribute-based access that includes environment, checked before retrieval, before content reaches a model, before cached results are served and just before any side effect, with cache keys scoped to identity and permissions (handbook 14.9).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same question, other tools</h2>
+        <p class="lede">Most tools that span environments pick one of two habits: scope the whole view to one, or show several side by side. Vector chose the first, for every screen.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="planes.html"><span>← Chapter 03</span><b>Five planes</b></a>
+    <a class="fwd" href="matrix.html"><span>Chapter 05 →</span><b>Matrix</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, eout, clamp, lerp } = Field;
+
+  const ENVS = {
+    dev:   { key: "DEV",   name: "Dev",   acct: "northstar-dev",   eks: "nsx-dev-use1 / commerce",   jk: "commerce/dev",   perm: "Read & write", next: "QA",    rights: { read: 1, exec: 1, write: 1 } },
+    qa:    { key: "QA",    name: "QA",    acct: "northstar-qa",    eks: "nsx-qa-use1 / commerce",    jk: "commerce/qa",    perm: "Read, exec",   next: "Stage", rights: { read: 1, exec: 1, write: 0 } },
+    stage: { key: "STAGE", name: "Stage", acct: "northstar-stage", eks: "nsx-stage-use1 / commerce", jk: "commerce/stage", perm: "Read only",    next: "Prod",  rights: { read: 1, exec: 0, write: 0 } },
+    prod:  { key: "PROD",  name: "Prod",  acct: "northstar-prod",  eks: "nsx-prod-use1, euw1",       jk: "commerce/prod",  perm: "Read only",    next: "—",     rights: { read: 1, exec: 0, write: 0 } },
+  };
+  const ORDER = ["dev", "qa", "stage", "prod"];
+  const TILES = ["Home", "Threads", "Reviews", "CodeX", "Compute", "Clusters", "Pipelines", "GroundBridge", "Approvals", "Logger", "Traces", "Cost", "Sentinel", "Matrix", "Repos", "Knowledge", "Retrieval", "AllSpark", "Agents", "Prompts", "Models", "Tools", "Evals", "Datasets", "Vault", "Bridge", "Architecture", "@B"];
+
+  // the title-bar picker pill used across scenes
+  function picker(g, x, y, label, o = {}) {
+    const w = g.tw(label, o.size || 13, "ui", 600) + 38, h = o.h || 26, a = o.a === undefined ? 1 : o.a;
+    const x0 = x - w;
+    g.rect(x0, y - h / 2, w, h, { fill: "#F4F8FE", stroke: "#B9D3F5", lw: 1.2, r: h / 2, a });
+    g.circle(x0 + 12, y, 3.6, { fill: "exp", a });
+    g.text(label, x0 + 21, y + 4.5, { size: o.size || 13, font: "ui", weight: 600, color: "#0058B0", a });
+    g.text("⌄", x - 10, y + 2, { size: 11, font: "ui", color: "#0058B0", align: "center", a });
+    return x0;
+  }
+
+  /* ---------------- hero: one picker, 28 screens ---------------- */
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g;
+    const per = 3.6, cyc = s.t / per, k = Math.floor(cyc) % 4, ph = cyc - Math.floor(cyc);
+    const env = ENVS[ORDER[k]], prev = ENVS[ORDER[(k + 3) % 4]];
+    const wx = 22, wy = Math.max(34, g.safeTop + 4), ww = W - 44, wh = H - wy - 58;
+    const c = g.win(wx, wy, ww, wh, { title: "Vector", bar: 34, tsize: 14 });
+    // picker in the title bar, with a short-lived open menu just before the switch
+    const px = wx + ww - 60;
+    picker(g, px, wy + 17, env.name + " us-east-1", { size: 12.5, h: 24 });
+    const menuA = ph > 0.8 ? ramp(ph, 0.8, 0.08) : 0;
+    if (menuA > 0.01) {
+      const mx = px - 170, my = wy + 34;
+      g.rect(mx, my, 170, 4 * 26 + 10, { fill: "card", stroke: "hair", lw: 1.2, r: 8, a: menuA });
+      ORDER.forEach((e, i) => {
+        const nextK = (k + 1) % 4, on = i === nextK;
+        if (on) g.rect(mx + 4, my + 5 + i * 26, 162, 24, { fill: "rgba(0,113,227,0.10)", r: 6, a: menuA });
+        g.text(ENVS[e].name, mx + 14, my + 22 + i * 26, { size: 12, font: "ui", weight: on ? 600 : 500, color: on ? "#0058B0" : "ink", a: menuA });
+        g.text(ENVS[e].perm, mx + 160, my + 22 + i * 26, { size: 10.5, font: "ui", color: "ink-3", align: "right", a: menuA });
+      });
+    }
+    // environment strip
+    const sy = c.y, sh = 24;
+    g.rect(c.x, sy, c.w, sh, { fill: "#F4F8FE" });
+    g.line(c.x, sy + sh, c.x + c.w, sy + sh, { color: "#DCE7F7", lw: 1 });
+    g.text(env.key, c.x + 12, sy + 16, { size: 11, font: "ui", weight: 700, color: "#0058B0", ls: 0.8 });
+    g.text(`${env.acct} · ${env.eks} · ${env.jk}`, c.x + 22 + g.tw(env.key, 11, "ui", 700) + 6, sy + 16, { size: 11, font: "mono", color: "#0058B0" });
+    // tiles: 7 x 4; they blank out and reload in a sweep right after each switch
+    const cols = 7, rows = 4, gap = 8, gx = c.x + 12, gy = sy + sh + 12, gw = c.w - 24, gh = c.y + c.h - gy - 12;
+    const tw = (gw - gap * (cols - 1)) / cols, th = (gh - gap * (rows - 1)) / rows;
+    TILES.forEach((name, i) => {
+      const r = Math.floor(i / cols), q = i % cols, x = gx + q * (tw + gap), y = gy + r * (th + gap);
+      const sweep = clamp((ph * 3.2 - (q + r) * 0.06));
+      const showing = ph < 0.08 ? 0 : 1, a = ph < 0.3 ? ease(sweep * 2 - 0.4) : 1;
+      g.rect(x, y, tw, th, { fill: "card", stroke: "hair", lw: 1, r: 6 });
+      const isBee = name === "@B";
+      if (a > 0.02) {
+        if (isBee) g.bee(x + 15, y + 15, 16, { a });
+        g.text(name, x + (isBee ? 28 : 9), y + 19, { size: 11.5, font: "ui", weight: 600, color: "ink", a, maxW: tw - (isBee ? 34 : 14) });
+        for (let l = 0; l < 2; l++) g.rect(x + 9, y + 29 + l * 8, (tw - 18) * (0.85 - l * 0.3), 3.5, { fill: "grid", r: 2, a });
+        g.chip(x + tw - 7, y + th - 12, env.key, "exp", { size: 9, align: "right", a });
+      } else {
+        g.hatch(x + 3, y + 3, tw - 6, th - 6, { color: "ink-3", a: 0.35, r: 4 });
+      }
+      void showing;
+    });
+    // annotation under the window
+    const ay = wy + wh + 30;
+    g.dim(wx + 4, wx + ww - 4, ay - 8, "", { color: "ink-3" });
+    g.text(`${env.perm} · promotions go to ${env.next === "—" ? "nobody: changes through approvals" : env.next}`, W / 2, ay + 18, { size: 13, color: "ink-2", align: "center" });
+    if (ph < 0.3) g.text(`switched from ${prev.name}: state and caches cleared`, wx + 8, wy - 12, { size: 12, color: "bad", a: 1 - ramp(ph, 0.2, 0.1) });
+  }, { anim: true, restT: 2.2, zoom: 1.25, minW: 600, maxW: 900 });
+
+  /* ---------------- why: four screens, four answers ---------------- */
+  function miniContent(g, c, seed, a) {
+    for (let l = 0; l < 4; l++) g.rect(c.x + 12, c.y + 40 + l * 16, (c.w - 24) * (0.9 - ((seed * 7 + l * 3) % 5) * 0.11), 6, { fill: "grid", r: 3, a });
+  }
+  Field.scene("before", (g, s) => {
+    const { W, H, narrow } = g;
+    const b = s.b;
+    const ctlA = 1 - s.at(1);           // per-screen controls fade out at beat 1
+    const oneA = s.at(1);               // the single picker appears
+    const urlA = s.at(2);
+    const reset = s.at(3);              // switch to QA
+    const envName = reset > 0.5 ? "QA" : "Dev";
+    // outer frame with its own title bar (beat 1+)
+    const fx = 18, fy = Math.max(40, g.safeTop + 6), fw = W - 36, fh = H - fy - 18 - 92;
+    g.rect(fx, fy, fw, fh, { stroke: "ink-3", lw: 1.2, r: 12, dash: [5, 5], a: oneA });
+    if (oneA > 0.02) {
+      g.text("one Vector window", fx + 14, fy + 24, { size: 13, color: "ink-3", a: oneA });
+      picker(g, fx + fw - 14, fy + 20, envName + " us-east-1", { a: oneA });
+    }
+    const names = ["Clusters", "Pipelines", "Optimus Logger", "CodeX"];
+    const own = [["All", "Dev", "QA", "Stage", "Prod"], ["DEV", "STAGE", "PROD"], ["Prod · us-east-1"], ["dev", "qa", "stage", "prod"]];
+    const picked = [0, -1, 0, 0];
+    const top = fy + 46, gap = 16, cw = (fw - 28 - gap) / 2, ch = (fh - 60 - gap) / 2;
+    names.forEach((n, i) => {
+      const x = fx + 14 + (i % 2) * (cw + gap), y = top + Math.floor(i / 2) * (ch + gap);
+      const envLbl = oneA > 0.5 ? envName : null;
+      const c = g.win(x, y, cw, ch, { title: n, env: envLbl ? envLbl : undefined, caption: !narrow, a: 1 });
+      // reset sweep at beat 3
+      const blank = reset > 0.02 && reset < 0.98;
+      if (blank) g.hatch(c.x + 4, c.y + 4, c.w - 8, c.h - 8, { color: "ink-3", a: Math.sin(Math.PI * reset) * 0.8, r: 6 });
+      miniContent(g, c, i, 1 - (blank ? Math.sin(Math.PI * reset) : 0));
+      // own environment controls (beat 0)
+      if (ctlA > 0.02) {
+        if (i === 0 || i === 3) {
+          let tx = c.x + 10;
+          own[i].forEach((e, j) => {
+            const on = j === picked[i], w = g.tw(e, 10.5, "mono", 600) + 14;
+            g.rect(tx, c.y + 8, w, 20, { fill: on ? "ink" : "card", stroke: "hair", lw: 1, r: 5, a: ctlA });
+            g.text(e, tx + w / 2, c.y + 22, { size: 10.5, weight: 600, color: on ? "#FFFFFF" : "ink-2", align: "center", a: ctlA });
+            tx += w + 4;
+          });
+        } else if (i === 1) {
+          const sx0 = c.x + 14, sx1 = c.x + c.w - 14, sy = c.y + 18;
+          g.line(sx0, sy, sx1, sy, { color: "hair", lw: 3, a: ctlA });
+          own[1].forEach((e, j) => { const x2 = lerp(sx0, sx1, j / 2); g.circle(x2, sy, 5, { fill: "ink", a: ctlA }); g.text("deploy " + e.toLowerCase(), x2, sy + 18, { size: 9.5, color: "ink-2", align: j === 0 ? "left" : j === 2 ? "right" : "center", a: ctlA }); });
+        } else {
+          const lw2 = g.tw(own[2][0], 10.5, "mono", 600) + 16;
+          g.rect(c.x + 10, c.y + 8, lw2, 20, { fill: "card", stroke: "hair", lw: 1, r: 5, a: ctlA });
+          g.text(own[2][0], c.x + 18, c.y + 22, { size: 10.5, weight: 600, color: "ink", a: ctlA });
+        }
+        const showing = ["all five clusters", "Dev → Stage → Prod", "Prod", "four terminals"][i];
+        g.chip(c.x + c.w - 8, c.y + c.h - 14, "showing " + showing, "bad", { size: 10, align: "right", a: ctlA });
+      } else if (oneA > 0.5) {
+        g.chip(c.x + c.w - 8, c.y + c.h - 14, "showing " + envName, "exp", { size: 10, align: "right", a: oneA });
+      }
+      // links from the single picker to each window (beat 1)
+      if (oneA > 0.02 && urlA < 0.5) g.line(fx + fw - 60, fy + 34, x + cw - 40, y + 8, { color: "exp", lw: 1, dash: [3, 4], a: oneA * 0.6 * (1 - urlA * 2) });
+    });
+    if (ctlA > 0.02) g.text("which environment am I in?", W / 2, H - 70, { size: 16, color: "bad", align: "center", weight: 600, a: ctlA });
+    // URL bar (beat 2+)
+    if (urlA > 0.02) {
+      const uy = H - 78, ux = 18, uw = W - 36;
+      g.rect(ux, uy, uw, 34, { fill: "card", stroke: "hair", lw: 1.2, r: 17, a: urlA });
+      const pre = "vector://northstar", seg = `/env/${envName.toLowerCase()}/`, post = "pipelines/order-service/418";
+      const fs = narrow ? 12 : 13.5;
+      let x = ux + 18;
+      g.text(pre, x, uy + 22, { size: fs, color: "ink-3", a: urlA }); x += g.tw(pre, fs);
+      const sw = g.tw(seg, fs, "mono", 600);
+      g.rect(x - 2, uy + 7, sw + 4, 20, { fill: "rgba(0,113,227,0.12)", r: 4, a: urlA });
+      g.text(seg, x, uy + 22, { size: fs, weight: 600, color: "exp", a: urlA }); x += sw;
+      g.text(post, x, uy + 22, { size: fs, color: "ink-2", a: urlA });
+      g.text(reset > 0.5 ? "switched: QA reloads, Dev state is gone" : "refresh or share: still Dev", ux + uw - 14, uy + 54, { size: 12.5, color: reset > 0.5 ? "bad" : "exp", align: "right", a: urlA });
+    }
+    if (reset > 0.02) g.chip(fx + 14, fy + fh + 18, "state and caches cleared", "bad", { size: 11, a: Math.min(1, reset * 2) * (urlA > 0 ? 0 : 1) });
+  }, { anim: false, restT: 1, zoom: 1.3, minW: 620, maxW: 980 });
+
+  /* ---------------- flow: picker → EnvContext → header → gateway → registry → targets ---------------- */
+  Field.scene("flow", (g, s) => {
+    const { W, H, narrow } = g;
+    const b = s.b, t = s.t;
+    const pad = 22, top0 = Math.max(58, g.safeTop + 26), rowH = Math.min(84, (H - top0 - 60) / 4.6), rg = (H - top0 - pad - rowH * 4) / 3;
+    const ry = (i) => top0 + i * (rowH + rg);
+    const lab = (i, txt) => g.text(txt, pad, ry(i) - 8, { size: 11, color: "ink-3", ls: 1 });
+    const fs = narrow ? 13 : 14.5;
+    // row 1 · app
+    const r1 = ry(0), bw3 = (W - pad * 2 - 2 * 40) / 3;
+    const P = { x: pad, y: r1, w: bw3, h: rowH }, E = { x: pad + bw3 + 40, y: r1, w: bw3, h: rowH }, S = { x: pad + 2 * (bw3 + 40), y: r1, w: bw3, h: rowH };
+    lab(0, "1 · VECTOR APP");
+    const a0 = 1;
+    g.box(P.x, P.y, P.w, P.h, { color: "exp", wash: 0.08, a: a0 });
+    g.text("Environment picker", P.x + 12, P.y + 24, { size: fs, weight: 600, font: "ui", a: a0 });
+    picker(g, P.x + P.w - 12, P.y + P.h - 22, "Dev us-east-1", { size: 12, h: 22, a: a0 });
+    g.box(E.x, E.y, E.w, E.h, { color: "ink-3", wash: 0.03, a: a0 });
+    g.text("EnvContext", E.x + 12, E.y + 24, { size: fs, weight: 600, font: "ui", a: a0 });
+    g.text('env = "dev"', E.x + 12, E.y + 46, { size: 12.5, color: "exp", weight: 600, a: ramp(b, -0.2, 0.4) });
+    g.text("/env/dev/…", E.x + 12, E.y + 64, { size: 12, color: "ink-2", a: ramp(b, -0.2, 0.4) });
+    g.box(S.x, S.y, S.w, S.h, { color: "ink-3", wash: 0.03, a: a0 });
+    g.text("27 screens and @B", S.x + 12, S.y + 24, { size: fs, weight: 600, font: "ui", a: a0 });
+    g.text("all read EnvContext", S.x + 12, S.y + 46, { size: 12, color: "ink-2", a: a0 });
+    g.bee(S.x + S.w - 20, S.y + 20, 18, { a: a0 });
+    g.arrow(P.x + P.w + 4, P.y + P.h / 2, E.x - 4, E.y + E.h / 2, { color: "exp", lw: 1.6, head: 8 });
+    g.arrow(E.x + E.w + 4, E.y + E.h / 2, S.x - 4, S.y + S.h / 2, { color: "ink-3", lw: 1.4, head: 8 });
+    // row 2 · control
+    const r2 = ry(1), ca = Math.max(0.25, s.at(1));
+    lab(1, "2 · CONTROL PLANE");
+    const R = { x: pad, y: r2, w: (W - pad * 2) * 0.56, h: rowH }, Gw = { x: pad + (W - pad * 2) * 0.56 + 40, y: r2, w: (W - pad * 2) * 0.44 - 40, h: rowH };
+    g.box(Gw.x, Gw.y, Gw.w, Gw.h, { color: "ctl", wash: 0.08, a: ca });
+    g.text("API gateway + Sentinel", Gw.x + 12, Gw.y + 24, { size: fs, weight: 600, font: "ui", a: ca });
+    const chk = s.at(2);
+    g.text("✓ your role in Dev", Gw.x + 12, Gw.y + 46, { size: 12, color: "ok", weight: 600, a: chk });
+    g.text("✕ IDs from other environments", Gw.x + 12, Gw.y + 64, { size: 12, color: "bad", weight: 600, a: chk });
+    const ra = Math.max(0.25, s.at(3));
+    g.box(R.x, R.y, R.w, R.h, { color: "ctl", wash: 0.05, a: ra });
+    g.text("Env registry", R.x + 12, R.y + 22, { size: fs, weight: 600, font: "ui", a: ra });
+    g.text("the one place Dev is defined", R.x + 12 + g.tw("Env registry", fs, "ui", 600) + 10, R.y + 22, { size: 11.5, color: "ink-3", a: ra });
+    const binds = ["aws northstar-dev", "eks nsx-dev-use1/commerce", "jenkins commerce/dev", "kafka msk-dev-use1", "flags launchdarkly:dev", "vault secret/dev/commerce", "models bedrock us-east-1"];
+    const cols = narrow ? 2 : 3, bcw = (R.w - 24) / cols;
+    binds.forEach((bd, i) => { const q = i % cols, r = Math.floor(i / cols); if (r > 2) return; g.text(bd, R.x + 12 + q * bcw, R.y + 42 + r * 15, { size: 10.5, color: "ctl", a: s.at(3) * ramp(b, 2.4 + i * 0.07, 0.3), maxW: bcw - 8 }); });
+    // header packet from screens down to gateway (beat 1+)
+    const hp = s.at(1);
+    if (hp > 0.02) {
+      const x0 = S.x + S.w * 0.5, y0 = S.y + S.h, y1 = Gw.y;
+      g.arrow(x0, y0 + 2, x0, y1 - 2, { color: "exp", lw: 1.6, head: 8, a: hp });
+      for (let k = 0; k < 3; k++) { const u = (t * 0.5 + k / 3) % 1; g.circle(x0, lerp(y0, y1, u), 4, { fill: "exp", a: hp * Math.sin(Math.PI * u) }); }
+      g.pill(x0 + 10, (y0 + y1) / 2, "X-Vector-Env: dev", { size: 11.5, color: "exp", stroke: "exp", lw: 1.2, fill: "card", a: hp });
+    }
+    // rejected foreign ID (beat 2)
+    const rj = s.between(2, 3);
+    if (rj > 0.02) {
+      const u = (t * 0.45) % 1, bx = Gw.x + Gw.w + 2, by = Gw.y + Gw.h / 2;
+      const px = narrow ? W - 14 : W - 10, x = lerp(px, bx + 8, Math.min(1, u * 2)) + (u > 0.5 ? (u - 0.5) * 60 : 0);
+      g.text("pod from nsx-prod-use1", Gw.x + Gw.w - 4, Gw.y - 8, { size: 11.5, color: "bad", align: "right", weight: 600, a: rj });
+      g.circle(Math.min(x, W - 8), by, 5, { fill: "bad", a: rj });
+      if (u > 0.5) g.text("✕", bx - 2, by - 12, { size: 16, color: "bad", weight: 700, a: rj });
+    }
+    // gateway → registry (beat 3)
+    const la = s.at(3);
+    if (la > 0.02) { g.arrow(Gw.x - 4, Gw.y + Gw.h / 2, R.x + R.w + 4, R.y + R.h / 2, { color: "ctl", lw: 1.6, head: 8, a: la }); }
+    // rows 3–4 (beat 4)
+    const pa = Math.max(0.18, s.at(4));
+    lab(2, "3 · PLANE SERVICES"); lab(3, "4 · WHAT DEV RESOLVES TO");
+    const planes = [["Experience", "exp", "Home, Threads, CodeX, @B", "Jira · Bitbucket · Teams"], ["Execution", "exe", "Compute, pipelines, GroundBridge", "Jenkins · Amazon EKS"], ["Knowledge", "kno", "Matrix, Knowledge, Vault", "Kafka · CMDB · Git"], ["Telemetry and cost", "tel", "Logger, Traces, Evals, Cost", "Logs · traces · AWS bill"]];
+    const pw = (W - pad * 2 - 3 * 14) / 4, r3 = ry(2), r4 = ry(3);
+    planes.forEach(([n, c, sub, tgt], i) => {
+      const x = pad + i * (pw + 14);
+      g.box(x, r3, pw, rowH, { color: c, wash: 0.08, a: pa });
+      g.text(n, x + 10, r3 + 22, { size: narrow ? 12 : 13.5, weight: 600, font: "ui", a: pa, maxW: pw - 16 });
+      g.wrap(sub, x + 10, r3 + 42, pw - 18, { size: 10.5, color: "ink-2", lh: 14, a: pa, maxLines: 2 });
+      g.rect(x, r4, pw, rowH, { fill: "card", stroke: "hair", lw: 1.2, r: 10, a: pa });
+      g.wrap(tgt, x + 10, r4 + 22, pw - 18, { size: narrow ? 11.5 : 12.5, weight: 600, font: "ui", lh: 16, a: pa, maxLines: 2 });
+      g.text("env=dev", x + 10, r4 + rowH - 12, { size: 11, color: c, weight: 600, a: s.at(4) });
+      g.arrow(x + pw / 2, r3 + rowH + 3, x + pw / 2, r4 - 3, { color: "ink-3", lw: 1.3, head: 7, a: pa });
+      if (s.at(4) > 0.02) for (let k = 0; k < 2; k++) { const u = (t * 0.6 + k / 2 + i * 0.13) % 1; g.circle(x + pw / 2, lerp(r3 + rowH, r4, u), 3.2, { fill: c, a: s.at(4) * Math.sin(Math.PI * u) }); }
+    });
+    planes.forEach((p_, i) => { const x = pad + i * (pw + 14) + pw / 2; g.curve([Gw.x + Gw.w / 2, Gw.y + Gw.h + 3], [x, Gw.y + Gw.h + rg * 0.55], [x, r3 - 4], { color: "ctl", lw: 1.2, head: 7, a: pa * 0.8 }); });
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 640, maxW: 1000 });
+
+  /* ---------------- promotion ladder ---------------- */
+  Field.scene("ladder", (g, s) => {
+    const { W, H } = g;
+    const tall = H > W * 0.95;
+    const pad = 26, gap = tall ? 40 : 70, top = Math.max(56, g.safeTop + 22);
+    const cyc = (s.t % 10) / 10;
+    const lenaSigned = cyc > 0.36, moving = clamp((cyc - 0.46) / 0.2), inQA = cyc > 0.66;
+    const boxes = ORDER.map((e, i) => {
+      if (!tall) { const w = (W - pad * 2 - gap * 3) / 4; return { x: pad + i * (w + gap), y: top, w, h: H - top - 30 }; }
+      const h = (H - top - 34 - gap * 3) / 4; return { x: pad, y: top + i * (h + gap), w: W - pad * 2, h };
+    });
+    const NEXT = { dev: "promotions go to QA", qa: "promotions go to Stage", stage: "promotions go to Prod", prod: "changes through approvals" };
+    ORDER.forEach((e, i) => {
+      const B = boxes[i], E = ENVS[e], here = (i === 0 && !inQA) || (i === 1 && inQA);
+      g.rect(B.x, B.y, B.w, B.h, { fill: "card", stroke: here ? "exp" : "hair", lw: here ? 2 : 1.4, r: 12 });
+      g.text(E.name, B.x + 16, B.y + 36, { size: 30, font: "display", weight: 800 });
+      const chipC = E.rights.write ? "exe" : E.rights.exec ? "exp" : "ink-3";
+      if (tall) g.chip(B.x + B.w - 16, B.y + 26, E.perm, chipC, { size: 11.5, align: "right" });
+      else g.chip(B.x + 16, B.y + 62, E.perm, chipC, { size: 11.5 });
+      const ly = tall ? B.y + 58 : B.y + 96;
+      [["account", E.acct], ["cluster", E.eks], ["jenkins", E.jk]].forEach(([k, v], j) => {
+        if (tall && j > 1) return;
+        g.text(k, B.x + 16, ly + j * 20, { size: 11, color: "ink-3" });
+        g.text(v, B.x + 80, ly + j * 20, { size: 11.5, color: "ink-2", maxW: B.w - 96 });
+      });
+      if (!tall) g.text(NEXT[e], B.x + 16, ly + 66, { size: 11.5, color: e === "prod" ? "ink-3" : "ctl", weight: 600, maxW: B.w - 28 });
+      if (i < 3) {
+        const N = boxes[i + 1];
+        const [x1, y1, x2, y2] = tall ? [B.x + 60, B.y + B.h + 4, N.x + 60, N.y - 4] : [B.x + B.w + 6, B.y + 30, N.x - 6, N.y + 30];
+        g.arrow(x1, y1, x2, y2, { color: i === 0 ? "ctl" : "ink-3", lw: i === 0 ? 2.2 : 1.3, head: 9, dash: i === 0 ? null : [4, 5], a: i === 0 ? 1 : 0.6 });
+        const lab = i === 0 ? (tall ? ["gated request"] : ["gated", "request"]) : ["request"];
+        lab.forEach((t_, k) => g.text(t_, tall ? x1 + 16 : (x1 + x2) / 2, tall ? (y1 + y2) / 2 + 4 + k * 14 : y1 + 22 + k * 14, { size: 11, color: i === 0 ? "ctl" : "ink-3", align: tall ? "left" : "center", weight: i === 0 ? 600 : 500 }));
+      }
+    });
+    // signatures on the Dev → QA gate
+    const D = boxes[0], Q = boxes[1];
+    const sx = tall ? D.x + D.w * 0.45 : D.x + 16, sy = tall ? D.y + 60 : D.y + D.h - 62;
+    [["MC", "Maya Chen · owner", true], ["LF", "Lena Fischer · AppSec", lenaSigned]].forEach(([ini, who, ok], j) => {
+      const y = sy + j * 28;
+      g.circle(sx + 11, y, 11, { fill: ok ? "ok" : "card", stroke: ok ? "ok" : "ink-3", lw: 1.4, dash: ok ? null : [3, 3] });
+      g.text(ini, sx + 11, y + 4, { size: 9.5, weight: 700, color: ok ? "#FFFFFF" : "ink-3", align: "center" });
+      g.text(ok ? who + " ✓" : who + " · pending", sx + 28, y + 4, { size: 11, color: ok ? "ok" : "ink-3", weight: ok ? 600 : 500, maxW: (tall ? D.w * 0.5 : D.w) - 50 });
+    });
+    // the bundle token travels Dev → QA, unchanged
+    const tok = "2.14.0-rc2 · 7f3a…c91e";
+    const p0 = tall ? [D.x + 16, D.y + D.h - 22] : [D.x + 16, D.y + D.h * 0.56];
+    const p1 = tall ? [Q.x + 16, Q.y + Q.h - 22] : [Q.x + 16, Q.y + Q.h * 0.56];
+    const u = ease(moving), bx = lerp(p0[0], p1[0], u), by = lerp(p0[1], p1[1], u) - Math.sin(Math.PI * u) * 40;
+    g.pill(bx, by, tok, { size: 11.5, stroke: "exe", color: "exe", lw: 1.6, r: 6 });
+    if (moving > 0 && moving < 1) g.text("same bundle · nothing rebuilt", bx, by - 22, { size: 11, color: "exe" });
+    if (inQA) g.wrap("the run appears here when you switch to QA", Q.x + 16, tall ? Q.y + 58 : Q.y + Q.h * 0.56 + 36, Q.w - 32, { size: 11.5, color: "ink-2", lh: 16, maxLines: 2 });
+    g.text(lenaSigned ? (inQA ? "after both sign: handed to QA" : "both signed") : "in the design: waiting for Lena Fischer", W - pad, tall ? H - 4 : 34, { size: 12.5, color: lenaSigned ? "ok" : "ink-2", align: "right", weight: 600 });
+  }, { anim: true, restT: 2, zoom: 1.15, minW: 620, maxW: 1200 });
+
+  /* ---------------- lab ---------------- */
+  const REQ = {
+    read: { text: "List pods for order-service", need: "read" },
+    exec: { text: "kubectl exec into the namespace", need: "exec" },
+    redeploy: { text: "Redeploy loyalty-consumer 1.9.0", need: "write" },
+    promote: { text: "Promote order-service 2.14.0-rc2", need: "promote" },
+    foreign: { text: "Open pod by ID (nsx-prod-use1)", need: "foreign" },
+  };
+  // stop: index of the step that ends the request (6 = reaches the target); kind: ok | wait | bad
+  function decide(req, env) {
+    const E = ENVS[env];
+    if (req === "read") return { stop: 6, kind: "ok", title: "Allowed · read", why: `Pods come back from ${E.eks}.` };
+    if (req === "exec") return E.rights.exec ? { stop: 6, kind: "ok", title: "Allowed · exec", why: `The terminal opens in ${E.eks} and carries ${E.name} with it.` } : { stop: 3, kind: "bad", title: `Refused · ${E.name} is read only`, why: `Sentinel allows reading in ${E.name}, not exec.` };
+    if (req === "redeploy") {
+      if (env === "dev") return { stop: 3, kind: "wait", title: "Waits for a person · R-2207", why: "Write actions need a person. Sam Patel, the Customer Platform owner, approves; then it rolls out on nsx-dev-use1." };
+      return { stop: 3, kind: "bad", title: `Refused · no direct writes in ${E.name}`, why: env === "prod" ? "Prod is read only. Changes reach it through approvals." : `Changes reach ${E.name} only as a promoted bundle.` };
+    }
+    if (req === "promote") {
+      if (env === "prod") return { stop: 3, kind: "bad", title: "Nothing to promote to", why: "Prod is the last environment." };
+      return { stop: 3, kind: "wait", title: `Creates a request · ${E.name} → ${E.next}`, why: env === "dev" ? "Bound to bundle sha256:7f3a…c91e. The application owner and Application Security must both sign." : "GroundBridge files a gated request. The same bundle moves; nothing is rebuilt." };
+    }
+    if (req === "foreign") return env === "prod" ? { stop: 6, kind: "ok", title: "Allowed · read", why: "The pod belongs to Prod, and so does this window." } : { stop: 3, kind: "bad", title: "Rejected by the gateway", why: `The ID belongs to nsx-prod-use1, but this window sends X-Vector-Env: ${env}.` };
+  }
+  Field.scene("envlab", (g, s) => {
+    const st = s.state; if (!st.env) return;
+    const { W, H, narrow } = g;
+    const E = ENVS[st.env], d = decide(st.req, st.env), R = REQ[st.req];
+    const el = (performance.now() - (st._since || 0)) / 1000;
+    const steps = [
+      ["Picker", `${E.name} us-east-1`, "exp"],
+      ["EnvContext", `env = "${st.env}"`, "exp"],
+      ["Request", `X-Vector-Env: ${st.env}`, "exp"],
+      ["Gateway + Sentinel", "role and resource check", "ctl"],
+      ["Env registry", "resolves the target", "ctl"],
+      ["Target", E.eks, "exe"],
+    ];
+    const pad = 24, colW = narrow ? W - pad * 2 : W * 0.5;
+    const top = Math.max(66, g.safeTop + 34), sh = narrow ? 44 : Math.min(52, (H - 250) / 6), gap = narrow ? 10 : Math.min(16, (H - 250 - sh * 6) / 5 + 4);
+    g.text(`Request: ${R.text}`, pad, 50, { size: 14, weight: 600, color: "ink", maxW: W - pad * 2 });
+    steps.forEach(([n, sub, c], i) => {
+      const y = top + i * (sh + gap);
+      const reached = i <= d.stop - (d.stop === 6 ? 1 : 0);
+      const lit = ramp(el, i * 0.28, 0.2);
+      const isStop = i === d.stop;
+      const col = isStop ? (d.kind === "bad" ? "bad" : d.kind === "wait" ? "ctl" : c) : reached ? c : "ink-3";
+      const a = reached || isStop ? 0.35 + 0.65 * lit : 0.3;
+      g.rect(pad, y, colW, sh, { fill: "card", stroke: col, lw: isStop ? 2 : 1.3, r: 9, dash: isStop && d.kind === "wait" ? [5, 4] : null, a });
+      if (reached && lit > 0.5 && !isStop) g.rect(pad, y, colW, sh, { fill: g.rgba(c, 0.07), r: 9 });
+      g.text(n, pad + 14, y + sh / 2 + 5, { size: 13.5, weight: 600, font: "ui", a });
+      g.text(sub, pad + colW - 14, y + sh / 2 + 5, { size: 11.5, color: isStop ? col : "ink-2", align: "right", a, maxW: colW * 0.55 });
+      if (i < steps.length - 1) {
+        const go = i < d.stop;
+        g.arrow(pad + 30, y + sh + 1, pad + 30, y + sh + gap - 1, { color: go ? "ink-3" : "hair", lw: 1.3, head: 6, a: go ? lit : 0.5 });
+      }
+      if (isStop && lit > 0.6) g.text(d.kind === "bad" ? "✕" : d.kind === "wait" ? "⏸" : "✓", pad + colW + 12, y + sh / 2 + 7, { size: 18, color: col, weight: 700 });
+    });
+    if (d.stop === 6 && ramp(el, 6 * 0.28, 0.2) > 0.5) g.text("✓", pad + colW + 12, top + 5 * (sh + gap) + sh / 2 + 7, { size: 18, color: "ok", weight: 700 });
+    // the packet travelling down the path
+    const pu = clamp(el / (Math.min(d.stop, 5) * 0.28 + 0.2));
+    const py = top + sh / 2 + pu * Math.min(d.stop, 5) * (sh + gap);
+    if (el < 3) g.circle(pad + colW - 6, py, 5, { fill: d.kind === "bad" && pu > 0.95 ? "bad" : "exp" });
+    // registry card (right) or below on narrow
+    const rx = narrow ? pad : pad + colW + 44, ry = narrow ? top + 6 * (sh + gap) + 6 : top - 30, rw = narrow ? W - pad * 2 : W - rx - pad;
+    const rows = st.env === "dev"
+      ? [["aws", E.acct], ["eks", E.eks], ["jenkins", E.jk], ["kafka", "msk-dev-use1"], ["flags", "launchdarkly:dev"], ["secrets", "secret/dev/commerce"], ["models", "bedrock us-east-1"]]
+      : [["aws", E.acct], ["eks", E.eks], ["jenkins", E.jk], ["kafka · flags · secrets · models", `from the ${E.name} entry`]];
+    const rh = narrow ? 18 : 22, cardH = 42 + rows.length * rh;
+    if (!narrow || H - ry > cardH + 110) {
+      g.rect(rx, ry, rw, cardH, { fill: "card", stroke: "ctl", lw: 1.3, r: 10 });
+      g.text(`Env registry · ${E.name}`, rx + 14, ry + 24, { size: 13.5, weight: 600, font: "ui" });
+      rows.forEach(([k, v], i) => { g.text(k, rx + 14, ry + 46 + i * rh, { size: 11.5, color: "ink-3" }); g.text(v, rx + rw - 14, ry + 46 + i * rh, { size: 11.5, color: "ctl", align: "right", maxW: rw * 0.62 }); });
+    }
+    // verdict
+    const vy = narrow ? H - 92 : ry + cardH + 18, vx = narrow ? pad : rx, vw = narrow ? W - pad * 2 : rw, vh = narrow ? 80 : Math.min(150, H - vy - 24);
+    const vc = d.kind === "ok" ? "ok" : d.kind === "wait" ? "ctl" : "bad";
+    const va = ramp(el, Math.min(d.stop, 5) * 0.28 + 0.1, 0.25);
+    g.rect(vx, vy, vw, vh, { fill: g.rgba(vc, 0.08), stroke: vc, lw: 1.6, r: 10, a: va, dash: d.kind === "wait" ? [5, 4] : null });
+    g.text(d.title, vx + 14, vy + 28, { size: narrow ? 20 : 22, font: "display", weight: 800, color: vc, a: va, maxW: vw - 28 });
+    g.wrap(d.why, vx + 14, vy + 52, vw - 28, { size: 12, color: "ink-2", lh: 17, a: va, maxLines: narrow ? 2 : 5 });
+  }, {
+    controls: "env-ctl", anim: true, restT: 4, zoom: 1.3, minW: 620, maxW: 1000,
+    onState: (st) => {
+      const key = st.env + "|" + st.req;
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      const E = ENVS[st.env], d = decide(st.req, st.env);
+      document.getElementById("o-perm").textContent = E.perm;
+      document.getElementById("o-next").textContent = E.next;
+      document.getElementById("o-why").textContent = d.title + ". " + d.why;
+    },
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3", who: ["this design"], what: "One environment per window, chosen in the title bar, kept in the URL and sent on every call as <code>X-Vector-Env</code>. The gateway and Sentinel enforce it; one registry resolves it. Promotion is a gated GroundBridge request, never a side-by-side view.", vs: "<b>The baseline for this chapter.</b> Shared tools (Jira, Bitbucket, Confluence, Teams) appear in every environment but show that environment's runtime facts." },
+      { name: "AWS Management Console", who: ["Amazon Web Services"], what: "A Region selector in the navigation bar scopes services whose resources live in a Region, such as EC2 instances. AWS notes that resources can seem missing because the console is showing a different Region. Some services, such as IAM, need no Region.", vs: "The closest habit to Vector's: one scope in the top bar, with global services exempt, much like Vector's shared tools. AWS scopes by Region; Vector scopes by environment and also enforces it server-side per request.", src: [["Choosing a Region", "https://docs.aws.eu/awsconsolehelpdocs/latest/gsg/select-region.html"]] },
+      { name: "LaunchDarkly", who: ["feature flags"], what: "Environments such as Test and Production live inside a project, and every flag has its own targeting rules in each environment. The flags list and a flag's Targeting tab can add environments, and how many show side by side depends on the browser width.", vs: "<b>Side by side on purpose.</b> Comparing a flag across environments is the job there. Vector refuses side-by-side views so no screen can mix two environments' facts.", src: [["Environments", "https://launchdarkly.com/docs/home/account/environment"]] },
+      { name: "GitHub Actions environments", who: ["GitHub"], what: "A deployment environment such as production can require reviewers, add a wait timer and restrict which branches may deploy. A job that references the environment must pass those rules before it runs, and its environment secrets stay locked until a reviewer approves.", vs: "Same gate idea as Vector's Dev → QA request with Owner and Security. GitHub attaches it to a workflow job; Vector attaches it to a sealed bundle and shows it in every tool's context.", src: [["Managing environments for deployment", "https://docs.github.com/en/enterprise-server@3.10/actions/deployment/targeting-different-environments/managing-environments-for-deployment"]] },
+      { name: "Kargo", who: ["Akuity", "Argo CD ecosystem"], what: "Each Stage is a Kubernetes resource. Freight, a set of versioned artifacts, becomes available to a Stage only after it is verified upstream or explicitly approved, and a promotion template applies it.", vs: "Kargo's Freight plays the role of Vector's bundle: the same artifacts move stage to stage. Vector adds the person-facing side: one environment per window and approvals bound to the bundle's fingerprint.", src: [["Working with Stages", "https://docs.kargo.io/user-guide/how-to-guides/working-with-stages"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · Environment picker (open) and Environment flow boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · 3.1 Application shell · 4.2 Environments · 14.9 Identity, security and tenancy", ""],
+      ["Vector, annotated (v3 explainer film) · chapter 02 One environment", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

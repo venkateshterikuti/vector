@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AllSpark · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .proto { display: grid; gap: clamp(20px, 3vw, 32px); }
+  .proto .prose p + p { margin-top: 0; }
+  .ctl .switches { display: grid; gap: 8px; }
+  .readout b.name { font-size: 1.25rem; line-height: 1.1; }
+  .lab .note + .note { margin-top: -6px; }
+  @media (min-width: 861px) { #lab .lab { align-items: start; } #lab .lab .board { aspect-ratio: 10 / 9.4; position: sticky; top: 84px; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark" aria-current="page">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">09</span> AI engineering · prompts, models, agents, tools</span>
+        <h1>AllSpark, the AI <em>workbench</em></h1>
+        <p class="dek">Prompts, models, agents and tools are built here and compared on the same order and the same evals. Change any of them and you have a new configuration, so evidence from older runs stops counting toward a release.</p>
+        <div class="files">
+          <span class="tag t-exe"><i></i>v3 · AllSpark</span>
+          <span class="tag t-exe"><i></i>v3 · Agent studio</span>
+          <span class="tag t-exe"><i></i>v3 · Prompts</span>
+          <span class="tag t-exe"><i></i>v3 · Models</span>
+          <span class="tag t-exe"><i></i>v3 · Tools</span>
+          <span class="tag">handbook 6.1–6.8</span>
+          <span class="tag">handbook 8.3–8.5</span>
+          <span class="tag">handbook 14.7–14.8</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="Three model columns run the fraud-review v7 prompt on order ORD-10482 side by side. Local Llama finishes first and approves; General Reasoner says manual_review but misses one eval; Risk Reasoner 3 finishes last with manual_review at 0.91 and 8 of 8 evals. Dimension lines under each column measure latency and cost.">
+        <span class="ruler">ord-10482 · one prompt · three models</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="workbench">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Prompt, model, tools, policy</span>
+        <h2>One order, three models, one set of evals</h2>
+        <p class="lede">AllSpark's Compare view runs one prompt, with the same tools and guardrails, against three models on order ORD-10482. The left of the screen is the configuration. The three columns are evidence about it.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Prompts · fraud-review v7</span><h4>A prompt with typed variables</h4><p>Risk Engineering owns fraud-review v7; Priya Raman last edited it on Oct 11. The system message says to use <code>{{context}}</code>, call fraud-risk-api exactly once, return a FraudDecision and decide <code>manual_review</code> when the score is at least <code>{{threshold}}</code>. Each variable has a type: a retrieval recipe, a number that defaults to 0.80, and order JSON validated against OrderInput.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Output schema and versions</span><h4>Held to FraudDecision</h4><p>The schema allows two decisions, a score from 0 to 1 and at most three reasons. Every version records what changed and how it scored: v5 added the PII rule (6/8), v6 capped reasons at three (7/8), v7 fails closed on a tool timeout (8/8). Saving creates v8, and fraud-review-agent stays on v7 until someone switches it.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Settings and guardrails</span><h4>Every setting is part of the configuration</h4><p>Temperature 0.2, review threshold 0.80, 1,024 output tokens, PII redaction, the injection shield, the FraudDecision schema check, two tools and four context items from Commerce + Risk. Together they are configuration cfg-7f3a9c. The screen states the rule under the settings: "Any change here creates a new configuration. Evidence from older runs no longer counts toward a release."</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Compare · ORD-10482</span><h4>Three answers to one order</h4><p>Risk Reasoner 3 on Bedrock returns <code>manual_review</code> at 0.91 with three reasons. General Reasoner on Azure OpenAI also holds the order, at 0.87, with two. Local Llama, self-hosted on vLLM, approves at 0.64 after skipping the fraud-risk-api call the prompt requires.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">What the comparison shows</span><h4>Speed and price don't decide</h4><p>Local Llama is the fastest (0.92 s) and the cheapest ($0.0009 a run, an illustrative figure), and it approves a risky order. General Reasoner is quicker than Risk Reasoner 3 and misses T07, the event contract case. Only Risk Reasoner 3 passes all 8 cases.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="workbench" data-label="The fraud-review v7 prompt with its three typed variables; the FraudDecision schema and the version history v4 to v8; the settings, guardrails and tools that make configuration cfg-7f3a9c, and how a change to temperature creates a new configuration that has no evidence; the three model outputs on a shared risk-score axis; and bars comparing latency, cost, tokens and evals."><span class="ruler">allspark · experiment cfg-7f3a9c</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="agents">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Agents and tools</span>
+        <h2>Agents wait, tools ask</h2>
+        <p class="lede">An agent in Agent studio is a flow of typed steps you can read top to bottom. Tools come from a registry that marks each one read or write, and a write always waits for a person.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Agent studio · fraud-review-agent v3</span><h4>Seven steps, one waits</h4><p>When order-service asks for a decision, the agent retrieves 8 results from Commerce + Risk, calls fraud-risk-api, reasons with Risk Reasoner 3 using fraud-review v7, checks the output against FraudDecision and for PII, branches at 0.80, and asks a person before create-jira-ticket. It runs on a LangGraph runtime on nsx-dev-use1 with at most 8 steps, a 10 s timeout and $0.01 per run.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Step 3 · Call tool</span><h4>Fail closed after 800 ms</h4><p>The tool step pins fraud-risk-api 2.4.0 (OpenAPI, Risk Engineering, scope <code>risk:score</code>) and passes <code>order_id</code> and <code>amount</code>. It has an 800 ms timeout and one retry. If the API still does not answer, the step fails closed and the prompt's rule turns that into <code>manual_review</code>. The call runs with the caller's permissions.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Test run · ORD-10482</span><h4>Nothing was written</h4><p>Context took 140 ms, the tool returned 0.91 in 220 ms, reasoning took 1,280 ms and the checks passed in 90 ms. The run ends at <code>manual_review</code> with the ticket step waiting for approval. In the design's words: "Nothing was written; the ticket step waits for a person."</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Tools · registry</span><h4>Read sees what you see</h4><p>Commerce Orders has four registered tools. fraud-risk-api (OpenAPI) and enterprise-search (MCP) only read, and only what the caller could read anyway. create-pull-request (Git adapter) and deployment-request (event) write, and "Write tools always need a person to approve the exact action."</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Sandbox · create-pull-request 1.3.0</span><h4>A write becomes a request</h4><p>The sandbox runs in Dev with your own permissions. Running the write tool opens nothing on Bitbucket. It returns <code>approval_requested</code> as REQ-0042, bound to the input digest <code>sha256:41be…09d</code> and to the caller, with <code>external_action: false</code>. A different input has a different digest, so this approval cannot cover it. Maya Chen decides in Approvals.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="agents" data-label="The seven-step fraud-review-agent flow with its runtime limits; step 3's tool settings and its timeout, retry and fail-closed path; a test run token that stops at the ask-a-person step; the tool registry split into read tools and write tools behind a person; and the sandbox turning a create-pull-request input into approval request REQ-0042 bound to its input digest."><span class="ruler">agent studio · tools · dev</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where you see it on screen</h2>
+        <p class="lede">Three of the five AI engineering boards: the compare view, the model catalog and the tool sandbox. The prompt and agent boards are drawn above. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/AllSpark.webp" data-w="1600" data-h="1000" data-crop="230,70,1370,915" data-title="AllSpark — compare three models on ORD-10482 (v3)">
+          <span class="pin c-ctl" data-x="522" data-y="103">1</span>
+          <span class="pin c-exe" data-x="400" data-y="417">2</span>
+          <span class="pin c-ctl" data-x="468" data-y="561">3</span>
+          <span class="pin c-ctl" data-x="276" data-y="903">4</span>
+          <span class="pin c-ok" data-x="775" data-y="333">5</span>
+          <span class="pin c-bad" data-x="1120" data-y="333">6</span>
+          <span class="pin c-bad" data-x="1425" data-y="333">7</span>
+          <span class="pin c-tel" data-x="878" data-y="940">8</span>
+          <span class="ring" data-box="572,880,998,38"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 09.1 · AllSpark, Compare mode</span>
+          <h3>One configuration, three columns</h3>
+          <ol class="pins">
+            <li><span><b>The experiment's identity.</b> "Experiment · fraud-review v7 · cfg-7f3a9c": the prompt version and the configuration it runs.</span></li>
+            <li><span><b>Settings.</b> Temperature 0.2, review threshold 0.80, max output tokens 1,024, with Chat, Compare and Agent modes above them.</span></li>
+            <li><span><b>Guardrails.</b> PII redaction, injection shield and the FraudDecision JSON schema, all switched on.</span></li>
+            <li><span><b>The rule.</b> "Any change here creates a new configuration. Evidence from older runs no longer counts toward a release."</span></li>
+            <li><span><b>Risk Reasoner 3</b> (Bedrock · Claude, Approved): <code>manual_review</code> at 0.91, tool called once, evals 8/8.</span></li>
+            <li><span><b>General Reasoner</b> (Azure OpenAI · GPT, Approved): <code>manual_review</code> at 0.87, evals 7/8, "Missed T07 contract".</span></li>
+            <li><span><b>Local Llama</b> (vLLM · Private VPC, Experimental): <code>approve</code> at 0.64, "Skipped the fraud-risk-api call", evals 6/8.</span></li>
+            <li><span><b>Latency, tokens, cost.</b> 1.84 s, 3,412 tokens and $0.0041 for Risk Reasoner 3 against 0.92 s, 3,104 and $0.0009 for Local Llama. Cost figures are illustrative.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Models.webp" data-w="1600" data-h="1000" data-crop="230,85,1370,900" data-title="Models — the model gateway catalog (v3)">
+          <span class="pin c-ctl" data-x="878" data-y="158">1</span>
+          <span class="pin" data-x="690" data-y="350">2</span>
+          <span class="pin c-exe" data-x="822" data-y="458">3</span>
+          <span class="pin c-ctl" data-x="1146" data-y="459">4</span>
+          <span class="pin c-ctl" data-x="700" data-y="954">5</span>
+          <span class="pin" data-x="1548" data-y="255">6</span>
+          <span class="pin c-ctl" data-x="1548" data-y="373">7</span>
+          <span class="pin c-tel" data-x="1360" data-y="419">8</span>
+          <span class="pin c-tel" data-x="1360" data-y="625">9</span>
+          <span class="ring" data-box="256,702,928,54"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 09.2 · Models, the model gateway</span>
+          <h3>Ten aliases, one catalog</h3>
+          <ol class="pins">
+            <li><span><b>The promise.</b> "One approved catalog. Teams call aliases; the gateway handles routing, credentials and residency."</span></li>
+            <li><span><b>Residency per alias:</b> US, EU or Private VPC. EU-only aliases carry the status "Approved · EU".</span></li>
+            <li><span><b>What each can do:</b> tools, JSON, code, vision or embeddings, context from 32k to 1M, price per 1M tokens in · out, and p50 latency.</span></li>
+            <li><span><b>Status.</b> Seven aliases are approved, Vision Reader and Local Llama are Experimental, and risk-small-ft (ringed) is "Registered · untested".</span></li>
+            <li><span><b>The release rule.</b> "Untested endpoints can run in AllSpark but can't pass a release gate."</span></li>
+            <li><span><b>Behind the alias.</b> Risk Reasoner 3 resolves to Bedrock · Claude in us-east-1, falls back to the Anthropic API (same family), takes credentials from <code>vault://models/bedrock</code> and keeps data in the US with no retention.</span></li>
+            <li><span><b>Quota and approval.</b> 600 req/min for Commerce in Dev, approved by the AI Review Board on Sep 30.</span></li>
+            <li><span><b>Evals on this model:</b> fraud-review v3 8/8, incident-summary v2 23/25, runbook-answer v1 17/20.</span></li>
+            <li><span><b>Routing, last 7 days:</b> Bedrock 98.7%, fallback 1.3% after 2 throttling events.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Tools.webp" data-w="1600" data-h="1000" data-crop="230,85,1370,900" data-title="Tools — tool registry and sandbox (v3)">
+          <span class="pin c-exe" data-x="530" data-y="318">1</span>
+          <span class="pin c-ctl" data-x="530" data-y="455">2</span>
+          <span class="pin c-exp" data-x="962" data-y="337">3</span>
+          <span class="pin c-ctl" data-x="632" data-y="698">4</span>
+          <span class="pin c-ctl" data-x="1400" data-y="386">5</span>
+          <span class="pin c-ctl" data-x="1490" data-y="474">6</span>
+          <span class="pin c-ok" data-x="1362" data-y="534">7</span>
+          <span class="pin" data-x="1530" data-y="650">8</span>
+          <span class="pin" data-x="1530" data-y="796">9</span>
+          <span class="ring" data-box="1130,352,422,224"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 09.3 · Tools, registry and sandbox</span>
+          <h3>A write that waits</h3>
+          <ol class="pins">
+            <li><span><b>Read tools:</b> fraud-risk-api 2.4.0 (OpenAPI · Risk Engineering) and enterprise-search 2.1.0 (MCP · Platform).</span></li>
+            <li><span><b>Write tools:</b> create-pull-request 1.3.0 (Git adapter · Developer Experience) and deployment-request 1.0.0 (Event · Platform).</span></li>
+            <li><span><b>Scope of the sandbox.</b> "Sandbox runs in Dev with your own permissions."</span></li>
+            <li><span><b>The acknowledgement.</b> "Running it creates an approval request, not a pull request. Nothing changes until a person approves."</span></li>
+            <li><span><b>The result:</b> <code>approval_requested</code>, request REQ-0042, tool <code>create-pull-request@1.3.0</code>.</span></li>
+            <li><span><b>Bound to</b> the input digest <code>sha256:41be…09d</code> and the caller, venkatesh.</span></li>
+            <li><span><b><code>external_action: false</code>.</b> Nothing has happened on Bitbucket yet.</span></li>
+            <li><span><b>Checks:</b> the input matches the schema, the caller can push to feature/fraud-review, the approval is bound to this exact input, and it waits for Maya Chen in Approvals.</span></li>
+            <li><span><b>Policy:</b> the caller's own token, 60 calls per minute, an 800 ms timeout, US residency.</span></li>
+          </ol>
+          <p class="note">The agent's write step uses create-jira-ticket, which is not among the four tools this registry lists for Commerce Orders. The design does not show where that tool is registered.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prototype">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>A fixture with a real fingerprint</h2>
+        <p class="lede">Atlas calls no model. The run is a timed fixture, but the configuration fingerprint is real string comparison, which is enough to show the release rule working.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p>In the Atlas prototype, AllSpark is a proposed name over the Playground, Prompt library, Agent studio, Model gateway and Tool registry views (handbook 6). Run checks that the input parses as JSON, waits 900 ms and returns the same answer every time: order ORD-10482 at risk 0.91, <code>manual_review</code> when 0.91 is at least the threshold, otherwise <code>approve</code>. The amount you type does not change it. Latency and cost are copied from the model descriptor, and tokens are estimated from the prompt's string length.</p>
+          <p>Most settings only change the fingerprint. That still proves the point: move the temperature and the 8/8 evaluation goes stale, though the fixture answer is identical. Compare models lists the first three built-in descriptors with their fixed latency; it does not run them. Agent studio holds an ordered list of step names, and Test workflow calls the same fixture without waiting at a human step.</p>
+          <p>The model gateway starts with nine aliases, all Approved. Capability admission is not implemented: Open Reasoner 70B lacks tools and still runs the preset (6.7).</p>
+        </div>
+        <div class="code">
+          <div class="hd"><span>state.tsx · run() and configKey</span><span>handbook 6.2 · 11.2</span></div>
+<pre><span class="k">run</span>():
+  <span class="k">if</span> busy: <span class="k">return</span>               <span class="c">// one run at a time</span>
+  snap = state                 <span class="c">// captured before the wait</span>
+  wait <span class="n">900</span> ms
+  latency, cost ← models[snap.model]   <span class="c">// fixed numbers</span>
+  tokens = <span class="n">1280</span> + prompt.length       <span class="c">// not a tokenizer</span>
+  risk_score = <span class="n">0.91</span>                  <span class="c">// always ORD-10482</span>
+  decision = <span class="n">0.91</span> &gt;= threshold
+           ? <span class="s">"manual_review"</span> : <span class="s">"approve"</span>
+  run.config = configKey(snap)
+
+<span class="k">configKey</span> = JSON.stringify([
+  guard, threshold, temperature, model, prompt,
+  agentNodes, agentPattern, maxTokens, topP,
+  reasoning, messages, policies, code ])
+<span class="c">// prompt version number, endpoint metadata and
+// tool sandbox input are not part of the key</span></pre>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Setting</th><th>Default</th><th>Effect in the prototype (handbook 6.3)</th></tr></thead>
+          <tbody>
+            <tr><td>Model endpoint</td><td><code>risk-3</code></td><td>Picks the descriptor's name, fixed latency and cost; part of the fingerprint.</td></tr>
+            <tr><td>System prompt</td><td>Fraud instruction</td><td>Changes estimated tokens and the fingerprint, not the answer.</td></tr>
+            <tr><td>Review threshold</td><td>0.80 (0.50–1.00)</td><td>The one setting that changes the decision, plus two evaluation cases.</td></tr>
+            <tr><td>Safety guard</td><td>On</td><td>Changes the policy wording and three evaluation cases; required for release.</td></tr>
+            <tr><td>Temperature, top-p, reasoning budget</td><td>0.2 · 1 · Standard</td><td>Fingerprint only. No sampling happens.</td></tr>
+            <tr><td>Max output tokens</td><td>2048 (128–8192)</td><td>Fingerprinted and echoed in the output; truncates nothing.</td></tr>
+            <tr><td>Conversation turns</td><td>Empty</td><td>Fingerprinted; never sent to a model.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split">
+        <div class="code">
+          <div class="hd"><span>Model gateway · register endpoint</span><span>handbook 6.7</span></div>
+<pre><span class="c">accepted when all five hold</span>
+  <span class="n">1</span>  new URL(endpoint) parses
+  <span class="n">2</span>  protocol is https:
+  <span class="n">3</span>  no username, password or query string
+  <span class="n">4</span>  display name is not blank after trim
+  <span class="n">5</span>  credential ref starts with <span class="s">"vault://"</span>
+
+<span class="c">not checked: DNS, connectivity, the vault itself,
+fragments, capabilities, duplicate endpoints</span>
+
+<span class="k">creates</span>
+  id       custom-&lt;model count + 1&gt;
+  caps     tools, json
+  latency  <span class="n">1500</span> ms    cost  $<span class="n">0.01</span>    context  128k
+  region   <span class="s">"Enterprise private"</span>
+  status   <span class="s">"Registered · untested"</span></pre>
+        </div>
+        <div class="code">
+          <div class="hd"><span>Tool registry · sandbox</span><span>handbook 8.4 · 8.5</span></div>
+<pre><span class="c">input checks, in order</span>
+  <span class="n">1</span>  parse JSON
+  <span class="n">2</span>  require an object (not null, not an array)
+  <span class="n">3</span>  required fields not undefined or ""
+  <span class="n">4</span>  typeof matches the schema type
+  <span class="n">5</span>  declared enums
+  <span class="n">6</span>  fraud-risk-api: amount not negative
+  <span class="n">7</span>  write tools: acknowledgment switch on
+
+<span class="k">outputs</span>
+  fraud-risk-api  amount &gt; <span class="n">2500</span> → <span class="n">0.91</span> manual_review
+                  otherwise     → <span class="n">0.23</span> approve
+  write tools     <span class="s">demo-request-0042</span> · queued_for_review
+                  external_action: false
+<span class="c">// approval is not bound to an input digest, and a
+// passing sandbox test satisfies no release gate</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Route a request through the gateway</h2>
+        <p class="lede">Describe a request and watch the ten aliases from the v3 catalog go through four stages in order: policy, capabilities, capacity, then your preference. Each alias stops at the first stage it fails, with the reason.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="route-ctl">
+          <div class="ctl"><span class="lbl">Data residency required</span>
+            <div class="seg" id="res" role="group" aria-label="Data residency required">
+              <button type="button" value="us" aria-pressed="true">US</button><button type="button" value="eu" aria-pressed="false">EU customer data</button><button type="button" value="vpc" aria-pressed="false">Private VPC only</button>
+            </div>
+          </div>
+          <div class="ctl"><span class="lbl">The request needs</span>
+            <div class="switches">
+              <label class="switch">Tools (calls fraud-risk-api) <input type="checkbox" id="tools" checked></label>
+              <label class="switch">Vision (reads an image) <input type="checkbox" id="vision"></label>
+              <label class="switch">Embeddings <input type="checkbox" id="embed"></label>
+            </div>
+          </div>
+          <div class="ctl"><span class="lbl">Purpose</span>
+            <div class="seg" id="purpose" role="group" aria-label="Purpose">
+              <button type="button" value="exp" aria-pressed="false">AllSpark experiment</button><button type="button" value="release" aria-pressed="true">Release / production</button>
+            </div>
+          </div>
+          <div class="ctl"><label for="load">Peak load, Commerce in Dev <output for="load">100 req/min</output></label><input type="range" id="load" min="50" max="1000" step="50" value="100"></div>
+          <div class="ctl"><span class="lbl">Then prefer</span>
+            <div class="seg" id="pref" role="group" aria-label="Preference">
+              <button type="button" value="cost" aria-pressed="false">Lowest cost</button><button type="button" value="latency" aria-pressed="true">Lowest latency</button>
+            </div>
+          </div>
+          <div class="readout">
+            <div><b id="o-s1">–</b><span>left after policy</span></div>
+            <div><b id="o-s2">–</b><span>after capabilities</span></div>
+            <div><b id="o-s3">–</b><span>after capacity</span></div>
+            <div><b id="o-pick" class="name">–</b><span>chosen alias</span></div>
+          </div>
+          <p class="logline" id="o-why" aria-live="polite"></p>
+          <p class="note">The routing order is the production proposal (handbook 14.7: authorization and data policy first, capabilities second, capacity third, preferences such as cost or latency afterward). The catalog is the v3 Models board: provider, residency, capabilities, price per 1M tokens, p50 and status for all ten aliases. In the design a team names an alias and the gateway routes that alias to a deployment; running the order across the whole catalog is this lab's illustration.</p>
+          <p class="note">Residency must match exactly, because the design does not say which region the Private VPC is in. Capacity uses the only quota the design shows (Risk Reasoner 3, 600 req/min for Commerce in Dev); for the other aliases capacity is not shown in the design, so they pass unchecked. Prices are illustrative, and aliases billed as compute have no per-token price, so p50 breaks that tie.</p>
+        </div>
+        <div class="board" data-stage="routelab" data-label="A routing funnel. Ten aliases from the v3 model catalog are rows; four gate columns, policy, capabilities, capacity and preference, show a pass, a refusal with its reason, or an unchecked capacity. The chosen alias is highlighted, with a card explaining why and what AllSpark's evals say about it."><span class="ruler">model gateway · routing order</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>3</b><span>models compared on ORD-10482: 8/8, 7/8 and 6/8 evals</span></div>
+        <div><b>10</b><span>aliases in the model catalog: 7 approved (2 for EU only), 2 experimental, 1 untested</span></div>
+        <div><b>7 / 1</b><span>steps in fraud-review-agent / step that waits for a person</span></div>
+        <div><b>4</b><span>registered tools for Commerce Orders: 2 read, 2 write</span></div>
+        <div><b>v7 → v8</b><span>saving the prompt creates v8, which needs fresh evals before promotion</span></div>
+        <div><b>800 ms</b><span>tool timeout before fraud-risk-api fails closed</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>No model is invoked. A run is a 900 ms fixture that always returns ORD-10482 at 0.91, and most settings only change the fingerprint. Agent studio is a list of step names; nine model aliases all start Approved; a custom endpoint passes five string checks and becomes "Registered · untested". Write tools in the sandbox return <code>demo-request-0042</code>, with no approval bound to the input.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>Compare three models on one order, with steps, evals, latency, tokens and cost</li><li>Versioned prompts with typed variables and the FraudDecision schema</li><li>Ten-alias catalog with residency, quota, fallback and approval</li><li>Agents as explicit flows; a write tool becomes REQ-0042, bound to its input digest</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>Model descriptors that name a tested deployment, data-classification ceiling and quotas; routing by policy, then capabilities, capacity and preference; tool contracts with risk class, scopes, idempotency keys and a side-effect ledger; approvals bound to the exact proposal, environment, policy version and expiry; durable sequential agents first (handbook 14.7, 14.8).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same jobs, other tools</h2>
+        <p class="lede">Each piece of AllSpark has a mature counterpart: a model platform, a gateway, a prompt registry, an agent runtime, a tool protocol. Vector's design puts them behind one configuration fingerprint and one approval rule.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="pipelines.html"><span>← Chapter 08</span><b>Builds that explain themselves</b></a>
+    <a class="fwd" href="evals.html"><span>Chapter 10 →</span><b>Evals</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp } = Field;
+  // linear crossfade between scroll beats: 1 within ±0.35 of beat i, 0 beyond ±0.65
+  const vis = (b, i) => clamp(0.5 + (0.5 - Math.abs(b - i)) / 0.3);
+
+  /* ---------------- shared drawing helpers ---------------- */
+  function badge(g, x, y, s, label, a) {
+    g.rect(x, y, s, s, { fill: "sheet", stroke: "hair", lw: 1, r: s * 0.26, a });
+    g.text(label, x + s / 2, y + s / 2 + s * 0.13, { size: label.length > 2 ? s * 0.32 : s * 0.38, font: "ui", weight: 700, color: "ink-2", align: "center", a });
+  }
+  function card(g, x, y, w, h, o = {}) {
+    const a = o.a === undefined ? 1 : o.a;
+    g.rect(x + 1.5, y + 3, w, h, { fill: "ink", r: o.r || 10, a: a * 0.05 });
+    g.rect(x, y, w, h, { fill: o.fill || "card", stroke: o.stroke || "hair", lw: o.lw || 1.2, r: o.r || 10, dash: o.dash, a });
+  }
+  // flowing pills; y is the centre of the first row; returns the bottom edge
+  function chipFlow(g, x0, y, maxX, items, o = {}) {
+    const size = o.size || 11, h = Math.round(size * 1.8), gap = o.gap || 6;
+    let x = x0;
+    items.forEach(([label, c, dash]) => {
+      const w = g.tw(label, size, "mono", 500) + 18;
+      if (x + w > maxX && x > x0) { x = x0; y += h + gap; }
+      g.pill(x, y, label, { size, pad: 9, color: c === "ink-3" ? "ink-2" : c, stroke: c, lw: 1.2, fill: g.rgba(c, 0.06), a: o.a, dash });
+      x += w + gap;
+    });
+    return y + h / 2;
+  }
+  function lines(g, text, maxW, size, fam = "mono", wt = 500) {
+    const out = []; let line = "";
+    String(text).split(/\s+/).forEach((w) => { const t = line ? line + " " + w : w; if (g.tw(t, size, fam, wt) > maxW && line) { out.push(line); line = w; } else line = t; });
+    if (line) out.push(line);
+    return out;
+  }
+  function mark(g, x, y, kind, a, r = 7) {
+    if (kind === "pass") { g.circle(x, y, r, { fill: "card", stroke: "ink-3", lw: 1.2, a }); g.text("✓", x, y + r * 0.5, { size: r * 1.5, color: "ink-2", align: "center", weight: 600, a }); }
+    else if (kind === "bad") { g.circle(x, y, r, { fill: "bad", a }); g.text("✕", x, y + r * 0.5, { size: r * 1.35, color: "#FFFFFF", align: "center", weight: 700, a }); }
+    else if (kind === "unknown") { g.circle(x, y, r, { fill: "card", stroke: "ink-3", lw: 1.2, dash: [2.5, 2.5], a }); g.text("?", x, y + r * 0.5, { size: r * 1.4, color: "ink-3", align: "center", weight: 600, a }); }
+    else if (kind === "win") { g.circle(x, y, r, { fill: "ok", a }); g.text("✓", x, y + r * 0.5, { size: r * 1.5, color: "#FFFFFF", align: "center", weight: 700, a }); }
+    else if (kind === "lose") { g.circle(x, y, r, { fill: "card", stroke: "hair", lw: 1.2, a }); g.text("–", x, y + r * 0.5, { size: r * 1.5, color: "ink-3", align: "center", weight: 600, a }); }
+    else if (kind === "wait") { g.circle(x, y, r, { fill: "card", stroke: "ctl", lw: 1.4, dash: [2.5, 2.5], a }); g.text("⏸", x, y + r * 0.5, { size: r * 1.2, color: "ctl", align: "center", weight: 600, a }); }
+  }
+
+  /* ---------------- the three compared models (v3 AllSpark board) ---------------- */
+  const CMP = [
+    { name: "Risk Reasoner 3", badge: "AWS", line: "Approved · Bedrock · US", score: 0.91, dec: "manual_review",
+      reasons: ["new account, 3 days", "amount 4.1× median", "ship and bill countries differ"],
+      steps: [["context · 4 items", 140, "kno"], ["fraud-risk-api · 0.91", 220, "exe"], ["reasoning", 1280, "exe"], ["schema valid", 90, "ctl"]],
+      lat: 1.84, tok: 3412, cost: 0.0041, evals: 8, note: "tool called once" },
+    { name: "General Reasoner", badge: "AZ", line: "Approved · Azure OpenAI · US", score: 0.87, dec: "manual_review",
+      reasons: ["recent account", "high order value"],
+      steps: [["context · 4 items", 138, "kno"], ["fraud-risk-api · 0.87", 214, "exe"], ["reasoning", 760, "exe"], ["schema valid", 84, "ctl"]],
+      lat: 1.21, tok: 2980, cost: 0.0052, evals: 7, note: "missed T07 contract" },
+    { name: "Local Llama", badge: "vL", line: "Experimental · vLLM · Private VPC", score: 0.64, dec: "approve", exp: true,
+      reasons: ["amount within limit"],
+      steps: [["context · 4 items", 141, "kno"], ["skipped fraud-risk-api", 0, "bad"], ["reasoning", 690, "exe"], ["schema valid", 88, "ctl"]],
+      lat: 0.92, tok: 3104, cost: 0.0009, evals: 6, note: "wrong decision" },
+  ];
+
+  /* ---------------- hero: three columns streaming ---------------- */
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g;
+    const P = 9, tl = s.t % P, K = 1.9, start = 0.5;
+    const fade = 1 - ramp(tl, P - 0.5, 0.35);
+    const e = clamp((tl - start) / K, 0, 99);              // seconds of real model time
+    const pad = 16, gap = 10, top = Math.max(50, g.safeTop + 14);
+    const fs = W < 680 ? 10.5 : 11.5;
+    g.text("ORD-10482", pad, top, { size: fs + 0.5, weight: 600 });
+    const ox = pad + g.tw("ORD-10482", fs + 0.5, "mono", 600) + 8, inp = "$2,840 · account 3 days · ship NL ≠ bill US";
+    g.text(inp, ox, top, { size: fs, color: "ink-2" });
+    const rl = "fraud-review v7 · cfg-7f3a9c";
+    if (ox + g.tw(inp, fs) + 18 + g.tw(rl, fs - 1) < W - pad) g.text(rl, W - pad, top, { size: fs - 1, color: "ctl", align: "right" });
+    const cy = top + 14, colW = (W - pad * 2 - gap * 2) / 3, tlH = 3 * 22 + 46, colH = H - cy - tlH - 36;
+    CMP.forEach((m, i) => {
+      const x = pad + i * (colW + gap), done = e >= m.lat;
+      let acc = 0; const ends = m.steps.map((st) => (acc += st[1] / 1000));
+      card(g, x, cy, colW, colH, { stroke: done && i === 0 ? "exe" : "hair", lw: done && i === 0 ? 1.6 : 1.2, dash: m.exp ? [5, 4] : null, r: 9 });
+      badge(g, x + 10, cy + 11, 24, m.badge);
+      g.text(m.name, x + 42, cy + 22, { size: 12.5, font: "ui", weight: 600, maxW: colW - 50 });
+      g.text(m.line, x + 42, cy + 37, { size: 9.5, color: "ink-3", maxW: colW - 50 });
+      g.line(x + 1, cy + 50, x + colW - 1, cy + 50, { color: "grid", lw: 1 });
+      if (!done && e > 0) { const u = (s.t * 1.6) % 1; g.circle(x + colW - 12, cy + 14, 3.2, { fill: "exe", a: 0.4 + 0.6 * Math.sin(Math.PI * u) }); }
+      // output, typed during the reasoning step
+      const rs = ends[1], re = ends[2], out = clamp((e - rs) / (re - rs)) * fade;
+      const oy = cy + 72, ix = x + 12, iw = colW - 24;
+      if (out > 0.01) {
+        const n = Math.ceil(m.dec.length * clamp(out * 2));
+        g.text(m.dec.slice(0, n), ix, oy, { size: 13.5, weight: 600, color: m.dec === "approve" ? "bad" : "ink", a: fade });
+        const sa = ramp(out, 0.3, 0.2) * fade;
+        g.text("risk_score " + m.score.toFixed(2), ix, oy + 17, { size: 10.5, color: "ink-2", a: sa });
+        // mini gauge with the 0.80 threshold
+        const gx0 = ix, gx1 = ix + iw, gy = oy + 28, GX = (v) => lerp(gx0, gx1, v);
+        g.rect(GX(0.8), gy - 3, GX(1) - GX(0.8), 6, { fill: g.rgba("ctl", 0.16), a: sa });
+        g.line(gx0, gy, gx1, gy, { color: "hair", lw: 1.2, a: sa });
+        g.line(GX(0.8), gy - 5, GX(0.8), gy + 5, { color: "ctl", lw: 1.2, a: sa });
+        g.circle(GX(m.score), gy, 3.6, { fill: m.dec === "approve" ? "bad" : "ink", a: sa });
+        let ry = oy + 48;
+        m.reasons.forEach((r, j) => {
+          const ra = ramp(out, 0.5 + j * 0.15, 0.2) * fade;
+          lines(g, r, iw - 10, 10).forEach((ln, k) => { if (k === 0) g.text("·", ix, ry, { size: 10, color: "ink-3", a: ra }); g.text(ln, ix + 10, ry, { size: 10, color: "ink-2", a: ra }); ry += 13.5; });
+        });
+      } else if (e > 0) g.text("…", ix, oy, { size: 13, color: "ink-3", a: fade });
+      if (done) {
+        const ea = ramp(e, m.lat + 0.05, 0.15) * fade, ok = m.evals === 8;
+        // cost as a dimension line
+        const L = iw * 0.5, cx2 = ix + L * (m.cost / 0.0052), dy = cy + colH - 42;
+        g.line(ix, dy - 5, ix, dy + 5, { color: "tel", lw: 1.2, a: ea });
+        g.line(ix, dy, cx2, dy, { color: "tel", lw: 1.2, a: ea });
+        g.line(cx2, dy - 5, cx2, dy + 5, { color: "tel", lw: 1.2, a: ea });
+        g.text("$" + m.cost.toFixed(4), cx2 + 6, dy + 4, { size: 10, color: "ink", a: ea });
+        const cw = g.chip(ix, cy + colH - 17, `evals ${m.evals}/8`, ok ? "ok" : "bad", { size: 10, a: ea });
+        if (g.tw(m.note, 9.5) <= iw - cw - 6) g.text(m.note, ix + cw + 6, cy + colH - 13.5, { size: 9.5, color: ok ? "ink-3" : "bad", a: ea });
+      }
+    });
+    // shared latency axis: each run drawn step by step
+    const ty = cy + colH + 34, x0 = pad + 30, x1 = W - pad - 54, X = (v) => x0 + (x1 - x0) * v / 2;
+    g.text("LATENCY", pad, ty - 16, { size: 9.5, color: "ink-3", ls: 0.8 });
+    let lgx = W - pad;
+    [["schema", "ctl"], ["reasoning", "exe", 0.45], ["tool", "exe"], ["context", "kno"]].forEach(([n, c, al]) => {
+      const tw = g.tw(n, 9);
+      g.text(n, lgx, ty - 16, { size: 9, color: "ink-3", align: "right" });
+      lgx -= tw + 5; g.rect(lgx - 8, ty - 23, 8, 8, { fill: al ? g.rgba(c, al) : c, r: 2 }); lgx -= 18;
+    });
+    [0, 0.5, 1, 1.5, 2].forEach((v) => { g.line(X(v), ty + 3 * 22 - 6, X(v), ty + 3 * 22 - 2, { color: "ink-3", lw: 1 }); g.text(v === 2 ? "2.0 s" : v.toFixed(1), X(v), ty + 3 * 22 + 9, { size: 9, color: "ink-3", align: "center" }); });
+    g.line(X(0), ty + 3 * 22 - 6, X(2), ty + 3 * 22 - 6, { color: "hair", lw: 1 });
+    CMP.forEach((m, r) => {
+      const y = ty + r * 22;
+      g.text(m.badge, pad, y + 3.5, { size: 9, font: "ui", weight: 700, color: "ink-3" });
+      let t0 = 0;
+      m.steps.forEach(([lab, ms, c]) => {
+        const d = ms / 1000, s1 = t0 + d;
+        if (c === "bad") { if (e > t0) g.text("✕ tool", X(t0) + 1, y - 7, { size: 8.5, color: "bad", weight: 600, a: fade }); }
+        else if (e > t0) g.rect(X(t0), y - 4.5, X(Math.min(s1, e)) - X(t0), 9, { fill: c === "exe" && lab === "reasoning" ? g.rgba("exe", 0.45) : c, a: fade });
+        t0 = s1;
+      });
+      if (e > t0) g.rect(X(t0), y - 4.5, X(Math.min(m.lat, e)) - X(t0), 9, { fill: "hair", a: fade });
+      if (e >= m.lat) {
+        g.line(X(m.lat), y - 8, X(m.lat), y + 8, { color: "ink", lw: 1.2, a: fade });
+        g.text(m.lat.toFixed(2) + " s", X(m.lat) + 6, y + 4, { size: 10.5, weight: 600, a: fade });
+      }
+    });
+    if (e > 0 && e < 1.84) g.line(X(e), ty - 9, X(e), ty + 3 * 22 - 8, { color: "exe", lw: 1, dash: [3, 3] });
+    g.text("cost per run is illustrative · same prompt, tools and guardrails", W / 2, H - 9, { size: 9.5, color: "ink-3", align: "center", maxW: W - 24 });
+  }, { anim: true, restT: 6.6, zoom: 1.25, minW: 600, maxW: 900 });
+
+  /* ---------------- rich text: prompt with highlighted variables ---------------- */
+  const KIND = {
+    "": { fam: "ui", wt: 500, col: "ink" },
+    type: { fam: "ui", wt: 700, col: "ink" },
+    code: { fam: "mono", wt: 500, col: "ink-2", d: -1.5 },
+    kno: { fam: "mono", wt: 600, col: "kno", d: -1.5, bg: "kno" },
+    ctl: { fam: "mono", wt: 600, col: "ctl", d: -1.5, bg: "ctl" },
+    exe: { fam: "mono", wt: 600, col: "exe", d: -1.5, bg: "exe" },
+    new: { fam: "ui", wt: 500, col: "ink", nw: 1 },
+    newcode: { fam: "mono", wt: 500, col: "ink-2", d: -1.5, nw: 1 },
+  };
+  function richLayout(g, segs, maxW, size) {
+    const toks = []; let prevSpace = true;
+    segs.forEach(([t, k]) => {
+      if (t === "\n") { toks.push({ br: true }); prevSpace = true; return; }
+      const lead = /^\s/.test(t);
+      t.split(" ").forEach((w, i) => { if (w) toks.push({ t: w, k: k || "", glue: i === 0 && !lead && !prevSpace }); });
+      prevSpace = /\s$/.test(t);
+    });
+    const out = [[]]; let x = 0;
+    const sp = g.tw(" ", size, "ui", 500);
+    toks.forEach((tk) => {
+      if (tk.br) { out.push([]); x = 0; return; }
+      const K = KIND[tk.k], fs = size + (K.d || 0), w = g.tw(tk.t, fs, K.fam, K.wt) + (K.bg ? 8 : 0);
+      const gap = tk.glue ? 0 : sp;
+      if (x > 0 && x + gap + w > maxW) { out.push([]); x = 0; }
+      const line = out[out.length - 1], px = line.length ? x + gap : 0;
+      line.push({ ...tk, x: px, w, fs, K }); x = px + w;
+    });
+    return out;
+  }
+  function richDraw(g, L, x, y, lh, a) {
+    L.forEach((line, li) => {
+      const yy = y + li * lh, nw = line.filter((tk) => tk.K.nw);
+      if (nw.length) { const x0 = Math.min(...nw.map((t) => t.x)), x1 = Math.max(...nw.map((t) => t.x + t.w)); g.rect(x + x0 - 4, yy - lh * 0.66, x1 - x0 + 8, lh * 0.9, { fill: g.rgba("ok", 0.13), r: 4, a }); }
+      line.forEach((tk) => {
+        if (tk.K.bg) g.rect(x + tk.x, yy - tk.fs * 1.0, tk.w, tk.fs * 1.4, { fill: g.rgba(tk.K.bg, 0.12), r: 4, a });
+        g.text(tk.t, x + tk.x + (tk.K.bg ? 4 : 0), yy, { size: tk.fs, font: tk.K.fam, weight: tk.K.wt, color: tk.K.col, a });
+      });
+    });
+  }
+  const SYS = [["You assess order fraud risk for Northstar Commerce."], ["\n"],
+    ["Use the context in "], ["{{context}}", "kno"], [" and call the tool "], ["fraud-risk-api", "exe"], [" exactly once."], ["\n"],
+    ["Return a "], ["FraudDecision", "type"], [" object. If the risk score is at least "], ["{{threshold}}", "ctl"], [", the decision is "], ["manual_review", "code"], ["; otherwise "], ["approve", "code"], ["."], ["\n"],
+    ["If the tool times out, decide ", "new"], ["manual_review", "newcode"], [". Never approve without a score.", "new"], ["\n"],
+    ["Give at most three short reasons. Never include customer email, phone or card data."]];
+  const USR = [["Assess this order: "], ["{{order}}", "exe"]];
+
+  function promptPanel(g, A, top) {
+    const { W, H, narrow } = g, pad = 24, w = W - pad * 2;
+    g.text("fraud-review", pad, top + 14, { size: 28, font: "display", weight: 800, a: A });
+    g.text("v7", pad + g.tw("fraud-review", 28, "display", 800) + 8, top + 14, { size: 28, font: "display", weight: 700, color: "ink-3", a: A });
+    g.text("Risk Engineering · last edited by Priya Raman, Oct 11", pad, top + 34, { size: 11, color: "ink-3", a: A, maxW: w });
+    const fs = narrow ? 13 : 15, lh = Math.round(fs * 1.78), ip = 20;
+    const sys = richLayout(g, SYS, w - ip * 2, fs), usr = richLayout(g, USR, w - ip * 2, fs);
+    const cy = top + 50, yL = cy + 28, yS = yL + lh;
+    const yDiv = yS + (sys.length - 1) * lh + lh * 0.7, yU = yDiv + 24, yUT = yU + lh;
+    const ch = yUT + (usr.length - 1) * lh + 20 - cy;
+    card(g, pad, cy, w, ch, { a: A });
+    g.text("SYSTEM", pad + ip, yL, { size: 10, color: "ink-3", ls: 1, a: A });
+    richDraw(g, sys, pad + ip, yS, lh, A);
+    const ni = sys.findIndex((ln) => ln.some((tk) => tk.K.nw));
+    if (ni >= 0) { const ln = sys[ni], end = Math.max(...ln.map((t) => t.x + t.w)), tag = "added in v7"; if (end + 30 + g.tw(tag, 10) < w - ip * 2) g.text(tag, pad + w - ip, yS + ni * lh, { size: 10, color: "ok", align: "right", weight: 600, a: A }); }
+    g.line(pad + ip, yDiv, pad + w - ip, yDiv, { color: "grid", lw: 1, a: A });
+    g.text("USER", pad + ip, yU, { size: 10, color: "ink-3", ls: 1, a: A });
+    richDraw(g, usr, pad + ip, yUT, lh, A);
+    const vh = narrow ? 92 : 100, foot = 46;
+    const vy = Math.min(cy + ch + 66, H - vh - foot - 24), gap = 12, cw = (w - gap * 2) / 3;
+    g.text("VARIABLES", pad, vy - 14, { size: 10, color: "ink-3", ls: 1, a: A });
+    [["{{context}}", "kno", "Retrieval recipe", "Commerce + Risk"], ["{{threshold}}", "ctl", "Number", "default 0.80"], ["{{order}}", "exe", "JSON", "validated against OrderInput"]].forEach(([v, c, t1, t2], i) => {
+      const x = pad + i * (cw + gap);
+      card(g, x, vy, cw, vh, { stroke: c, a: A });
+      g.rect(x + 1, vy + 1, cw - 2, 32, { fill: g.rgba(c, 0.08), r: 9, a: A });
+      g.text(v, x + 12, vy + 22, { size: narrow ? 11.5 : 12.5, weight: 600, color: c, a: A, maxW: cw - 24 });
+      g.text(t1, x + 12, vy + 54, { size: narrow ? 13 : 14, font: "ui", weight: 600, a: A });
+      g.wrap(t2, x + 12, vy + 73, cw - 24, { size: 10.5, color: "ink-3", lh: 14, maxLines: 2, a: A });
+    });
+    g.wrap("Owner Risk Engineering · used by fraud-review-agent · eval dataset v3, 8 cases · tested on 3 models · 6,140 calls in Dev over 7 days", pad, vy + vh + 30, w, { size: 10.5, color: "ink-3", lh: 15, maxLines: 2, a: A });
+  }
+
+  function schemaPanel(g, A, top) {
+    const { W, H, narrow } = g, pad = 24, w = W - pad * 2;
+    g.text("FraudDecision", pad, top + 14, { size: 28, font: "display", weight: 800, a: A });
+    g.text("output schema of fraud-review v7", pad + g.tw("FraudDecision", 28, "display", 800) + 10, top + 14, { size: 11, color: "ink-3", a: A });
+    const cy = top + 32, rh = narrow ? 62 : 72, ch = 24 + rh * 3;
+    card(g, pad, cy, w, ch, { a: A });
+    const kx = pad + 18, vx = pad + (narrow ? 132 : 168), vw = pad + w - 18 - vx;
+    [["decision", "enum"], ["risk_score", "number 0–1"], ["reasons", "string[] · max 3"]].forEach(([k, t], i) => {
+      const y = cy + 12 + i * rh + rh / 2;
+      if (i) g.line(pad + 12, y - rh / 2, pad + w - 12, y - rh / 2, { color: "grid", lw: 1, a: A });
+      g.text(k, kx, y - 2, { size: 13, weight: 600, a: A });
+      g.text(t, kx, y + 15, { size: 10, color: "ink-3", a: A });
+      if (i === 0) {
+        const w1 = g.pill(vx, y + 2, '"approve"', { size: 11.5, pad: 10, stroke: "hair", lw: 1.2, a: A });
+        g.text("|", vx + w1 + 9, y + 6, { size: 12, color: "ink-3", a: A });
+        g.pill(vx + w1 + 22, y + 2, '"manual_review"', { size: 11.5, pad: 10, stroke: "hair", lw: 1.2, a: A });
+      } else if (i === 1) {
+        const x0 = vx + 4, x1 = vx + vw - 4, X = (v) => lerp(x0, x1, v), sy = y + 2;
+        g.rect(X(0.8), sy - 6, X(1) - X(0.8), 12, { fill: g.rgba("ctl", 0.12), a: A });
+        g.line(x0, sy, x1, sy, { color: "ink-3", lw: 1.2, a: A });
+        [0, 0.5, 1].forEach((v) => g.line(X(v), sy - 4, X(v), sy + 4, { color: "ink-3", lw: 1.2, a: A }));
+        g.line(X(0.8), sy - 13, X(0.8), sy + 9, { color: "ctl", lw: 1.4, dash: [3, 3], a: A });
+        g.text("{{threshold}} 0.80", X(0.8), sy - 17, { size: 10, color: "ctl", align: "center", weight: 600, a: A });
+        g.text("0", x0, sy + 20, { size: 9.5, color: "ink-3", a: A });
+        g.text("approve", X(0.4), sy + 20, { size: 10, color: "ink-2", align: "center", a: A });
+        g.text("manual_review", x1, sy + 20, { size: 10, color: "ctl", align: "right", a: A });
+      } else {
+        const sw = Math.min(110, (vw - 3 * 8) / 4.6);
+        for (let k = 0; k < 4; k++) {
+          const x = vx + k * (sw + 8);
+          if (k < 3) { g.rect(x, y - 10, sw, 24, { fill: "sheet", stroke: "hair", lw: 1.2, r: 5, a: A }); g.rect(x + 8, y + 1, sw * 0.6, 3, { fill: "grid", r: 2, a: A }); }
+          else { g.hatch(x, y - 10, sw, 24, { color: "bad", a: A, r: 5 }); g.text("✕", x + sw / 2, y + 6, { size: 12, color: "bad", align: "center", weight: 700, a: A }); }
+        }
+        const lx = vx + 4 * (sw + 8) - 2, lab = "a 4th fails";
+        if (lx + g.tw(lab, 10) < pad + w - 14) g.text(lab, lx, y + 6, { size: 10, color: "bad", a: A });
+      }
+    });
+    // versions rail, centred in the space left
+    const yB = cy + ch, blk = 200, ry = yB + Math.max(80, (H - yB - blk) / 2 + 62);
+    g.text("VERSIONS", pad, ry - 56, { size: 10, color: "ink-3", ls: 1, a: A });
+    const V = [["v4", "Sep 9", "First structured output", null], ["v5", "Sep 21", "Added PII rule", 6], ["v6", "Oct 2", "Three reasons max", 7], ["v7", "Oct 11", "Fail closed on timeout", 8], ["v8", "next save", "Saving creates v8", -1]];
+    const sp = w / 5, X = (i) => pad + sp * (i + 0.5);
+    g.line(X(0), ry, X(3), ry, { color: "ink-3", lw: 1.4, a: A });
+    g.line(X(3), ry, X(4), ry, { color: "ink-3", lw: 1.4, dash: [4, 4], a: A });
+    V.forEach(([v, d, c, ev], i) => {
+      const x = X(i), cur = i === 3, nxt = i === 4;
+      g.text(v.toUpperCase(), x, ry - 26, { size: 22, font: "display", weight: 800, color: nxt ? "ink-3" : cur ? "exp" : "ink", align: "center", a: A });
+      g.text(d, x, ry - 12, { size: 9.5, color: "ink-3", align: "center", a: A });
+      g.circle(x, ry, 7, { fill: cur ? "exp" : nxt ? "card" : "ink-3", stroke: nxt ? "ink-3" : null, lw: 1.4, dash: nxt ? [3, 3] : null, a: A });
+      const yy = g.wrap(c, x, ry + 26, sp - 12, { size: 10.5, color: nxt ? "ink-3" : "ink-2", lh: 14, maxLines: 2, align: "center", a: A });
+      const cy2 = Math.max(yy, ry + 54) + 4, cs = 6, cg = 2, cx0 = x - (8 * cs + 7 * cg) / 2;
+      if (ev === null) g.text("no evals listed", x, cy2 + 6, { size: 9.5, color: "ink-3", align: "center", a: A });
+      else {
+        for (let k = 0; k < 8; k++) {
+          if (ev < 0) g.rect(cx0 + k * (cs + cg), cy2, cs, cs, { stroke: "ink-3", lw: 1, dash: [2, 2], a: A });
+          else g.rect(cx0 + k * (cs + cg), cy2, cs, cs, { fill: k < ev ? "tel" : "card", stroke: k < ev ? null : "tel", lw: 1, a: A });
+        }
+        g.text(ev < 0 ? "needs fresh evals" : `evals ${ev}/8`, x, cy2 + 20, { size: 9.5, color: ev < 0 ? "ink-3" : "tel", align: "center", weight: 600, a: A, maxW: sp - 8 });
+      }
+      if (cur) { g.arrow(x, cy2 + 50, x, cy2 + 30, { color: "exe", lw: 1.3, head: 7, a: A }); g.wrap("fraud-review-agent", x, cy2 + 64, sp - 8, { size: 10, color: "exe", weight: 600, align: "center", lh: 13, maxLines: 2, a: A }); }
+      if (nxt) g.wrap("the agent stays on v7 until someone switches it", x, cy2 + 40, sp - 10, { size: 9.5, color: "ink-3", lh: 13, maxLines: 4, align: "center", a: A });
+    });
+  }
+
+  function configPanel(g, A, top, t) {
+    const { W, H, narrow } = g, tall = H > W * 0.95, pad = 24;
+    const P = 8, ph = t % P, ch = ramp(ph, 2.6, 0.7) * (1 - ramp(ph, 7.2, 0.5));
+    const lw = tall ? W - pad * 2 : W * 0.5 - pad - 10, labW = narrow ? 86 : 100, csz = narrow ? 10.5 : 12;
+    const rows = [
+      ["PROMPT", [["fraud-review v7", "exe"]]],
+      ["MODEL", [["Risk Reasoner 3", "exe"]]],
+      ["SETTINGS", [[`temperature ${ch > 0.5 ? "0.3" : "0.2"}`, ch > 0.05 ? "exp" : "ink-3"], ["threshold 0.80", "ink-3"], ["max tokens 1,024", "ink-3"]]],
+      ["GUARDRAILS", [["PII redaction", "ctl"], ["Injection shield", "ctl"], ["JSON schema · FraudDecision", "ctl"]]],
+      ["TOOLS", [["fraud-risk-api", "exe"], ["enterprise-search", "exe"]]],
+      ["CONTEXT", [["Commerce + Risk · 4 items", "kno"]]],
+    ];
+    const layout = (y0, a) => { let y = y0; const ys = []; rows.forEach(([k, items]) => { g.text(k, pad, y + 4, { size: 9.5, color: "ink-3", ls: 0.8, a }); ys.push(y); const b = chipFlow(g, pad + labW, y, pad + lw, items, { size: csz, a }); y = b + (tall ? 18 : 30); }); return { ys, end: y }; };
+    const hIn = layout(0, 0).end;
+    const bh = 72, eh = 58, gh = 72, hR = bh + 26 + eh + 34 + gh;
+    const mid = (top + 26 + H - 20) / 2;
+    const inTop = tall ? top + 30 : Math.max(top + 30, mid - hIn / 2 + 10);
+    g.text("INPUTS", pad, inTop - 22, { size: 10, color: "ink-3", ls: 1, a: A });
+    const L = layout(inTop, A);
+    const rx = tall ? pad : W * 0.5 + 30, rw = tall ? W - pad * 2 : W - pad - rx;
+    const ry = tall ? L.end + 10 : Math.max(top + 20, mid - hR / 2), bw = (rw - 16) / 2;
+    const oldA = A * (1 - 0.55 * ch), newA = A * ch, nx = rx + bw + 16;
+    g.box(rx, ry, bw, bh, { color: "ctl", wash: 0.08, a: oldA });
+    g.text("CONFIGURATION", rx + 12, ry + 21, { size: 9.5, color: "ctl", ls: 0.8, a: oldA, maxW: bw - 24 });
+    g.text("cfg-7f3a9c", rx + 12, ry + 52, { size: 24, font: "display", weight: 800, a: oldA, maxW: bw - 24 });
+    g.rect(nx, ry, bw, bh, { fill: g.rgba("ctl", 0.05), stroke: "ctl", lw: 1.6, r: 10, dash: [5, 4], a: newA });
+    g.text("NEW CONFIGURATION", nx + 12, ry + 21, { size: 9.5, color: "ctl", ls: 0.8, a: newA, maxW: bw - 24 });
+    g.text("no evidence yet", nx + 12, ry + 48, { size: 11.5, color: "ink-3", a: newA });
+    // the inputs, bracketed, feed the current configuration
+    const tx = lerp(rx, nx, ch), ty = ry + bh / 2;
+    if (!tall) {
+      const bx = pad + lw + 16, y0 = L.ys[0], y1 = L.ys[L.ys.length - 1], ym = (y0 + y1) / 2;
+      L.ys.forEach((y) => g.line(bx - 9, y, bx, y, { color: "ink-3", lw: 1.2, a: A }));
+      g.line(bx, y0, bx, y1, { color: "ink-3", lw: 1.2, a: A });
+      g.curve([bx + 1, ym], [lerp(bx, tx, 0.55), ym], [tx - 4, ty], { color: ch > 0.5 ? "exp" : "ink-3", lw: 1.4, head: 8, a: A });
+    } else g.arrow(pad + 40, L.end - 14, pad + 40, ry - 4, { color: "ink-3", lw: 1.3, head: 7, a: A });
+    // evidence belongs to cfg-7f3a9c
+    const ey = ry + bh + 26, ew = bw - 34;
+    g.line(rx + 24, ry + bh, rx + 24, ey, { color: "tel", lw: 1.3, a: A });
+    card(g, rx, ey, ew, eh, { stroke: "tel", a: A });
+    g.text("evals 8 of 8", rx + 12, ey + 24, { size: 13, weight: 600, color: "tel", a: A, maxW: ew - 20 });
+    g.text("run 11:04 · Dev", rx + 12, ey + 43, { size: 10, color: "ink-3", a: A, maxW: ew - 20 });
+    // release gate reads the current configuration
+    const gy = ey + eh + 34, ok = ch < 0.5, gc = ok ? "ok" : "bad", ax = lerp(rx + bw - 14, nx + bw / 2, ch);
+    g.arrow(ax, ry + bh + 3, ax, gy - 3, { color: "ctl", lw: 1.4, head: 7, dash: ch > 0.5 ? [4, 4] : null, a: A * 0.85 });
+    g.rect(rx, gy, rw, gh, { fill: g.rgba(gc, 0.07), stroke: gc, lw: 1.5, r: 10, a: A });
+    mark(g, rx + 22, gy + 24, ok ? "win" : "bad", A, 9);
+    g.text("RELEASE GATE", rx + 40, gy + 28, { size: 10, color: "ctl", ls: 0.8, a: A });
+    g.wrap(ok ? "evidence for the current configuration: it counts toward a release" : "evidence from older runs no longer counts toward a release", rx + 14, gy + 50, rw - 28, { size: 11, color: ok ? "ink-2" : "bad", weight: ok ? 500 : 600, lh: 15, maxLines: 2, a: A });
+    if (gy + gh + 30 < H) g.text(ch > 0.5 ? "temperature 0.2 → 0.3 is enough" : "watch one setting change", rx, gy + gh + 24, { size: 10.5, color: ch > 0.5 ? "exp" : "ink-3", a: A });
+  }
+
+  function outputsPanel(g, A, top) {
+    const { W, H, narrow } = g, pad = 24, w = W - pad * 2;
+    const ax0 = pad + 10, ax1 = W - pad - 10, ay = top + 56, X = (v) => lerp(ax0, ax1, v);
+    g.text("risk_score on ORD-10482", pad, top + 8, { size: 11, color: "ink-3", a: A });
+    g.rect(X(0.8), ay - 7, X(1) - X(0.8), 14, { fill: g.rgba("ctl", 0.12), a: A });
+    g.line(ax0, ay, ax1, ay, { color: "ink-3", lw: 1.2, a: A });
+    [0, 0.5, 1].forEach((v) => g.line(X(v), ay - 4, X(v), ay + 4, { color: "ink-3", lw: 1.2, a: A }));
+    g.line(X(0.8), ay - 30, X(0.8), ay + 12, { color: "ctl", lw: 1.4, dash: [3, 3], a: A });
+    g.text("0", ax0, ay + 20, { size: 9.5, color: "ink-3", align: "center", a: A });
+    g.text("approve", X(0.4), ay + 20, { size: 10, color: "ink-2", align: "center", a: A });
+    g.text("0.80 →", X(0.8) - 4, ay + 20, { size: 10, color: "ctl", align: "right", a: A });
+    g.text("manual_review", ax1, ay + 20, { size: 10, color: "ctl", align: "right", a: A });
+    CMP.forEach((m, i) => {
+      const x = X(m.score), bad = m.dec === "approve";
+      g.circle(x, ay, 5.5, { fill: bad ? "bad" : "ink", stroke: "card", lw: 2, a: A });
+      const al = i === 1 ? "right" : i === 0 ? "left" : "center", dx = i === 1 ? -5 : i === 0 ? 5 : 0;
+      g.text(m.score.toFixed(2), x + dx, ay - 12, { size: 10.5, weight: 600, color: bad ? "bad" : "ink", align: al, a: A });
+      g.text(m.badge, x + dx, ay - 26, { size: 9, font: "ui", weight: 700, color: "ink-3", align: al, a: A });
+    });
+    const cy = ay + 46, gap = 12, cw = (w - gap * 2) / 3, chh = Math.min(H - cy - 20, 420);
+    CMP.forEach((m, i) => {
+      const x = pad + i * (cw + gap), bad = m.dec === "approve", ix = x + 12, iw = cw - 24;
+      card(g, x, cy, cw, chh, { dash: m.exp ? [5, 4] : null, a: A });
+      badge(g, ix, cy + 12, 24, m.badge, A);
+      g.text(m.name, ix + 32, cy + 24, { size: 12.5, font: "ui", weight: 600, a: A, maxW: iw - 32 });
+      g.text(m.line, ix + 32, cy + 39, { size: 9.5, color: "ink-3", a: A, maxW: iw - 32 });
+      g.text(m.dec.toUpperCase(), ix, cy + 78, { size: narrow ? 18 : 22, font: "display", weight: 800, color: bad ? "bad" : "ink", a: A, maxW: iw });
+      let y = cy + 102;
+      g.text("REASONS", ix, y, { size: 9, color: "ink-3", ls: 0.8, a: A }); y += 17;
+      m.reasons.forEach((r) => { lines(g, r, iw - 10, 10.5).forEach((ln, k) => { if (!k) g.text("·", ix, y, { size: 10.5, color: "ink-3", a: A }); g.text(ln, ix + 10, y, { size: 10.5, color: "ink-2", a: A }); y += 15; }); });
+      // steps, metrics and evals anchored at the bottom
+      const ey = cy + chh - 34, my = ey - 44, sy = my - 30 - 4 * 17;
+      g.line(ix, sy - 22, ix + iw, sy - 22, { color: "grid", lw: 1, a: A });
+      g.text("STEPS", ix, sy - 6, { size: 9, color: "ink-3", ls: 0.8, a: A });
+      m.steps.forEach(([lab, ms, c], k) => {
+        const yy = sy + 12 + k * 17, skipped = c === "bad";
+        g.circle(ix + 3, yy - 3.5, 3, { fill: c, a: A });
+        g.text(lab, ix + 11, yy, { size: 10, color: skipped ? "bad" : "ink-2", weight: skipped ? 600 : 500, a: A, maxW: iw - 56 });
+        g.text(skipped ? "—" : ms.toLocaleString("en-US") + " ms", ix + iw, yy, { size: 9.5, color: "ink-3", align: "right", a: A });
+      });
+      const third = iw / 3;
+      [[m.lat.toFixed(2) + " s", "latency"], [m.tok.toLocaleString("en-US"), "tokens"], ["$" + m.cost.toFixed(4), "cost"]].forEach(([v, l], k) => {
+        g.text(v, ix + k * third, my, { size: narrow ? 11 : 12.5, weight: 600, a: A, maxW: third - 4 });
+        g.text(l, ix + k * third, my + 14, { size: 9, color: "ink-3", a: A });
+      });
+      const ok = m.evals === 8;
+      g.chip(ix, ey, `evals ${m.evals}/8`, ok ? "ok" : "bad", { size: 10.5, a: A });
+      g.text(m.note, ix, ey + 22, { size: 10, color: ok ? "ink-3" : "bad", a: A, maxW: iw });
+    });
+  }
+
+  function rankPanel(g, A, top) {
+    const { W, H, narrow } = g, pad = 24, w = W - pad * 2;
+    const G = [
+      ["LATENCY", [1.84, 1.21, 0.92], (v) => v.toFixed(2) + " s", "fastest"],
+      ["COST PER RUN · ILLUSTRATIVE", [0.0041, 0.0052, 0.0009], (v) => "$" + v.toFixed(4), "cheapest"],
+      ["TOKENS", [3412, 2980, 3104], (v) => v.toLocaleString("en-US"), "fewest"],
+      ["EVALS PASSED", [8, 7, 6], (v) => v + " / 8", "all 8"],
+    ];
+    const nameW = narrow ? 128 : 150, bx0 = pad + nameW, bw = w - nameW - (narrow ? 130 : 160);
+    const gh = Math.min(116, (H - top - 140) / 4);
+    G.forEach(([title, vals, fmt, tag], gi) => {
+      const gy = top + 14 + gi * gh, evals = gi === 3;
+      g.text(title, pad, gy, { size: 10, color: evals ? "tel" : "ink-3", ls: 0.8, weight: 600, a: A });
+      const max = Math.max(...vals), best = evals ? 0 : vals.indexOf(Math.min(...vals));
+      vals.forEach((v, r) => {
+        const y = gy + 24 + r * 24, len = bw * (evals ? v / 8 : v / max), isBest = r === best;
+        g.text(CMP[r].name, pad, y + 4, { size: 11.5, font: "ui", color: "ink-2", a: A, maxW: nameW - 10 });
+        const c = evals ? (v === 8 ? "ok" : "bad") : isBest ? "ink" : "ink-3";
+        g.rect(bx0, y - 7, len, 14, { fill: evals ? c : g.rgba(c, isBest ? 0.85 : 0.35), r: 3, a: A });
+        const vx = bx0 + len + 8;
+        g.text(fmt(v), vx, y + 4, { size: 11.5, weight: isBest ? 600 : 500, color: evals ? c : "ink", a: A });
+        if (isBest) g.text(tag, vx + g.tw(fmt(v), 11.5, "mono", 600) + 8, y + 4, { size: 10, color: evals ? "ok" : "ink-3", a: A });
+      });
+    });
+    const by = top + 14 + 4 * gh + 6, bh = 66;
+    if (by + bh < H - 4) {
+      g.rect(pad, by, w, bh, { fill: g.rgba("ok", 0.07), stroke: "ok", lw: 1.5, r: 10, a: A });
+      g.text("ONLY RISK REASONER 3 PASSES ALL 8 CASES", pad + 16, by + 29, { size: narrow ? 17 : 20, font: "display", weight: 800, color: "ok", a: A, maxW: w - 32 });
+      g.text("The fastest, cheapest column approves a risky order.", pad + 16, by + 50, { size: 11, color: "ink-2", a: A, maxW: w - 32 });
+    }
+  }
+
+  Field.scene("workbench", (g, s) => {
+    const b = s.b, top = Math.max(56, g.safeTop + 20);
+    const v = [0, 1, 2, 3, 4].map((i) => vis(b, i));
+    if (v[0] > 0.01) promptPanel(g, v[0], top);
+    if (v[1] > 0.01) schemaPanel(g, v[1], top);
+    if (v[2] > 0.01) configPanel(g, v[2], top, s.t);
+    if (v[3] > 0.01) outputsPanel(g, v[3], top);
+    if (v[4] > 0.01) rankPanel(g, v[4], top);
+  }, { anim: true, restT: 4, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- agents and tools ---------------- */
+  const STEPS = [
+    { n: "When order-service asks for a decision on order", c: "ink-3" },
+    { n: "Retrieve context from Commerce + Risk keeping 8 results", c: "kno", tag: "140 ms" },
+    { n: "Call fraud-risk-api with order_id and amount", c: "exe", tag: "Read", tc: "exe" },
+    { n: "Reason with Risk Reasoner 3 using prompt fraud-review v7", c: "exe", tag: "1.3 s" },
+    { n: "Check output matches FraudDecision and contains no PII", c: "ctl" },
+    { n: "If risk_score is at least 0.80, return manual_review, otherwise approve", c: "ctl" },
+    { n: "Ask a person before create-jira-ticket for the review queue", c: "ctl", tag: "Write", tc: "ctl", wait: true },
+  ];
+  function flowGeom(g, top) {
+    const { W, H } = g, tall = H > W * 0.95, pad = 22;
+    const fw = tall ? W - pad * 2 : W * 0.5 - pad - 6, fy = top + 50;
+    const gap = tall ? 6 : 10;
+    const sh = tall ? Math.min(36, (H * 0.48 - gap * 6) / 7) : Math.min(64, (H - fy - 20 - gap * 6) / 7);
+    const bottom = fy + 7 * sh + 6 * gap;
+    return { tall, pad, fx: pad, fw, fy, sh, gap, bottom, rx: tall ? pad : W * 0.5 + 18, rw: tall ? W - pad * 2 : W - pad - (W * 0.5 + 18), ry: tall ? bottom + 20 : top + 50 };
+  }
+  function drawFlow(g, F, A, top, focus, tok) {
+    g.text("fraud-review-agent", F.fx, top + 14, { size: 26, font: "display", weight: 800, a: A });
+    g.text("v3", F.fx + g.tw("fraud-review-agent", 26, "display", 800) + 8, top + 14, { size: 26, font: "display", weight: 700, color: "ink-3", a: A });
+    g.text("Flow · 7 steps · 1 waits for a person", F.fx, top + 33, { size: 10.5, color: "ink-3", a: A, maxW: F.fw });
+    const is = Math.min(24, F.sh - 12);
+    STEPS.forEach((st, i) => {
+      const y = F.fy + i * (F.sh + F.gap), on = focus === i, here = tok && Math.round(tok.i) === i;
+      if (i < 6) g.line(F.fx + 8 + is / 2, y + F.sh, F.fx + 8 + is / 2, y + F.sh + F.gap, { color: "hair", lw: 1.4, a: A });
+      card(g, F.fx, y, F.fw, F.sh, { stroke: on || here ? st.c : st.wait ? "ctl" : "hair", lw: on || here ? 2 : 1.2, dash: st.wait && !here ? [5, 4] : null, r: 8, a: A });
+      g.rect(F.fx + 8, y + (F.sh - is) / 2, is, is, { fill: st.c, r: 6, a: A });
+      g.text(String(i + 1), F.fx + 8 + is / 2, y + F.sh / 2 + 4, { size: 11, font: "ui", weight: 700, color: "#FFFFFF", align: "center", a: A });
+      let tagW = 0;
+      if (st.tag) {
+        if (st.tc) tagW = g.chip(F.fx + F.fw - 8, y + F.sh / 2, st.tag, st.tc, { size: 9.5, align: "right", a: A });
+        else { g.text(st.tag, F.fx + F.fw - 10, y + F.sh / 2 + 4, { size: 10, color: "ink-3", align: "right", a: A }); tagW = g.tw(st.tag, 10); }
+      }
+      const tx = F.fx + 8 + is + 10, mw = F.fw - (tx - F.fx) - tagW - 16, fs = F.tall ? 11.5 : 12;
+      let L = lines(g, st.n, mw, fs, "ui", 500);
+      if (L.length > 2 || (F.sh < 40 && L.length > 1)) L = [L[0] + (L.length > 1 ? "…" : "")];
+      const lh = 15, y0 = y + F.sh / 2 + 4 - (L.length - 1) * lh / 2;
+      L.forEach((ln, k) => g.text(ln, tx, y0 + k * lh, { size: fs, font: "ui", a: A, maxW: mw }));
+    });
+    if (tok) {
+      const yA = F.fy + Math.floor(tok.i) * (F.sh + F.gap), yB = F.fy + Math.min(6, Math.floor(tok.i) + 1) * (F.sh + F.gap), u = tok.i - Math.floor(tok.i);
+      const ty = lerp(yA, yB, u) + F.sh / 2, tx = F.fx + F.fw + 2;
+      if (!F.tall) { g.circle(tx + 8, ty, 6, { fill: tok.wait ? "ctl" : "exe", a: A }); if (tok.wait) g.text("waits for a person", tx + 18, ty + 4, { size: 10.5, color: "ctl", weight: 600, a: A }); }
+      else g.circle(F.fx + F.fw - 4, ty - F.sh / 2 + 4, 4.5, { fill: tok.wait ? "ctl" : "exe", a: A });
+    }
+  }
+  function runtimePanel(g, F, A) {
+    const { H } = g, x = F.rx, w = F.rw;
+    let y = F.ry;
+    const ch = Math.min(H - y - 20, 236);
+    card(g, x, y, w, ch, { a: A });
+    g.text("RUNTIME", x + 16, y + 24, { size: 10, color: "ink-3", ls: 1, a: A });
+    g.text("LangGraph", x + 16, y + 48, { size: 16, font: "ui", weight: 600, a: A });
+    g.text("on nsx-dev-use1", x + 16 + g.tw("LangGraph", 16, "ui", 600) + 8, y + 48, { size: 11.5, color: "ink-2", a: A });
+    // max 8 steps
+    y += 76;
+    g.text("max 8 steps", x + 16, y, { size: 11, color: "ink-2", a: A });
+    const bs = Math.min(20, (w - 150) / 8 - 5);
+    for (let k = 0; k < 8; k++) {
+      const bx = x + 120 + k * (bs + 5);
+      if (k < 7) g.rect(bx, y - bs + 4, bs, bs, { fill: STEPS[k].c, r: 4, a: A });
+      else g.rect(bx, y - bs + 4, bs, bs, { stroke: "ink-3", lw: 1.2, dash: [3, 3], r: 4, a: A });
+    }
+    y += 40;
+    g.text("10 s timeout", x + 16, y, { size: 11, color: "ink-2", a: A });
+    g.dim(x + 120, x + w - 18, y - 4, "10 s", { color: "ink-3", size: 10.5, a: A });
+    y += 38;
+    g.text("$0.01 per run", x + 16, y, { size: 11, color: "ink-2", a: A });
+    g.text("cost figures illustrative", x + w - 16, y, { size: 9.5, color: "ink-3", align: "right", a: A });
+    // agents list
+    const ly = F.ry + ch + 30;
+    const AG = [["fraud-review-agent", "v3", "Running", "Risk Engineering"], ["Ratchet · pipeline agent", "v5", "Running", "Wheeljack"], ["knowledge-copilot", "v12", "Running", "Employee Experience"], ["developer-assistant", "v8", "Running", "Developer Experience"], ["release-notes-writer", "v1", "Draft", "Wheeljack"]];
+    if (ly + AG.length * 22 + 10 < H) {
+      g.text("AGENTS · 5", x, ly, { size: 10, color: "ink-3", ls: 1, a: A });
+      AG.forEach(([n, v, st, team], k) => {
+        const yy = ly + 22 + k * 22;
+        g.text(n, x, yy, { size: 11, font: "ui", weight: k === 0 ? 700 : 500, a: A, maxW: w * 0.5 });
+        g.text(v, x + w * 0.52, yy, { size: 10, color: "ink-3", a: A });
+        g.text(`${st} · ${team}`, x + w, yy, { size: 10, color: st === "Draft" ? "ink-3" : "exe", align: "right", a: A, maxW: w * 0.4 });
+      });
+    }
+  }
+  function step3Panel(g, F, A) {
+    const { H } = g, x = F.rx, w = F.rw;
+    let y = F.ry;
+    const ch = 196;
+    card(g, x, y, w, ch, { stroke: "exe", a: A });
+    g.text("STEP 3 · CALL TOOL", x + 16, y + 24, { size: 10, color: "ink-3", ls: 1, a: A });
+    g.text("fraud-risk-api 2.4.0", x + 16, y + 48, { size: 16, font: "ui", weight: 600, a: A });
+    g.text("OpenAPI · Risk Engineering · scope risk:score", x + 16, y + 66, { size: 10.5, color: "ink-3", a: A, maxW: w - 32 });
+    [["Inputs", "order_id, amount"], ["Timeout", "800 ms, then fail closed"], ["Retries", "1"], ["Identity", "caller's permissions"]].forEach(([k, v], i) => {
+      const yy = y + 96 + i * 24;
+      g.text(k, x + 16, yy, { size: 11, color: "ink-3", a: A });
+      g.text(v, x + 100, yy, { size: 11.5, color: "ink", weight: 500, a: A, maxW: w - 116 });
+    });
+    if (!F.tall) { const sy = F.fy + 2 * (F.sh + F.gap) + F.sh / 2; g.curve([F.fx + F.fw + 4, sy], [x - 20, sy], [x - 3, y + 40], { color: "exe", lw: 1.3, head: 7, a: A * 0.8 }); }
+    // timeout path
+    y += ch + 30;
+    if (y + 120 > H) return;
+    g.text("IF THE API DOES NOT ANSWER", x, y, { size: 10, color: "ink-3", ls: 1, a: A });
+    const by = y + 34, bwid = (w - 3 * 22) / 4;
+    const B = [["call", "exe"], ["retry 1", "exe"], ["fail closed", "ctl"], ["manual_review", "ctl"]];
+    B.forEach(([lab, c], i) => {
+      const bx = x + i * (bwid + 22);
+      g.rect(bx, by - 15, bwid, 30, { fill: g.rgba(c, i === 3 ? 0.14 : 0.07), stroke: c, lw: 1.3, r: 7, a: A });
+      g.text(lab, bx + bwid / 2, by + 4, { size: 10.5, weight: 600, color: c, align: "center", a: A, maxW: bwid - 10 });
+      if (i < 3) g.arrow(bx + bwid + 3, by, bx + bwid + 19, by, { color: "ink-3", lw: 1.2, head: 6, a: A });
+      if (i < 2) { g.text("✕", bx + bwid + 11, by - 18, { size: 11, color: "bad", align: "center", weight: 700, a: A }); }
+    });
+    g.dim(x, x + bwid, by + 30, "800 ms", { color: "ink-3", size: 10, a: A });
+    g.wrap("prompt v7: \"If the tool times out, decide manual_review.\" Eval case T03 checks it.", x, by + 60, w, { size: 10.5, color: "ink-2", lh: 15, maxLines: 3, a: A });
+  }
+  function testPanel(g, F, A, k) {
+    const { H } = g, x = F.rx, w = F.rw;
+    const y = F.ry;
+    const R = [["Context · 4 items", "140 ms", "kno", 2], ["fraud-risk-api → 0.91", "220 ms", "exe", 3], ["Reasoning", "1,280 ms", "exe", 4], ["Checks passed", "90 ms", "ctl", 5], ["Ticket waiting for approval", "—", "wait", 6]];
+    const ch = Math.min(F.tall ? 250 : 300, H - y - 20);
+    card(g, x, y, w, ch, { a: A });
+    g.text("TEST RUN · ORD-10482", x + 16, y + 24, { size: 10, color: "ink-3", ls: 1, a: A });
+    g.chip(x + w - 14, y + 20, "Passed", "ok", { size: 10, align: "right", a: A * ramp(k, 5.8, 0.3) });
+    const rh = F.tall ? 22 : 26;
+    R.forEach(([lab, ms, c, need], i) => {
+      const yy = y + 52 + i * rh, ra = A * (k >= need ? 1 : 0.22);
+      if (c === "wait") mark(g, x + 21, yy - 4, "wait", ra, 6);
+      else g.circle(x + 21, yy - 4, 4, { fill: c, a: ra });
+      g.text(lab, x + 34, yy, { size: 11, color: c === "wait" ? "ctl" : "ink", a: ra, maxW: w - 110 });
+      g.text(ms, x + w - 16, yy, { size: 10.5, color: "ink-3", align: "right", a: ra });
+    });
+    const ry = y + 52 + R.length * rh + 6, ra = A * ramp(k, 5.8, 0.3);
+    if (ry + 60 < y + ch) {
+      g.rect(x + 14, ry, w - 28, ch - (ry - y) - 14, { fill: "sheet", r: 8, a: ra });
+      g.text("Result: manual_review", x + 26, ry + 24, { size: 13, font: "ui", weight: 700, a: ra });
+      g.wrap("Nothing was written; the ticket step waits for a person.", x + 26, ry + 44, w - 52, { size: 11, color: "ink-2", lh: 15, maxLines: 2, a: ra });
+    }
+  }
+  function registryPanel(g, A, top) {
+    const { W, H, narrow } = g, tall = H > W * 0.95, pad = 22, w = W - pad * 2;
+    g.text("Tools", pad, top + 14, { size: 26, font: "display", weight: 800, a: A });
+    g.text("registered for Commerce Orders · 4", pad + g.tw("Tools", 26, "display", 800) + 10, top + 14, { size: 11, color: "ink-3", a: A });
+    const TOOLS = [
+      ["API", "fraud-risk-api", "2.4.0", "OpenAPI · Risk Engineering · risk:score", "read"],
+      ["MCP", "enterprise-search", "2.1.0", "MCP · Platform", "read"],
+      ["GIT", "create-pull-request", "1.3.0", "Git adapter · Developer Experience · pullrequest:write", "write", "pull request on Bitbucket"],
+      ["EVT", "deployment-request", "1.0.0", "Event · Platform", "write", "deployment event"],
+    ];
+    const th = 52, laneH = 46 + 2 * th + 8 + 40, lgap = 22;
+    const cw = tall ? w : 150, chh = tall ? 54 : 104;
+    const total = tall ? chh + 26 + 2 * laneH + lgap : 2 * laneH + lgap;
+    const y0 = top + 36 + Math.max(0, (H - top - 56 - total) / 2);
+    const cY = tall ? y0 : y0 + total / 2 - chh / 2, cx = pad;
+    card(g, cx, cY, cw, chh, { stroke: "exp", a: A });
+    g.text("CALLER", cx + 12, cY + 20, { size: 9.5, color: "exp", ls: 1, a: A });
+    g.text("Venkatesh", cx + 12, cY + 40, { size: 13, font: "ui", weight: 600, a: A });
+    if (!tall) g.wrap("or an agent or @B acting for him", cx + 12, cY + 60, cw - 24, { size: 9.5, color: "ink-3", lh: 13, maxLines: 3, a: A });
+    else g.text("or an agent or @B acting for him", cx + cw - 36, cY + 40, { size: 10, color: "ink-3", align: "right", a: A });
+    g.bee(cx + cw - 18, cY + 18, 16, { a: A });
+    const lx = tall ? pad : pad + cw + 46, lw = W - pad - lx, laneTop = tall ? cY + chh + 26 : y0;
+    [["READ", "exe", "sees only what the caller can see", "Results stay within the caller's own access."], ["WRITE", "ctl", "a person approves the exact action", "Running it creates an approval request; nothing changes until a person approves."]].forEach(([nm, c, sub, foot], li) => {
+      const ly = laneTop + li * (laneH + lgap);
+      g.rect(lx, ly, lw, laneH, { fill: g.rgba(c, 0.04), stroke: c, lw: 1.2, r: 12, a: A, dash: li ? [6, 4] : null });
+      g.text(nm, lx + 14, ly + 28, { size: 22, font: "display", weight: 800, color: c, a: A });
+      g.text(sub, lx + 14 + g.tw(nm, 22, "display", 800) + 10, ly + 27, { size: 11, color: "ink-2", a: A, maxW: lw - 100 });
+      const tools = TOOLS.filter((t) => t[4] === (li ? "write" : "read"));
+      const tw = li ? (tall ? lw - 28 - 40 : lw * 0.56) : lw - 28;
+      tools.forEach((t, k) => {
+        const ty = ly + 44 + k * (th + 8), tx = lx + 14;
+        card(g, tx, ty, tw, th, { r: 8, a: A });
+        badge(g, tx + 8, ty + (th - 26) / 2, 26, t[0], A);
+        g.text(t[1], tx + 42, ty + th / 2 - 2, { size: 12, font: "ui", weight: 600, a: A, maxW: tw - 100 });
+        g.text(t[2], tx + 42 + Math.min(tw - 100, g.tw(t[1], 12, "ui", 600)) + 6, ty + th / 2 - 2, { size: 10, color: "ink-3", a: A });
+        g.text(t[3], tx + 42, ty + th / 2 + 13, { size: 9.5, color: "ink-3", a: A, maxW: tw - 52 });
+        if (!tall) g.curve([cx + cw + 3, cY + chh / 2], [lx - 16, ty + th / 2], [tx - 3, ty + th / 2], { color: c, lw: 1.1, head: 6, a: A * 0.55 });
+        if (li) {
+          const gx = tx + tw + 26, gyy = ty + th / 2;
+          g.arrow(tx + tw + 3, gyy, gx - 13, gyy, { color: "ctl", lw: 1.2, head: 6, a: A });
+          g.circle(gx, gyy, 11, { fill: "card", stroke: "ctl", lw: 1.5, dash: [3, 3], a: A });
+          g.circle(gx, gyy - 3, 3, { fill: "ctl", a: A }); g.rect(gx - 5, gyy + 2, 10, 5, { fill: "ctl", r: 2.5, a: A });
+          if (!tall) {
+            const ex = gx + 22, ew = lx + lw - 14 - ex;
+            g.arrow(gx + 12, gyy, ex - 3, gyy, { color: "ctl", lw: 1.2, head: 6, dash: [3, 3], a: A });
+            g.rect(ex, ty, ew, th, { stroke: "hair", lw: 1.2, r: 8, dash: [4, 4], a: A });
+            g.wrap(t[5], ex + 10, ty + th / 2 - 2, ew - 20, { size: 10, color: "ink-3", lh: 13, maxLines: 2, a: A });
+          }
+        }
+      });
+      g.wrap(foot, lx + 14, ly + laneH - 16, lw - 28, { size: 10, color: c, lh: 13, maxLines: 1, a: A });
+    });
+  }
+  function sandboxPanel(g, A, top) {
+    const { W, H, narrow } = g, tall = H > W * 0.95, pad = 22, w = W - pad * 2;
+    g.text("Sandbox", pad, top + 14, { size: 26, font: "display", weight: 800, a: A });
+    g.text("runs in Dev with your own permissions", pad + g.tw("Sandbox", 26, "display", 800) + 10, top + 14, { size: 11, color: "exp", a: A, maxW: w - 120 });
+    const ix = pad, iy = top + 36, iw = tall ? w : W * 0.43, ih = tall ? 200 : 268;
+    card(g, ix, iy, iw, ih, { a: A });
+    g.text("create-pull-request 1.3.0", ix + 14, iy + 26, { size: 13, font: "ui", weight: 600, a: A, maxW: iw - 90 });
+    g.chip(ix + iw - 12, iy + 21, "Write", "ctl", { size: 9.5, align: "right", a: A });
+    const FLD = [["title", "COM-2841: keep riskDecision out of v2 event"], ["branch", "feature/fraud-review"], ["target", "main"], ["reviewers", "maya.chen, priya.raman"]];
+    const fh = tall ? 30 : 42;
+    FLD.forEach(([k, v], i) => {
+      const fy = iy + 46 + i * fh;
+      g.text(k, ix + 14, fy + 4, { size: 9.5, color: "ink-3", a: A });
+      if (tall) g.text(v, ix + 90, fy + 4, { size: 11, color: "ink", a: A, maxW: iw - 104 });
+      else { g.rect(ix + 14, fy + 10, iw - 28, 22, { fill: "sheet", stroke: "hair", lw: 1, r: 5, a: A }); g.text(v, ix + 22, fy + 25, { size: 10.5, a: A, maxW: iw - 44 }); }
+    });
+    const ay = iy + 46 + 4 * fh + (tall ? 0 : 10);
+    g.rect(ix + 14, ay, iw - 28, 30, { fill: g.rgba("ctl", 0.07), stroke: "ctl", lw: 1, r: 6, a: A });
+    g.rect(ix + 22, ay + 8, 14, 14, { fill: "ctl", r: 3, a: A }); g.text("✓", ix + 29, ay + 19.5, { size: 10, color: "#FFFFFF", align: "center", weight: 700, a: A });
+    g.text("I understand this is a write action", ix + 44, ay + 20, { size: 10.5, color: "ink", weight: 600, a: A, maxW: iw - 66 });
+    // digest → result
+    const rx = tall ? pad : ix + iw + 50, rw = tall ? w : W - pad - rx, rh = tall ? 136 : 184;
+    let ry;
+    if (tall) {
+      const dx = pad + w / 2, dy = iy + ih + 24;
+      g.arrow(dx, iy + ih + 2, dx, dy - 12, { color: "ctl", lw: 1.3, head: 6, a: A });
+      g.pill(dx, dy, "input_digest sha256:41be…09d", { size: 10.5, align: "center", color: "ctl", stroke: "ctl", lw: 1.3, a: A });
+      ry = dy + 22;
+    } else {
+      ry = iy;
+      g.arrow(ix + iw + 3, iy + 56, rx - 3, iy + 56, { color: "ctl", lw: 1.4, head: 7, a: A });
+      g.text("digest", (ix + iw + rx) / 2, iy + 49, { size: 9.5, color: "ctl", align: "center", a: A });
+    }
+    card(g, rx, ry, rw, rh, { stroke: "ctl", a: A });
+    g.text("RESULT", rx + 14, ry + 22, { size: 10, color: "ink-3", ls: 1, a: A });
+    g.chip(rx + rw - 12, ry + 18, "Waiting for approval", "ctl", { size: 9.5, align: "right", a: A });
+    const J = tall
+      ? [["status", "approval_requested", "ctl"], ["request", "REQ-0042", "ink"], ["bound_to", "digest + caller venkatesh", "ink"], ["external_action", "false", "ok"]]
+      : [["status", "approval_requested", "ctl"], ["request", "REQ-0042", "ink"], ["tool", "create-pull-request@1.3.0", "ink-2"], ["input_digest", "sha256:41be…09d", "ctl"], ["caller", "venkatesh", "ink-2"], ["external_action", "false", "ok"]];
+    const kw = tall ? 120 : 112;
+    J.forEach(([k, v, c], i) => {
+      const yy = ry + 46 + i * 22;
+      g.text(k, rx + 14, yy, { size: 10, color: "ink-3", a: A });
+      g.text(v, rx + 14 + kw, yy, { size: 10.5, color: c, weight: 600, a: A, maxW: rw - kw - 28 });
+    });
+    // checks
+    let py = ry + rh + 26;
+    const CH = [["pass", "Input matches the schema"], ["pass", "Caller can push to feature/fraud-review"], ["pass", "Approval bound to this exact input"], ["wait", "Waiting for Maya Chen in Approvals"]];
+    const chk = tall ? CH.slice(2) : CH;
+    if (!tall) { g.text("CHECKS", rx, py, { size: 10, color: "ink-3", ls: 1, a: A }); py += 22; }
+    chk.forEach(([k, t]) => { mark(g, rx + 8, py - 4, k, A, 7); g.text(t, rx + 24, py, { size: 10.5, color: k === "wait" ? "ctl" : "ink-2", weight: k === "wait" ? 600 : 500, a: A, maxW: rw - 30 }); py += 22; });
+    py += 8;
+    if (py + 36 < H - 8) {
+      const lab = "Bitbucket · no pull request until a person approves";
+      g.hatch(rx, py, rw, 34, { color: "ink-3", a: A * 0.7, r: 6 });
+      g.rect(rx + 8, py + 7, Math.min(rw - 16, g.tw(lab, 10.5) + 16), 20, { fill: "sheet", r: 4, a: A });
+      g.text(lab, rx + 16, py + 21, { size: 10.5, color: "ink-2", a: A, maxW: rw - 32 });
+    }
+    // an edited input is not covered
+    if (!tall) {
+      const ey = iy + ih + 40, sz = 10.5;
+      g.text("EDIT THE INPUT", ix, ey - 8, { size: 10, color: "ink-3", ls: 1, a: A });
+      let x = ix;
+      const w1 = g.pill(x, ey + 14, "title edited", { size: sz, pad: 9, stroke: "bad", color: "bad", lw: 1.2, dash: [4, 3], a: A }); x += w1 + 8;
+      g.arrow(x, ey + 14, x + 16, ey + 14, { color: "bad", lw: 1.2, head: 6, a: A }); x += 22;
+      const w2 = g.pill(x, ey + 14, "new digest", { size: sz, pad: 9, stroke: "bad", color: "bad", lw: 1.2, dash: [4, 3], a: A }); x += w2 + 8;
+      g.wrap("REQ-0042 no longer covers it", ix, ey + 46, iw, { size: 10.5, color: "bad", weight: 600, lh: 15, maxLines: 2, a: A });
+    } else {
+      const ey = py + 56;
+      if (ey < H - 6) g.wrap("Edit any field and the digest changes, so REQ-0042 no longer covers the input.", pad, ey, w, { size: 10.5, color: "bad", lh: 15, maxLines: 2, a: A });
+    }
+  }
+
+  Field.scene("agents", (g, s) => {
+    const b = s.b, top = Math.max(56, g.safeTop + 20);
+    const F = flowGeom(g, top);
+    const flowA = clamp(0.5 + (2.5 - b) / 0.3);
+    const v = [0, 1, 2, 3, 4].map((i) => vis(b, i));
+    // test-run token (beat 2)
+    const P = 7.5, ph = s.t % P;
+    const arrive = [0, 0.5, 1.1, 1.8, 3.4, 3.9, 4.4];
+    let ti = 0; arrive.forEach((a, i) => { if (ph >= a) ti = i; });
+    let ipos = ti;
+    if (ti < 6 && ph > arrive[ti + 1] - 0.18) ipos = ti + (ph - (arrive[ti + 1] - 0.18)) / 0.18;
+    const tok = v[2] > 0.3 ? { i: ipos, wait: ti === 6 } : null;
+    const k = ti === 6 ? 6 : ti; // steps reached
+    if (flowA > 0.01) {
+      const focus = v[1] > 0.5 ? 2 : -1;
+      drawFlow(g, F, flowA, top, focus, tok);
+      if (v[0] > 0.01) runtimePanel(g, F, v[0] * flowA);
+      if (v[1] > 0.01) step3Panel(g, F, v[1] * flowA);
+      if (v[2] > 0.01) testPanel(g, F, v[2] * flowA, k + (ti === 6 ? Math.min(1, (ph - arrive[6]) / 0.3) : 0));
+    }
+    if (v[3] > 0.01) registryPanel(g, v[3], top);
+    if (v[4] > 0.01) sandboxPanel(g, v[4], top);
+  }, { anim: true, restT: 6.2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- lab: model gateway routing ---------------- */
+  const CAT = [
+    { name: "Risk Reasoner 3", b: "AWS", prov: "Bedrock · Claude", res: "US", caps: ["tools", "JSON"], ctx: "200k", pin: 3, pout: 15, p50: 1.2, st: "Approved", quota: 600 },
+    { name: "General Reasoner", b: "AZ", prov: "Azure OpenAI · GPT", res: "US", caps: ["tools", "JSON"], ctx: "128k", pin: 2.5, pout: 10, p50: 0.9, st: "Approved" },
+    { name: "EU Reasoner", b: "AWS", prov: "Bedrock · Mistral", res: "EU", caps: ["tools", "JSON"], ctx: "", pin: 2, pout: 6, p50: 1.0, st: "Approved · EU" },
+    { name: "Code Assistant", b: "A", prov: "Anthropic API · Claude", short: "Anthropic API", res: "US", caps: ["tools", "code"], ctx: "200k", pin: 3, pout: 15, p50: 1.1, st: "Approved" },
+    { name: "Vision Reader", b: "G", prov: "Google AI Studio · Gemini", short: "Google AI Studio", res: "US", caps: ["vision"], ctx: "1M", pin: 1.25, pout: 5, p50: 1.4, st: "Experimental" },
+    { name: "Local Llama", b: "vL", prov: "vLLM · self-hosted", res: "Private VPC", caps: ["JSON"], ctx: "32k", pin: null, pout: null, p50: 0.6, st: "Experimental", compute: true },
+    { name: "Fast Classifier", b: "N", prov: "NVIDIA NIM", res: "Private VPC", caps: ["JSON"], ctx: "", pin: null, pout: null, p50: 0.2, st: "Approved", compute: true },
+    { name: "Embedder Large", b: "AWS", prov: "Bedrock · Titan", res: "US", caps: ["embeddings"], ctx: "", pin: 0.10, pout: null, p50: 0.08, st: "Approved" },
+    { name: "Embedder EU", b: "AZ", prov: "Azure OpenAI", res: "EU", caps: ["embeddings"], ctx: "", pin: 0.13, pout: null, p50: 0.09, st: "Approved · EU" },
+    { name: "risk-small-ft", b: "?", prov: "Custom HTTPS endpoint", short: "Custom HTTPS", res: null, caps: ["JSON"], ctx: "", pin: null, pout: null, p50: null, st: "Registered · untested" },
+  ];
+  const AS_EVALS = { "Risk Reasoner 3": "In AllSpark it passed 8 of 8 on fraud-review v7.", "General Reasoner": "Routing never reads evals. In AllSpark this alias passed 7 of 8 on fraud-review v7 and missed T07, the event contract case.", "Local Llama": "Routing never reads evals. In AllSpark this alias passed 6 of 8 on fraud-review v7 and approved a risky order." };
+  const RES = { us: "US", eu: "EU", vpc: "Private VPC" }, STAY = { us: "in the US", eu: "in the EU", vpc: "inside the Private VPC" };
+  const price = (m) => m.pin == null ? (m.compute ? "compute" : "—") : `${m.pin.toFixed(2)} · ${m.pout == null ? "—" : m.pout.toFixed(2)}`;
+  const p50 = (m) => m.p50 == null ? "—" : m.p50 < 0.1 ? Math.round(m.p50 * 1000) + " ms" : m.p50.toFixed(1) + " s";
+  const statusShort = (st) => st === "Approved" ? "approved" : st === "Approved · EU" ? "approved · EU" : st === "Experimental" ? "experimental" : "untested";
+  const costKey = (m) => m.pin == null ? 1e9 : m.pin * 1000 + (m.pout || 0);
+  function route(st) {
+    const need = RES[st.res], rel = st.purpose === "release";
+    const req = []; if (st.embed) req.push("embeddings"); if (st.tools) req.push("tools"); if (st.vision) req.push("vision");
+    const rows = CAT.map((m) => {
+      const r = { m, out: 0, why: "" };
+      if (!m.res) { r.out = 1; r.fail = 1; r.why = "Residency not declared, so no data policy can admit it."; }
+      else if (m.res !== need) { r.out = 1; r.fail = 1; r.why = `Residency ${m.res}; this data must stay ${STAY[st.res]}.`; }
+      else if (rel && !m.st.startsWith("Approved")) { r.out = 1; r.fail = 2; r.why = m.st === "Experimental" ? "Experimental: AllSpark experiments only, never a release." : "Untested: can run in AllSpark, can't pass a release gate."; }
+      if (r.out) return r;
+      const embOnly = m.caps.length === 1 && m.caps[0] === "embeddings", miss = req.filter((c) => !m.caps.includes(c));
+      if (!st.embed && embOnly) { r.out = 2; r.why = "Embeddings only; it can't generate an answer."; }
+      else if (miss.length) { r.out = 2; r.why = `No ${miss.join(" or ")} capability in the catalog.`; }
+      if (r.out) return r;
+      if (m.quota && st.load > m.quota) { r.out = 3; r.why = `Over its quota: ${st.load} > ${m.quota} req/min.`; }
+      return r;
+    });
+    const left = rows.filter((r) => !r.out);
+    const byLat = (a, b) => (a.m.p50 ?? 99) - (b.m.p50 ?? 99) || costKey(a.m) - costKey(b.m);
+    const byCost = (a, b) => costKey(a.m) - costKey(b.m) || (a.m.p50 ?? 99) - (b.m.p50 ?? 99);
+    left.sort(st.pref === "cost" ? byCost : byLat);
+    left.forEach((r, i) => (r.rank = i + 1));
+    const win = left[0];
+    const counts = [10, rows.filter((r) => !r.out || r.out > 1).length, rows.filter((r) => !r.out || r.out > 2).length, left.length, win ? 1 : 0];
+    left.slice(1).forEach((r) => {
+      if (st.pref === "cost") {
+        if (r.m.pin == null && win.m.pin == null) r.why = `Eligible. No per-token price (compute), so p50 decides: ${p50(r.m)} against ${p50(win.m)}.`;
+        else if (costKey(r.m) !== costKey(win.m)) r.why = `Eligible, but costs more: ${price(r.m)} against ${price(win.m)} per 1M tokens.`;
+        else r.why = `Eligible. Same price, slower at ${p50(r.m)} p50.`;
+      } else r.why = r.m.p50 !== win.m.p50 ? `Eligible, but slower: ${p50(r.m)} p50 against ${p50(win.m)}.` : "Eligible. Same p50, costs more.";
+    });
+    let pickWhy = "", none = "";
+    if (win) {
+      const n = left.length;
+      if (n === 1) pickWhy = "The only alias left after policy, capabilities and capacity.";
+      else if (st.pref === "cost") pickWhy = win.m.pin == null ? `No alias left has a per-token price (they bill as compute), so p50 breaks the tie: ${p50(win.m)}.` : `Lowest price of the ${n} eligible aliases: ${price(win.m)} per 1M tokens in · out (illustrative).`;
+      else pickWhy = `Lowest p50 of the ${n} eligible aliases: ${p50(win.m)}.`;
+      win.why = pickWhy;
+    } else {
+      const k = counts.findIndex((c, i) => i > 0 && c === 0);
+      if (k === 1) none = `No alias in the catalog passes policy for ${RES[st.res]} data${rel ? " in a release" : ""}.`;
+      else if (k === 2) {
+        if (st.res === "vpc" && st.tools) none = "Nothing in the Private VPC lists tools. The catalog gives Local Llama JSON only, and in AllSpark it skipped the fraud-risk-api call.";
+        else if (st.vision && st.res === "us" && rel) none = "Vision Reader is the only alias that reads images, and it is Experimental, so it can't serve a release.";
+        else if (st.embed && (st.tools || st.vision)) none = "The embedding models list embeddings only, so no alias does both.";
+        else none = `None of the ${counts[1]} aliases that passed policy has ${req.join(" and ")}.`;
+      } else none = "Risk Reasoner 3 was the only alias left, and this load is over its quota. In the design its overflow would go to the fallback.";
+    }
+    return { rows, left, win, counts, pickWhy, none };
+  }
+
+  Field.scene("routelab", (g, s) => {
+    const st = s.state; if (!st.res) return;
+    const { W, H, narrow } = g, R = route(st);
+    const el = (performance.now() - (st._since || 0)) / 1000;
+    const pad = 18, top = Math.max(60, g.safeTop + 22);
+    const nameW = narrow ? 156 : 230, gx0 = pad + nameW + 8, cellW = (W - pad - gx0) / 4;
+    const cardH = narrow ? 150 : 172;
+    const ry0 = top + 82, rowH = Math.min(56, (H - ry0 - cardH - 22) / 10);
+    const reveal = (k) => ramp(el, 0.15 + k * 0.32, 0.25);
+    // header and funnel counts
+    g.text("10", pad, top + 30, { size: 26, font: "display", weight: 800 });
+    g.text("aliases · v3 catalog", pad + g.tw("10", 26, "display", 800) + 8, top + 29, { size: 10.5, color: "ink-3" });
+    const ST = ["Policy", "Capabilities", "Capacity", "Preference"], SUB = ["residency, status", "tools, vision, embed", "quota", st.pref === "cost" ? "lowest cost" : "lowest latency"];
+    ST.forEach((n, k) => {
+      const x = gx0 + k * cellW, a = reveal(k);
+      g.text(`${k + 1} · ${n}`, x + 4, top + 2, { size: narrow ? 10 : 11, weight: 600, color: "ink-2", maxW: cellW - 8 });
+      g.text(SUB[k], x + 4, top + 16, { size: 9, color: "ink-3", maxW: cellW - 8 });
+      const c = R.counts[k + 1];
+      g.text(String(c), x + 4, top + 44, { size: 24, font: "display", weight: 800, color: c === 0 ? "bad" : k === 3 && c ? "ok" : "ink", a: 0.25 + 0.75 * a });
+      g.text(k === 3 ? (c ? "chosen" : "none") : "left", x + 11 + g.tw(String(c), 24, "display", 800), top + 43, { size: 10, color: "ink-3", a: 0.25 + 0.75 * a });
+      g.line(x, top - 10, x, ry0 + rowH * 10, { color: k === 0 ? "hair" : "grid", lw: 1 });
+    });
+    // funnel band
+    const fy = top + 62, xs = [pad, gx0, gx0 + cellW, gx0 + 2 * cellW, gx0 + 3 * cellW, gx0 + 4 * cellW], cs = [10, 10, R.counts[1], R.counts[2], R.counts[3], R.counts[4]];
+    const hh = (c) => 1.5 + 7 * c / 10;
+    g.poly(xs.map((x, i) => [x, fy - hh(cs[i])]).concat(xs.slice().reverse().map((x, i) => [x, fy + hh(cs[cs.length - 1 - i])])), { fill: g.rgba("exe", 0.16), color: "exe", lw: 0.8, close: true });
+    // rows
+    R.rows.forEach((r, i) => {
+      const m = r.m, y = ry0 + i * rowH, mid = y + rowH / 2, win = R.win === r;
+      if (win) g.rect(pad - 6, y + 2, W - pad * 2 + 12, rowH - 4, { fill: g.rgba("exe", 0.08), stroke: "exe", lw: 1.2, r: 8, a: reveal(3) });
+      g.line(pad, y + rowH, W - pad, y + rowH, { color: "grid", lw: 1 });
+      badge(g, pad, mid - 11, 22, m.b);
+      g.text(m.name, pad + 30, mid - 2, { size: narrow ? 11.5 : 12.5, font: "ui", weight: 600, maxW: nameW - 34, color: r.out ? "ink-2" : "ink" });
+      g.text(narrow ? (m.short || m.prov) : m.prov, pad + 30, mid + 12, { size: 9.5, color: "ink-3", maxW: nameW - 34 });
+      const stop = r.out || 4;
+      for (let k = 0; k < 4; k++) {
+        const x = gx0 + k * cellW, a = reveal(k);
+        if (r.out && k + 1 > r.out) continue;
+        let kind = "pass";
+        if (k + 1 === r.out) kind = "bad";
+        else if (k === 2 && !m.quota) kind = "unknown";
+        else if (k === 3) kind = r.rank === 1 ? "win" : "lose";
+        if (a < 0.02) continue;
+        mark(g, x + 13, mid - 3, kind, a, narrow ? 6.5 : 7);
+        let l1 = "", l2 = "";
+        if (k === 0) { l1 = m.res || "—"; l2 = statusShort(m.st); }
+        else if (k === 1) { l1 = m.caps.join(" · "); l2 = m.ctx ? m.ctx + " ctx" : ""; }
+        else if (k === 2) { l1 = m.quota ? "600 req/min" : "not shown"; l2 = m.quota ? "Commerce in Dev" : "in the design"; }
+        else { l1 = st.pref === "cost" ? price(m) : p50(m); l2 = (r.rank === 1 ? "chosen" : "#" + r.rank) + (st.pref === "cost" ? " · $/1M" : " · p50"); }
+        const tx = x + 25, mw = cellW - 30;
+        const bad1 = kind === "bad" && r.fail !== 2, bad2 = kind === "bad" && r.fail === 2;
+        g.text(l1, tx, mid - 1, { size: narrow ? 10 : 11, color: bad1 ? "bad" : "ink", weight: kind === "win" || bad1 ? 600 : 500, a, maxW: mw });
+        if (l2) g.text(l2, tx, mid + 12, { size: narrow ? 8.5 : 9.5, color: kind === "win" ? "ok" : bad2 ? "bad" : "ink-3", weight: bad2 ? 600 : 500, a, maxW: mw });
+      }
+      // the refusal reason in the cells the alias never reached
+      if (r.out && r.out < 4) {
+        const a = reveal(r.out - 1), x = gx0 + r.out * cellW + 8, mw = W - pad - x;
+        const L = lines(g, r.why, mw, narrow ? 9.5 : 10.5).slice(0, 2), lh = narrow ? 12.5 : 14;
+        L.forEach((ln, k) => g.text(ln, x, mid + 3 - (L.length - 1) * lh / 2 + k * lh, { size: narrow ? 9.5 : 10.5, color: "bad", a, maxW: mw }));
+      }
+      // the trail and a travelling dot
+      const sx = gx0 - 4, ex = gx0 + (stop - 1) * cellW + 13, by = y + rowH - 5;
+      const u = clamp((el - 0.1 - i * 0.03) / (0.15 + stop * 0.32));
+      g.line(sx, by, lerp(sx, ex, u), by, { color: r.out ? "bad" : win ? "ok" : "ink-3", lw: 1, a: 0.35 });
+      if (u < 1) g.circle(lerp(sx, ex, u), by, 2.6, { fill: "exe" });
+    });
+    // result card
+    const cy = ry0 + rowH * 10 + 14, ch = H - cy - 12, cx = pad, cw = W - pad * 2, ca = reveal(3.4);
+    if (R.win) {
+      const m = R.win.m;
+      g.rect(cx, cy, cw, ch, { fill: g.rgba("exe", 0.05), stroke: "exe", lw: 1.4, r: 10, a: ca });
+      g.text("CHOSEN", cx + 16, cy + 22, { size: 10, color: "exe", ls: 1, a: ca });
+      g.text(m.name, cx + 16, cy + 48, { size: narrow ? 22 : 26, font: "display", weight: 800, a: ca, maxW: cw - 32 });
+      let y = cy + 68;
+      const det = `${m.prov} · ${m.res} · ${m.caps.join(", ")}${m.ctx ? " · " + m.ctx : ""} · ${price(m)}${m.pin != null ? " per 1M (illustrative)" : ""} · p50 ${p50(m)}`;
+      y = g.wrap(det, cx + 16, y, cw - 32, { size: 10.5, color: "ink-2", lh: 14, maxLines: 2, a: ca });
+      if (m.name === "Risk Reasoner 3") y = g.wrap("alias → Bedrock · Claude · us-east-1; fallback Anthropic API, same family", cx + 16, y, cw - 32, { size: 10.5, color: "ink-3", lh: 14, maxLines: 1, a: ca });
+      y = g.wrap(R.pickWhy, cx + 16, y + 2, cw - 32, { size: 11, color: "ink", lh: 15, maxLines: 2, a: ca });
+      const ev = AS_EVALS[m.name];
+      if (ev && y + 8 < cy + ch) y = g.wrap(ev, cx + 16, y + 2, cw - 32, { size: 11, color: "tel", weight: 600, lh: 15, maxLines: 2, a: ca });
+      R.left.slice(1).forEach((r) => { if (y + 20 < cy + ch) y = g.wrap(`${r.m.name}: ${r.why}`, cx + 16, y + 6, cw - 32, { size: 10.5, color: "ink-3", lh: 14, maxLines: 2, a: ca }); });
+    } else {
+      g.rect(cx, cy, cw, ch, { fill: g.rgba("bad", 0.06), stroke: "bad", lw: 1.4, r: 10, a: ca });
+      g.text("NO ALIAS LEFT", cx + 16, cy + 30, { size: narrow ? 22 : 26, font: "display", weight: 800, color: "bad", a: ca });
+      g.wrap(R.none, cx + 16, cy + 54, cw - 32, { size: 11, color: "ink-2", lh: 15, maxLines: 4, a: ca });
+    }
+  }, {
+    controls: "route-ctl", anim: true, restT: 4, zoom: 1.3, minW: 620, maxW: 1000,
+    format: (id, v) => (id === "load" ? v + " req/min" : String(v)),
+    onState: (st) => {
+      const key = [st.res, st.tools, st.vision, st.embed, st.purpose, st.pref, st.load].join("|");
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      if (!st.res) return;
+      const R = route(st);
+      document.getElementById("o-s1").textContent = R.counts[1];
+      document.getElementById("o-s2").textContent = R.counts[2];
+      document.getElementById("o-s3").textContent = R.counts[3];
+      document.getElementById("o-pick").textContent = R.win ? R.win.m.name : "none";
+      document.getElementById("o-why").textContent = R.win
+        ? `${R.win.m.name}. 10 aliases → ${R.counts[1]} after policy → ${R.counts[2]} after capabilities → ${R.counts[3]} after capacity. ${R.pickWhy}`
+        : `No alias. ${R.none}`;
+    },
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3", who: ["this design"], what: "AllSpark compares models on one order with one prompt, tools and guardrails; Prompts versions system and user messages, typed variables and the FraudDecision schema; Models is a ten-alias catalog with residency, quota, fallback and approval; Agent studio flows have an explicit ask-a-person step; Tools mark read and write, and a write becomes an approval request bound to its input digest.", vs: "<b>The baseline for this chapter.</b> Any change creates a new configuration, and evidence from older runs stops counting toward a release. Untested endpoints can run in AllSpark but can't pass a release gate." },
+      { name: "Amazon Bedrock", who: ["AWS", "model access", "Guardrails"], what: "Serverless foundation models are enabled by default; IAM and SCP deny policies on <code>bedrock:InvokeModel</code> decide who may call which model, and Anthropic models need a one-time use-case form. Guardrails are versioned policies with content filters (including prompt attack), denied topics, word filters, sensitive-information filters that block or mask PII, contextual grounding checks and Automated Reasoning checks. The ApplyGuardrail API evaluates text without invoking a model.", vs: "Risk Reasoner 3 resolves to Bedrock in the design, so Bedrock sits under Vector's gateway. Bedrock governs access per account and model; Vector adds an alias catalog across providers with an approval status, residency and evals per alias, and ties its guardrail switches to the configuration fingerprint.", src: [["Access Amazon Bedrock foundation models", "https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html"], ["Amazon Bedrock Guardrails", "https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html"]] },
+      { name: "LiteLLM Router", who: ["BerriAI", "open source", "LLM gateway"], what: "Load-balances a model group across deployments with strategies such as weighted shuffle (the default), rate-limit aware, latency-based and cost-based routing. Per-deployment rpm and tpm limits weight or filter deployments, fallbacks move to other model groups when one fails, cooldowns bench failing deployments, and pre-call checks drop deployments whose context window is too small or that sit outside a requested region.", vs: "Close to the gateway half of the Models board: an alias resolved to a deployment, with a fallback (Bedrock 98.7%, fallback 1.3%). LiteLLM's filters are operational; the proposed Vector order puts authorization and data policy first and adds approval status, so an untested endpoint never serves a release.", src: [["Router: load balancing, fallbacks", "https://docs.litellm.ai/docs/routing"]] },
+      { name: "Langfuse prompt management", who: ["Langfuse", "prompt registry"], what: "Prompts are stored as numbered versions. Labels point at a version: <code>latest</code> follows the newest, and the SDK fetches the version labelled <code>production</code> by default. Rolling back means moving the production label to an earlier version; protected labels (an Enterprise feature) stop members from moving it.", vs: "Vector's Prompts board versions the same way (v4 to v7) and keeps the agent on v7 until someone switches it. In Vector a new version must earn fresh evals before promotion, because evidence is bound to the configuration; in Langfuse moving the label is the deployment.", src: [["Prompt version control", "https://langfuse.com/docs/prompt-management/features/prompt-version-control"]] },
+      { name: "LangGraph interrupts", who: ["LangChain", "agent runtime"], what: "<code>interrupt()</code> pauses a node; a checkpointer saves state under a thread ID, and <code>Command(resume=…)</code> continues it with the person's answer, so a reviewer can approve, reject or edit a tool call. On resume the node runs again from its start, so side effects before the interrupt must be idempotent.", vs: "The design runs fraud-review-agent on a LangGraph runtime, and its ask-a-person step maps onto an interrupt. Vector adds the registry rule around it: the write tool itself returns an approval request bound to the input digest, so the safeguard does not depend on each agent author placing an interrupt.", src: [["Interrupts", "https://docs.langchain.com/oss/python/langgraph/interrupts"]] },
+      { name: "Model Context Protocol tools", who: ["MCP spec 2025-06-18"], what: "Servers expose tools with a JSON Schema <code>inputSchema</code> and an optional <code>outputSchema</code>. The spec says there SHOULD always be a human in the loop able to deny invocations, clients SHOULD confirm sensitive operations and show inputs first, and annotations from untrusted servers MUST be treated as untrusted. Servers MUST validate inputs, enforce access control and rate limit calls.", vs: "enterprise-search is an MCP tool in the v3 registry. MCP is the transport and leaves confirmation to each client. The production proposal states that MCP is not an authorization grant, so Vector keeps the read/write class, scopes and approval binding in its own registry.", src: [["Tools (specification 2025-06-18)", "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · AllSpark, Agent studio, Prompts, Models and Tools boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · 6.1–6.8 AI engineering · 7.3–7.4 fingerprint and release gates · 8.3–8.5 tool registry and sandbox · 11.2 fingerprint layout", ""],
+      ["Atlas handbook · 14.7 Model and tool execution · 14.8 Durable agents and workspaces (proposed)", ""],
+      ["Atlas handbook reference · fixture catalogs (built-in model descriptors, tool registry input contracts)", ""],
+      ["Vector, annotated (v3 explainer film) · chapters 05–06 on evals and the configuration fingerprint", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

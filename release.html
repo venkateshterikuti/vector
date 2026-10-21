@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The sealed bundle · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .ids { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .ids > div { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .ids h4 { font-family: var(--f-mono); font-weight: 600; font-size: 1.3rem; line-height: 1.1; overflow-wrap: anywhere; }
+  .ids .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ids p { font-size: 0.95rem; color: var(--ink-2); }
+  @media (max-width: 760px) { .ids { grid-template-columns: minmax(0, 1fr); } }
+  .rulequote { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: var(--step-2); line-height: 1.02; text-transform: uppercase; max-width: 34ch; border-left: 3px solid var(--ctl); padding-left: 18px; }
+  .rulequote cite { display: block; margin-top: 10px; font-family: var(--f-mono); font-style: normal; font-weight: 500; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-3); }
+  .limits { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); border-top: 1px solid var(--hair); }
+  .limits li { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--hair); display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .limits b { font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; text-transform: uppercase; line-height: 1.05; }
+  .limits span { font-size: 0.95rem; color: var(--ink-2); line-height: 1.45; }
+  #lab .controls .btnrow .btn { flex: 1 1 auto; }
+  #lab .controls .sel { width: 100%; min-width: 0; text-overflow: ellipsis; }
+  #lab .lab { align-items: start; }
+  #lab .lab .board { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 72px); height: min(780px, calc(100svh - 96px)); min-height: 540px; }
+  @media (max-width: 860px) { #lab .lab .board { order: -1; top: calc(env(safe-area-inset-top, 0px) + 50px); height: 58svh; min-height: 420px; aspect-ratio: auto; z-index: 2; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle" aria-current="page">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">11</span> Prove and ship · GroundBridge releases</span>
+        <h1>The sealed <em>bundle</em></h1>
+        <p class="dek">A release is built and checked once, in Dev, then moved to QA unchanged. Two people sign for that exact bundle, and any change that matters sends it back to Draft.</p>
+        <div class="files">
+          <span class="tag t-exe"><i></i>v3 · GroundBridge releases</span>
+          <span class="tag t-ctl"><i></i>v3 · Approvals</span>
+          <span class="tag t-kno"><i></i>v3 · Vault</span>
+          <span class="tag">handbook 7.3–7.7</span>
+          <span class="tag">handbook 11.2</span>
+          <span class="tag">handbook 14.10</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="A shipping crate labelled order-service 2.14.0-rc2 lists its fingerprint parts: source 5c0d7e1, prompt fraud-review v7, Risk Reasoner 3, temperature 0.2, threshold 0.80, policies and eval dataset v3, giving cfg-7f3a9c. A seal closes it, four gate lamps light and Maya Chen signs while Lena Fischer is pending. Then a temperature knob twitches, the seal cracks, the lamps go stale, the signature clears and the release returns to Draft.">
+        <span class="ruler">bundle 2.14.0-rc2 · cfg-7f3a9c</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="built">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Built once, moved as is</span>
+        <h2>One bundle, built once in Dev</h2>
+        <p class="lede">GroundBridge, the release screen, follows order-service 2.14.0-rc2 from Draft to the QA handoff. The bundle is sealed at build #419, and every later step checks that same bundle.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Draft Oct 9 · Built 11:04 · #419</span><h4>The inputs go on the label</h4><p>The release opened as a Draft on Oct 9. Build #419 sealed it at 11:04 as bundle <code>sha256:7f3a…c91e</code>. Its bundle card pins source <code>5c0d7e1</code>, prompt fraud-review v7, Risk Reasoner 3 on Bedrock, temperature 0.2, threshold 0.80, two policies and eval dataset v3. Together they make configuration <code>cfg-7f3a9c</code>.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Release gates · 4 of 4 in Dev</span><h4>Four gates, one configuration</h4><p>"All four must pass on the same configuration": the source change applied and checked, an experiment run that matches (run-0001, manual_review at 0.91 risk), evaluations fresh and passing (8 of 8), and an approved model with the required safety policies. A pass recorded on another configuration does not count.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Running in Dev · 11:09</span><h4>Deployed to Dev as the same bundle</h4><p>At 11:09 the bundle went to Dev with all four gates green: order-service 2.14.0-rc2 on <code>nsx-dev-use1 / commerce</code>, 2 of 2 pods. This window has read and write rights in Dev, and its promotions go to QA.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Promotion approval · 1 of 2 signed</span><h4>Promotion moves the exact bundle</h4><p>At 15:12 Venkatesh requested promotion to QA. When it goes, GroundBridge sends <code>sha256:7f3a…c91e</code> as it is. QA does not build its own copy, so QA tests the bundle that Dev checked, not a rebuild of it.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">After approval · next</span><h4>Hand off, verify, reconcile</h4><p>Once both people sign, three steps follow: the Jenkins <code>commerce/qa</code> promote job hands the bundle off, the QA contract and integration suite runs on it, and the QA cluster is reconciled against the bundle. None of this has run yet in the design; the lifecycle shows Handed to QA as next.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="life" data-label="A lifecycle rail: Draft Oct 9, Built 11:04 #419, Running in Dev 11:09, Promotion approval 1 of 2 signed, Handed to QA next. Below, a Dev panel holds the sealed bundle; inputs flow into it, four gate lamps light on cfg-7f3a9c, two pods start in Dev, then the same bundle travels to a dashed QA panel where three after-approval steps wait."><span class="ruler">GroundBridge · order-service 2.14.0-rc2</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="identity">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">The fingerprint</span>
+        <h2>Two identities on one bundle</h2>
+        <p class="lede">The design shows two short codes. One names the bundle's contents. The other names the configuration that the evidence and the approvals were produced on.</p>
+      </header>
+      <div class="ids">
+        <div>
+          <span class="k-label">Bundle digest · what moves</span>
+          <h4>sha256:7f3a…c91e</h4>
+          <div class="tags"><span class="tag t-exe">Releases header</span><span class="tag t-ctl">Approvals · bound to</span><span class="tag t-kno">Vault · fingerprint column</span></div>
+          <p>The release bundle as Vault stores it: created Today 11:04, "signed by GroundBridge", status Promotion requested. Vault's rule for anything released: "Released artifacts never change. A new input — even one parameter — produces a new fingerprint and a new version."</p>
+        </div>
+        <div>
+          <span class="k-label">Configuration fingerprint · what the evidence is about</span>
+          <h4>cfg-7f3a9c</h4>
+          <div class="tags"><span class="tag">source 5c0d7e1</span><span class="tag">prompt fraud-review v7</span><span class="tag">Risk Reasoner 3 · Bedrock</span><span class="tag">temperature 0.2</span><span class="tag">threshold 0.80</span><span class="tag">PII redaction · injection shield</span><span class="tag">eval dataset v3 · 8 cases</span></div>
+          <p>The bundle card lists what it covers. Evals recorded 8 of 8 on it at 11:04, the four gates check it, and the approval request names it beside the bundle.</p>
+        </div>
+      </div>
+      <blockquote class="rulequote">Change anything that matters, even the temperature, and this release returns to Draft and approvals clear.<cite>Bundle card · GroundBridge releases (v3)</cite></blockquote>
+      <p class="note">The design does not say how either code is computed, or what counts as "anything that matters" beyond the listed parts. The prototype's version of the fingerprint is a plain JSON string (below). The production proposal asks for immutable digests compared directly (handbook 14.10).</p>
+    </div>
+  </section>
+
+  <section class="section" id="bound">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Bound approvals</span>
+        <h2>Two signatures for one bundle</h2>
+        <p class="lede">The Approvals screen shows Venkatesh's request from the requester's side. The approval names the exact bundle, where it comes from and the configuration it was checked on.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">This approval is bound to</span><h4>Bundle, namespace, configuration</h4><p>"Promote order-service 2.14.0-rc2 to QA" is tied to three things: bundle <code>sha256:7f3a…c91e</code>, its source <code>nsx-dev-use1 / commerce</code>, and configuration <code>cfg-7f3a9c</code>. A signature applies to that combination and nothing else.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Evidence · security summary</span><h4>What the approvers read</h4><p>Four evidence rows link out: release gates 4 of 4 in Dev on this configuration, evaluations 8 of 8, a security scan with 0 high and 1 accepted medium, and 8 downstream consumers with one unrelated conflicting edge in Dev. A security summary covers the new fraud-risk-api call: workload identity, no card data, and timeouts that fail closed.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Sign-off · 1 of 2</span><h4>Owner signed, Security pending</h4><p>Maya Chen, the Commerce application owner, approved at 15:14: "Fraud path reviewed with Risk Engineering. Event contract unchanged." Lena Fischer of Application Security is pending, with a reminder sent in Teams. "Each approver's permissions are checked again when they sign", so access held when the request was filed is not assumed at signing.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Audit · Oct 12</span><h4>The rule has fired before</h4><p>The oldest audit line reads "Returned to Draft — temperature changed." Everything after it, from the 11:04 evaluation to Maya's 15:14 approval, belongs to <code>cfg-7f3a9c</code>. If an input changed now, the fingerprint would stop matching, the release would return to Draft and Maya's approval would clear.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="bind" data-label="The approval request card: Promote order-service 2.14.0-rc2 to QA, requested 15:12, bound to three wells (bundle sha256, nsx-dev-use1 / commerce, cfg-7f3a9c). Evidence rows and a security summary appear, then the sign-off with Maya Chen approved 15:14 and Lena Fischer pending, a recheck chain for the next signature, and the GroundBridge audit ending with Oct 12 Returned to Draft. A replay of the rule turns the configuration red and clears Maya's approval."><span class="ruler">Approvals · requested by you</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where you see it on screen</h2>
+        <p class="lede">Three v3 boards carry the release: GroundBridge, Approvals and Vault. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Releases.webp" data-w="1600" data-h="1000" data-crop="240,100,1360,900" data-title="GroundBridge — Releases (v3)">
+          <span class="pin c-exe" data-x="712" data-y="158">1</span>
+          <span class="pin c-exe" data-x="548" data-y="206">2</span>
+          <span class="pin c-ctl" data-x="940" data-y="316">3</span>
+          <span class="pin c-ctl" data-x="880" data-y="618">4</span>
+          <span class="pin c-exe" data-x="668" data-y="871">5</span>
+          <span class="pin c-exe" data-x="1450" data-y="394">6</span>
+          <span class="pin" data-x="1222" data-y="452">7</span>
+          <span class="pin" data-x="1222" data-y="689">8</span>
+          <span class="ring" data-box="556,196,644,70"></span>
+          <span class="ring" data-box="1244,415,314,74"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 11.1 · GroundBridge releases</span>
+          <h3>The release page</h3>
+          <ol class="pins">
+            <li><span><b>The bundle.</b> "order-service 2.14.0-rc2 · Fraud review before payment · COM-2841 · bundle sha256:7f3a…c91e".</span></li>
+            <li><span><b>Lifecycle.</b> Draft Oct 9, Built 11:04 · #419, Running in Dev 11:09 · 2 of 2 pods, Promotion approval 1 of 2 signed, Handed to QA next.</span></li>
+            <li><span><b>Release gates.</b> "All four must pass on the same configuration", each with its evidence and a link to Build, Trace, Evals or Model. 4 of 4 in Dev.</span></li>
+            <li><span><b>Approvals bound to this exact bundle</b>, Dev → QA: Maya Chen approved 15:14, Lena Fischer pending.</span></li>
+            <li><span><b>After approval.</b> Hand off with the Jenkins <code>commerce/qa</code> promote job, verify the QA contract and integration suite, reconcile the QA cluster against the bundle.</span></li>
+            <li><span><b>Bundle card.</b> Source, prompt, model, parameters, policies and eval dataset, ending in fingerprint <code>cfg-7f3a9c</code> and a "Fingerprint matches" badge.</span></li>
+            <li><span><b>The rule.</b> "Change anything that matters — even the temperature — and this release returns to Draft and approvals clear."</span></li>
+            <li><span><b>Audit.</b> Newest first, down to "Oct 12 Returned to Draft — temperature changed".</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Approvals.webp" data-w="1600" data-h="1000" data-crop="255,180,1345,800" data-title="Approvals — promotion request detail (v3)">
+          <span class="pin c-ctl" data-x="606" data-y="211">1</span>
+          <span class="pin c-ctl" data-x="812" data-y="339">2</span>
+          <span class="pin" data-x="716" data-y="458">3</span>
+          <span class="pin" data-x="915" data-y="691">4</span>
+          <span class="pin c-ok" data-x="1266" data-y="246">5</span>
+          <span class="pin c-ctl" data-x="1266" data-y="352">6</span>
+          <span class="pin" data-x="1530" data-y="515">7</span>
+          <span class="pin c-bad" data-x="600" data-y="809">8</span>
+          <span class="ring" data-box="636,356,610,78"></span>
+          <span class="ring" data-box="636,475,610,177"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 11.2 · Approvals</span>
+          <h3>The request, as approvers see it</h3>
+          <ol class="pins">
+            <li><span><b>1 of 2 signed.</b> Requested by you · 15:12 · Dev → QA.</span></li>
+            <li><span><b>This approval is bound to</b> bundle <code>sha256:7f3a…c91e</code>, from <code>nsx-dev-use1 / commerce</code>, configuration <code>cfg-7f3a9c</code>.</span></li>
+            <li><span><b>Evidence.</b> Release gates, evaluations, security scan (0 high · 1 medium accepted) and 8 downstream consumers, each with Open.</span></li>
+            <li><span><b>Security summary.</b> Workload identity and no static secret, no card data sent, PII redaction verified by case T08, timeouts fail closed.</span></li>
+            <li><span><b>Sign-off.</b> Maya Chen, application owner, approved 15:14. Lena Fischer, Application Security, pending.</span></li>
+            <li><span><b>Rechecked.</b> "Each approver's permissions are checked again when they sign."</span></li>
+            <li><span><b>What changes.</b> 3 files (+130 −3), a new call to fraud-risk-api, flag <code>FRAUD_REVIEW_ENABLED</code>, rollback "flag off, under 1 min".</span></li>
+            <li><span><b>Decided.</b> Register model endpoint, risk-small-ft on the Dev gateway, untested: Declined on Monday.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Vault.webp" data-w="1600" data-h="1000" data-crop="255,120,1345,860" data-title="Vault — artifact registry and lineage (v3)">
+          <span class="pin c-exe" data-x="520" data-y="242">1</span>
+          <span class="pin c-ctl" data-x="1124" data-y="242">2</span>
+          <span class="pin" data-x="1076" data-y="606">3</span>
+          <span class="pin" data-x="742" data-y="554">4</span>
+          <span class="pin c-kno" data-x="1530" data-y="256">5</span>
+          <span class="pin c-kno" data-x="1282" data-y="289">6</span>
+          <span class="pin" data-x="1452" data-y="493">7</span>
+          <span class="pin" data-x="1186" data-y="890">8</span>
+          <span class="ring" data-box="1200,310,352,366"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 11.3 · Vault, the artifact registry</span>
+          <h3>Every version, with where it came from</h3>
+          <ol class="pins">
+            <li><span><b>The bundle row.</b> order-service release bundle 2.14.0-rc2, fingerprint <code>sha256:7f3a…c91e</code>, created Today 11:04.</span></li>
+            <li><span><b>Status</b> follows the release: Promotion requested.</span></li>
+            <li><span><b>Superseded, not rewritten.</b> fraud-review prompt v6 keeps its own fingerprint beside v7.</span></li>
+            <li><span><b>No fingerprint until released.</b> The order.confirmed v3 schema is a draft tracked in COM-2867.</span></li>
+            <li><span><b>Lineage.</b> The bundle is "signed by GroundBridge".</span></li>
+            <li><span><b>Built from</b> source commit 5c0d7e1, prompt v7, Risk Reasoner 3 · temp 0.2, eval dataset v3 (8 of 8), policy set Commerce 2026-10.</span></li>
+            <li><span><b>Model alias.</b> The model is recorded as <code>alias@3</code>.</span></li>
+            <li><span><b>The rule.</b> "Released artifacts never change. A new input — even one parameter — produces a new fingerprint and a new version."</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="proto">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>One string decides what counts</h2>
+        <p class="lede">Atlas, the working prototype, applies the same rule in the browser. Every run and evaluation keeps the configuration string it was produced under, and a gate counts evidence only when that string equals the current one.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p><code>configKey</code> is <code>JSON.stringify</code> of an ordered array of 13 values. Change any of them, even a space in the prompt, and the string changes. Each run, the latest evaluation and the staged release store the string they saw.</p>
+          <p>Some things are left out: the prompt version number, the model's endpoint and approval metadata, the budget amount, onboarding metadata, connector settings, dataset preview selection and tool sandbox input. Two prompts with identical text but different version numbers produce the same key.</p>
+          <p>A configuration change never deletes old evidence. It stops counting. Return to exactly the same values and the old run and evaluation count again, but the staging status and approvals do not come back.</p>
+          <p>The Safety guard and the six policy switches are separate. Guard off fails three evaluation cases (T03, T04, T08). Turning off a required policy can leave evaluations at 8 of 8 and still block release. The budget policy changes the fingerprint but is not a gate.</p>
+        </div>
+        <div class="code">
+          <div class="hd"><span>state.tsx · configKey</span><span>handbook 7.3, 11.2</span></div>
+<pre><span class="k">JSON</span>.stringify([
+  guard, threshold, temperature, model, prompt,
+  agentNodes, agentPattern, maxTokens, topP, reasoning,
+  messages, policies, code
+])
+<span class="c">// policies = { pii, injection, regional,</span>
+<span class="c">//              approval, audit, budget }</span>
+
+<span class="c">// not in the key:</span>
+<span class="c">// promptVersion · model endpoint and approval metadata</span>
+<span class="c">// monthlyBudget · onboarding metadata · connectorSettings</span>
+<span class="c">// dataset preview selection · tool sandbox input</span>
+
+<span class="c">// "a local equality key, not a cryptographic</span>
+<span class="c">//  digest or signed manifest"</span></pre>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Gate</th><th>Exact predicate (handbook 7.4)</th><th>What it proves locally</th></tr></thead>
+          <tbody>
+            <tr><td>Workspace scenario checks</td><td><code>tested &amp;&amp; applied</code></td><td>The prepared source-change flag and a simple source-string check passed.</td></tr>
+            <tr><td>Experiment executed</td><td>Some stored run has <code>run.config === configKey(state)</code></td><td>A fixture run captured the current configuration. It need not be the newest run.</td></tr>
+            <tr><td>Fresh regression suite</td><td>Exactly 8 results, all passed, and <code>evaluatedConfig === configKey(state)</code></td><td>The deterministic suite passed for this fingerprint.</td></tr>
+            <tr><td>Approved model &amp; guardrails</td><td>Selected model status exactly Approved, <code>guard</code> true, and pii, injection, regional, approval and audit policies all true</td><td>Required local switches are on. No real identity, region or capability enforcement happens.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure>
+        <div class="board fig-board short" data-stage="states" data-label="The prototype's release states: Draft, Staging and Approval requested, with forward arrows for promote and request approval, a self loop for reviewer decisions, and dashed red return arrows to Draft when a fingerprinted value changes. Deployed, Rejected, Rolled back and Cancelled are drawn hatched as states the prototype does not have."><span class="ruler">release states · handbook 7.5</span></div>
+        <figcaption>The prototype's release states. Promote to staging records <code>releaseConfig</code> and clears approvals; Request production approval clears them again. A wrapper around every shared state update sends a non-Draft release back to Draft when a fingerprinted value changes, clears <code>releaseConfig</code> and approvals, and adds an audit line.</figcaption>
+      </figure>
+      <ul class="limits">
+        <li><b>Not a digest</b><span>The key is a plain string compared for equality. Whitespace changes it, a version number does not, and nothing is signed or content-addressed.</span></li>
+        <li><b>Persona approvals</b><span>Choosing Commerce owner or Application Security writes Approved or Changes requested; choosing again replaces it. No identity, timestamp or signature is stored, and Changes requested does not send the release back to Draft.</span></li>
+        <li><b>No Deployed state</b><span>Two approvals deploy nothing. The release stays at Approval requested, and there is no deployment button, rejection or rollback state.</span></li>
+        <li><b>A manifest made on screen</b><span>The release manifest is assembled at render time from current state and fixed text. Its rollback target v0.3.2 is illustrative.</span></li>
+        <li><b>No clock</b><span>Evidence does not expire by time, and the audit is a list of browser strings the user can clear.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Break the seal</h2>
+        <p class="lede">Walk the prototype's release path: apply the change, gather evidence, promote and sign. Then move one slider and watch what a new fingerprint does to everything that depended on the old one.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="rel-ctl">
+          <div class="ctl"><span class="lbl">1 · Source change</span>
+            <div class="btnrow"><button type="button" class="btn" data-act="apply">Apply source change</button><button type="button" class="btn" data-act="check">Run checks</button></div>
+          </div>
+          <div class="ctl"><span class="lbl">2 · Evidence</span>
+            <div class="btnrow"><button type="button" class="btn" data-act="run">Run experiment</button><button type="button" class="btn" data-act="eval">Run evaluation</button></div>
+          </div>
+          <div class="ctl"><label for="model">Model</label>
+            <select class="sel" id="model"><option value="risk-3">Risk Reasoner 3 · Approved</option><option value="custom-10">Custom HTTPS endpoint · Registered · untested</option></select>
+          </div>
+          <label class="switch">Safety guard <input type="checkbox" id="guard" checked></label>
+          <div class="ctl"><label for="thr">Review threshold <output for="thr">0.80</output></label><input type="range" id="thr" min="0.5" max="1" step="0.01" value="0.8"></div>
+          <div class="ctl"><label for="temp">Temperature <output for="temp">0.2</output></label><input type="range" id="temp" min="0" max="1" step="0.1" value="0.2"></div>
+          <label class="switch">Policy · sensitive data protection <input type="checkbox" id="pii" checked></label>
+          <label class="switch">Policy · team spend controls <input type="checkbox" id="budget" checked></label>
+          <div class="ctl"><span class="lbl">3 · Release</span>
+            <div class="btnrow"><button type="button" class="btn primary" data-act="promote">Request promotion</button><button type="button" class="btn" data-act="request">Request approval</button></div>
+          </div>
+          <div class="ctl"><span class="lbl">4 · Sign</span>
+            <div class="btnrow"><button type="button" class="btn" data-act="owner">Approve as Commerce owner</button><button type="button" class="btn" data-act="sec">Approve as Application Security</button></div>
+          </div>
+          <div class="btnrow"><button type="button" class="btn" data-act="replay">Jump to 1 of 2 signed</button><button type="button" class="btn" data-act="reset">Reset</button></div>
+          <div class="readout">
+            <div><b id="o-gates">0 / 4</b><span>gates on this fingerprint</span></div>
+            <div><b id="o-status" style="font-size:1.25rem">Draft</b><span>release status</span></div>
+          </div>
+          <p class="logline" id="o-log" aria-live="polite"></p>
+          <p class="note">This lab runs the Atlas prototype's documented logic (handbook 7.3–7.6, 11.2): the 13-field <code>configKey</code>, the four gate predicates, Draft → Staging → Approval requested, the invalidation wrapper and the fresh-evidence check on approvals. Prompt, agent plan, tokens, top-p, reasoning and conversation turns are held fixed. The short code is an FNV hash of the JSON string for display; the prototype compares the whole string. Its buttons read Promote to staging and Request production approval; v3 calls the next environment QA. Runs record instantly here instead of after 900 ms.</p>
+        </div>
+        <div class="board" data-stage="rellab" data-label="The lab board: the release state machine (Draft, Staging, Approval requested), the configuration fingerprint with its 13 fields, four gate lamps with reasons, evidence chips that are solid when they match the current fingerprint and dashed when they belong to an earlier one, two approval seals, and the audit lines."><span class="ruler">release gates · prototype logic</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>4</b><span>release gates, all on configuration <code>cfg-7f3a9c</code></span></div>
+        <div><b>2</b><span>signatures: the application owner and Application Security</span></div>
+        <div><b>0</b><span>rebuilds between Dev and QA: the exact bundle moves</span></div>
+        <div><b>1 of 2</b><span>signed: Maya Chen at 15:14, Lena Fischer pending</span></div>
+        <div><b>3</b><span>steps after approval: hand off, verify, reconcile</span></div>
+        <div><b>13</b><span>fields in the prototype's <code>configKey</code></span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>Four gates computed in the browser from <code>configKey</code>, a 13-field JSON string. States Draft → Staging → Approval requested; a fingerprinted change returns the release to Draft and clears approvals. Approvals are persona strings with no identity, timestamp or signature, and nothing deploys.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>GroundBridge release page: lifecycle, four gates, bundle card with fingerprint <code>cfg-7f3a9c</code></li><li>Approvals bound to bundle, source namespace and configuration; permissions checked again at signing</li><li>Vault: immutable artifacts with lineage, bundle signed by GroundBridge</li><li>Handoff through Jenkins <code>commerce/qa</code>, then verify and reconcile</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>A release pins source or image, prompt digest, model deployment, agent plan, tool contracts, dataset and evaluator versions, retrieval recipe, knowledge-snapshot policy, evaluations and approval receipts, and freshness compares immutable digests. Approvals sit in a transactional store, bound to the exact proposal, environment, policy version and expiry. The approved deployment system still delivers; the platform requests it and reconciles what it observes (handbook 14.6, 14.7, 14.10).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same job, other tools</h2>
+        <p class="lede">Release tooling answers three questions: what exactly is moving, who agreed to it, and where it came from. Each tool below answers some of them in its own way. Vector's design puts all three on one release page.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="evals.html"><span>← Chapter 10</span><b>Evals</b></a>
+    <a class="fwd" href="sentinel.html"><span>Chapter 12 →</span><b>Sentinel</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp } = Field;
+  const SHA = "sha256:7f3a…c91e", FP = "cfg-7f3a9c";
+
+  // wax seal: scalloped disc, optional crack
+  function sealMark(g, x, y, r, o = {}) {
+    const a = o.a === undefined ? 1 : o.a, br = o.broken || 0;
+    if (a <= 0.01) return;
+    const c = br > 0.5 ? "bad" : "exe";
+    for (let k = 0; k < 12; k++) { const an = (k / 12) * Math.PI * 2; g.circle(x + Math.cos(an) * r * 0.9, y + Math.sin(an) * r * 0.9, r * 0.24, { fill: c, a }); }
+    g.circle(x, y, r * 0.92, { fill: c, a });
+    g.circle(x, y, r * 0.64, { stroke: "#FFFFFF", lw: 1.1, a: a * 0.8 });
+    if (o.label) g.text(o.label, x, y + r * 0.17, { size: Math.max(8, r * 0.46), weight: 600, color: "#FFFFFF", align: "center", a });
+    if (br > 0.02) g.poly([[x - r * 1.05, y - r * 0.45], [x - r * 0.25, y - r * 0.05], [x + r * 0.08, y - r * 0.5], [x + r * 0.45, y + r * 0.22], [x + r * 1.05, y + r * 0.02]], { color: "#FFFFFF", lw: 2.2, a: a * br });
+  }
+  // a compact crate: body, two straps, lid line, centred label lines, optional seal
+  function crate(g, C, o = {}) {
+    const a = o.a === undefined ? 1 : o.a, { x, y, w, h } = C;
+    if (a <= 0.01) return;
+    g.rect(x + 3, y + 5, w, h, { fill: "ink", r: 6, a: a * 0.06 });
+    g.rect(x, y, w, h, { fill: "card", stroke: o.dash ? "ink-3" : "ink-2", lw: 1.6, r: 6, dash: o.dash, a });
+    const m = Math.max(12, w * 0.07);
+    [x + m, x + w - m].forEach((sx) => g.rect(sx - 4, y + 1, 8, h - 2, { fill: g.rgba("exe", o.dash ? 0.08 : 0.16), a }));
+    g.line(x + 1, y + 13, x + w - 1, y + 13, { color: "hair", lw: 1, a });
+    (o.lines || []).forEach(([txt, op], i) => g.text(txt, x + w / 2, y + 36 + i * 18, Object.assign({ size: 11.5, align: "center", a, maxW: w - 2 * m - 16 }, op)));
+    if (o.seal) sealMark(g, x + w - 16, y + 13, o.sr || 12, { a: a * (o.sealA === undefined ? 1 : o.sealA), label: o.sealLabel || "", broken: o.broken || 0 });
+  }
+  function lamp(g, x, y, r, state, a = 1) {
+    if (state === "pass") { g.circle(x, y, r + 5, { fill: g.rgba("ok", 0.14), a }); g.circle(x, y, r, { fill: "ok", a }); }
+    else if (state === "stale") g.circle(x, y, r, { fill: "card", stroke: "ink-3", lw: 1.4, dash: [3, 3], a });
+    else if (state === "fail") { g.circle(x, y, r, { fill: "card", stroke: "bad", lw: 1.6, a }); g.line(x - r * 0.45, y - r * 0.45, x + r * 0.45, y + r * 0.45, { color: "bad", lw: 1.4, a }); g.line(x + r * 0.45, y - r * 0.45, x - r * 0.45, y + r * 0.45, { color: "bad", lw: 1.4, a }); }
+    else g.circle(x, y, r, { fill: "card", stroke: "hair", lw: 1.6, a });
+  }
+
+  /* ---------------- hero: the sealed crate ---------------- */
+  const ROWS = [["source", "5c0d7e1"], ["prompt", "fraud-review v7"], ["model", "Risk Reasoner 3 · Bedrock"], ["temperature", "0.2"], ["threshold", "0.80"], ["policies", "PII redaction · injection shield"], ["eval dataset", "v3 · 8 cases"]];
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g, narrow = W < 700;
+    const P = 11, ph = (s.t % P) / P;
+    const F = 1 - ramp(ph, 0.95, 0.03);
+    const pad = 22, top = Math.max(60, g.safeTop + 16);
+    const cx0 = pad, cy0 = top + 4, cw = W * 0.55, ch = H - cy0 - 84;
+    const built = ramp(ph, 0.13, 0.05) * F, changed = ph > 0.57 && F > 0.5, broke = ramp(ph, 0.61, 0.05) * F;
+    const maya = ramp(ph, 0.43, 0.04);
+    const gateOn = (i) => ramp(ph, 0.2 + i * 0.05, 0.04) * F;
+    // crate body, straps, lid
+    g.rect(cx0 + 3, cy0 + 5, cw, ch, { fill: "ink", r: 6, a: 0.06 });
+    g.rect(cx0, cy0, cw, ch, { fill: "card", stroke: "ink-2", lw: 1.8, r: 6 });
+    const s1 = cx0 + 16, s2 = cx0 + cw - 16;
+    [s1, s2].forEach((sx) => g.rect(sx - 5, cy0 + 1, 10, ch - 2, { fill: g.rgba("exe", 0.16) }));
+    g.line(cx0 + 1, cy0 + 16, cx0 + cw - 1, cy0 + 16, { color: "hair", lw: 1.2 });
+    // the label plate
+    const lx = s1 + 14, lw = s2 - s1 - 28, ly = cy0 + 30, lh = ch - 44;
+    g.rect(lx, ly, lw, lh, { fill: "sheet", stroke: "hair", lw: 1, r: 4 });
+    const ts = narrow ? 13 : 14.5, kw = narrow ? 84 : 98, vs = narrow ? 11.5 : 12.5;
+    g.text("order-service 2.14.0-rc2", lx + 12, ly + 24, { size: ts, font: "ui", weight: 600, maxW: lw - 24 });
+    g.text(built > 0.5 ? "bundle " + SHA : "Draft · Oct 9", lx + 12, ly + 42, { size: 11, color: built > 0.5 ? "exe" : "ink-3", maxW: lw - 24 });
+    const r0 = ly + 56, fpH = 44, rh = Math.min(34, (lh - 56 - fpH) / ROWS.length);
+    g.line(lx + 10, r0 - 4, lx + lw - 10, r0 - 4, { color: "hair", lw: 1 });
+    ROWS.forEach(([k, v], i) => {
+      const y = r0 + i * rh + rh * 0.66, a = F * ramp(ph, 0.01 + i * 0.012, 0.03), isT = k === "temperature";
+      if (isT && changed) g.rect(lx + 5, r0 + i * rh + 1, lw - 10, rh - 2, { fill: g.rgba("bad", 0.1), r: 3, a });
+      g.text(k, lx + 12, y, { size: 10.5, color: "ink-3", a });
+      if (isT && changed) {
+        const vx = lx + 12 + kw, w0 = g.tw("0.2", vs, "ui", 500);
+        g.text("0.2", vx, y, { size: vs, font: "ui", color: "ink-3", a });
+        g.line(vx - 2, y - 4, vx + w0 + 2, y - 4, { color: "bad", lw: 1.4, a });
+        g.text("changed", vx + w0 + 10, y, { size: vs, font: "ui", weight: 600, color: "bad", a });
+      } else g.text(v, lx + 12 + kw, y, { size: vs, font: "ui", a, maxW: lw - kw - 24 });
+    });
+    const fy = ly + lh - 16;
+    g.line(lx + 10, fy - 24, lx + lw - 10, fy - 24, { color: "hair", lw: 1 });
+    g.text("fingerprint", lx + 12, fy, { size: 10.5, color: "ink-3" });
+    const fps = narrow ? 13 : 15, fpx = lx + 12 + kw, fpw = g.tw(FP, fps, "mono", 600);
+    g.text(FP, fpx, fy, { size: fps, weight: 600, color: broke > 0.5 ? "bad" : "exe", a: F * ramp(ph, 0.1, 0.03) });
+    if (broke > 0.02) {
+      g.line(fpx - 2, fy - 5, fpx + fpw + 2, fy - 5, { color: "bad", lw: 1.6, a: broke });
+      g.text("no longer matches", lx + lw - 10, fy, { size: 10.5, color: "bad", weight: 600, align: "right", a: broke, maxW: lw - kw - fpw - 34 });
+    }
+    sealMark(g, cx0 + cw - 30, cy0 + 16, narrow ? 16 : 19, { a: built, broken: broke, label: "7f3a" });
+
+    // right column: gates, signatures, status
+    const rx = cx0 + cw + 30, rw = W - rx - pad;
+    g.text(narrow ? "4 GATES" : "4 GATES · ONE CONFIGURATION", rx, cy0 + 10, { size: 10.5, color: "ink-3", ls: 0.8, maxW: rw });
+    const GN = narrow ? ["Source checked", "Run matches", "Evals 8 of 8", "Model + policies"] : ["Source change checked", "Experiment run matches", "Evaluations 8 of 8", "Approved model + policies"];
+    const gy0 = cy0 + 34;
+    GN.forEach((n, i) => {
+      const yy = gy0 + i * 28, on = gateOn(i), stale = broke > 0.5 && on > 0.5;
+      lamp(g, rx + 8, yy, 6.5, stale ? "stale" : "none");
+      if (!stale && on > 0.02) lamp(g, rx + 8, yy, 6.5, "pass", on);
+      g.text(n, rx + 24, yy + 4.5, { size: narrow ? 11.5 : 12.5, font: "ui", color: stale ? "ink-3" : "ink", maxW: rw - 26 });
+    });
+    const wx = rx - 14, wa = gateOn(3);
+    if (wa > 0.02) {
+      const wc = broke > 0.5 ? "bad" : "exe", dash = broke > 0.5 ? [4, 4] : null;
+      g.line(wx, gy0, wx, fy - 5, { color: wc, lw: 1.3, a: wa, dash });
+      for (let i = 0; i < 4; i++) g.line(wx, gy0 + i * 28, rx + 1, gy0 + i * 28, { color: wc, lw: 1.1, a: wa * 0.8, dash });
+      g.arrow(wx, fy - 5, cx0 + cw + 5, fy - 5, { color: wc, lw: 1.3, head: 7, a: wa, dash });
+    }
+    const sy = gy0 + 4 * 28 + 8;
+    g.text(narrow ? "2 SIGNATURES" : "2 SIGNATURES · DEV → QA", rx, sy, { size: 10.5, color: "ink-3", ls: 0.8, maxW: rw });
+    const mOk = maya > 0.5 && broke < 0.5 && F > 0.5, mCleared = maya > 0.5 && broke >= 0.5;
+    [["MC", "Maya Chen · owner", mOk ? "approved 15:14" : mCleared ? "cleared" : "waiting", mOk], ["LF", "Lena Fischer · AppSec", "pending", false]].forEach(([ini, who, stt, ok], j) => {
+      const yy = sy + 28 + j * 42;
+      if (ok) g.circle(rx + 14, yy, 14, { fill: "ok" });
+      else g.circle(rx + 14, yy, 14, { fill: "card", stroke: stt === "cleared" ? "bad" : "ink-3", lw: 1.3, dash: [3, 3] });
+      g.text(ini, rx + 14, yy + 4, { size: 10, weight: 700, color: ok ? "#FFFFFF" : stt === "cleared" ? "bad" : "ink-3", align: "center" });
+      g.text(who, rx + 36, yy - 2, { size: narrow ? 11 : 12, font: "ui", weight: 600, maxW: rw - 38 });
+      g.text(stt, rx + 36, yy + 13, { size: 10.5, color: ok ? "ok" : stt === "cleared" ? "bad" : "ink-3", weight: ok || stt === "cleared" ? 600 : 500, maxW: rw - 38 });
+    });
+    const status = ph < 0.13 || F < 0.5 ? ["Draft", "ink-3"] : ph < 0.43 ? ["Built #419 · in Dev", "exe"] : broke < 0.5 ? ["1 of 2 signed", "ctl"] : ["back to Draft", "bad"];
+    g.pill(rx, sy + 28 + 84 + 4, status[0], { size: 11.5, stroke: status[1], color: status[1], lw: 1.4, pad: 10 });
+
+    // the temperature knob
+    const kx = cx0 + 30, ky = H - 40, kr = 17;
+    const turn = ph > 0.55 ? ease((ph - 0.55) / 0.04) * F : 0;
+    const ang = (v) => -Math.PI / 2 - Math.PI * 0.75 + v * Math.PI * 1.5;
+    for (let k = 0; k <= 10; k++) { const an = ang(k / 10); g.line(kx + Math.cos(an) * (kr + 3), ky + Math.sin(an) * (kr + 3), kx + Math.cos(an) * (kr + 7), ky + Math.sin(an) * (kr + 7), { color: "ink-3", lw: 1 }); }
+    g.circle(kx, ky, kr, { fill: "card", stroke: turn > 0.02 ? "bad" : "ink-2", lw: 1.6 });
+    const pv = ang(0.2 + 0.12 * turn);
+    g.line(kx, ky, kx + Math.cos(pv) * (kr - 4), ky + Math.sin(pv) * (kr - 4), { color: turn > 0.02 ? "bad" : "ink", lw: 2.2 });
+    g.circle(kx, ky, 2.5, { fill: "ink" });
+    g.text("temperature", kx + kr + 16, ky - 3, { size: 11, color: "ink-3" });
+    g.text(changed ? "changed" : "0.2", kx + kr + 16, ky + 13, { size: 12, font: "ui", weight: 600, color: changed ? "bad" : "ink" });
+    const cap = ph < 0.13 ? ["Every input that matters is pinned on the label.", "ink-2"] : ph < 0.43 ? ["Sealed at build #419. Four gates check the same configuration.", "ink-2"] : !changed ? ["The owner signed. Application Security is pending.", "ink-2"] : ["The temperature changed, so the fingerprint no longer matches: back to Draft, approvals clear.", "bad"];
+    g.wrap(cap[0], rx, H - 62, rw, { size: narrow ? 11 : 12, color: cap[1], lh: 15, maxLines: 3, font: "ui", weight: cap[1] === "bad" ? 600 : 500 });
+  }, { anim: true, restT: 5.7, zoom: 1.3, minW: 620, maxW: 900 });
+
+  /* ---------------- scrolly 1: built once, moved as is ---------------- */
+  const LIFE = [["Draft", "Oct 9"], ["Built", "11:04 · #419"], ["Running in Dev", "11:09 · 2 of 2 pods"], ["Promotion approval", "1 of 2 signed"], ["Handed to QA", "next"]];
+  const INPUTS = [["Source", "5c0d7e1"], ["Prompt", "fraud-review v7"], ["Model", "Risk Reasoner 3 · Bedrock"], ["Parameters", "temperature 0.2 · threshold 0.80"], ["Policies", "PII redaction · injection shield"], ["Eval dataset", "v3 · 8 cases"]];
+  const GATES_V3 = [["Source change applied and checked", "3 of 3 scenario checks · build #419 passed · commit 5c0d7e1"], ["Experiment run matches this configuration", "run-0001 · manual_review at 0.91 risk · threshold 0.80"], ["Evaluations fresh and passing", "8 of 8 cases, including prompt injection and PII redaction"], ["Approved model with required safety policies", "Risk Reasoner 3 on Bedrock · PII redaction and injection shield on"]];
+  const AFTER = [["1 · Hand off to QA", "Jenkins commerce/qa promote job"], ["2 · Verify", "QA contract + integration suite"], ["3 · Reconcile", "QA cluster vs bundle"]];
+  const CRATE_LINES = [["order-service 2.14.0-rc2", { font: "ui", weight: 600, size: 13 }], [SHA, { size: 11, color: "ink-2" }], [FP, { size: 11.5, color: "exe", weight: 600 }]];
+
+  Field.scene("life", (g, s) => {
+    const { W, H } = g, b = s.b, t = s.t;
+    const tall = H > W * 0.95, pad = 22, top = Math.max(60, g.safeTop + 22);
+    // lifecycle rail
+    const rx0 = pad + 46, rx1 = W - pad - 46, ry = top + 6, colW = (rx1 - rx0) / 4;
+    const xs = LIFE.map((_, i) => lerp(rx0, rx1, i / 4));
+    const done = [1, 1, s.at(2), s.at(3), s.at(4)];
+    const cur = [1, 1, 2, 3, 4][Math.round(clamp(b, 0, 4))];
+    g.line(rx0, ry, rx1, ry, { color: "hair", lw: 3 });
+    for (let i = 0; i < 4; i++) { const p = done[i + 1]; if (p > 0.01) g.line(xs[i], ry, lerp(xs[i], xs[i + 1], p), ry, { color: i === 3 ? "ink-3" : "exp", lw: 3, dash: i === 3 ? [5, 5] : null }); }
+    LIFE.forEach(([n, sub], i) => {
+      const x = xs[i], d = done[i];
+      if (i <= 2) { g.circle(x, ry, 7, { fill: "card", stroke: "hair", lw: 1.5 }); g.circle(x, ry, 7, { fill: "exp", a: d }); }
+      else if (i === 3) { g.circle(x, ry, 7.5, { fill: "card", stroke: d > 0.5 ? "ctl" : "hair", lw: 2.2 }); g.circle(x, ry, 3.2, { fill: "ctl", a: d }); }
+      else g.circle(x, ry, 7, { fill: "card", stroke: "ink-3", lw: 1.4, dash: [3, 3] });
+      const on = i === cur, mw = Math.min(colW - 6, 2 * (Math.min(x, W - x) - 8));
+      const ny = g.wrap(n, x, ry + 24, mw, { size: tall ? 11.5 : 12.5, font: "ui", weight: on ? 700 : 600, color: on ? "ink" : "ink-2", align: "center", lh: 14, maxLines: 2 });
+      g.text(sub, x, ny + 1, { size: 10.5, font: "ui", color: i === 3 && d > 0.5 ? "ctl" : "ink-3", align: "center", maxW: mw });
+    });
+    // panels
+    const mainTop = ry + (tall ? 74 : 62), mainH = H - mainTop - pad;
+    let L, R;
+    if (!tall) { const lw = (W - 2 * pad - 30) * 0.46; L = { x: pad, y: mainTop, w: lw, h: mainH }; R = { x: pad + lw + 30, y: mainTop, w: W - pad - (pad + lw + 30), h: mainH }; }
+    else { const lh = Math.min(250, mainH * 0.42); L = { x: pad, y: mainTop, w: W - 2 * pad, h: lh }; R = { x: pad, y: mainTop + lh + 18, w: W - 2 * pad, h: mainH - lh - 18 }; }
+    // Dev panel
+    g.rect(L.x, L.y, L.w, L.h, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    const dW = g.tw("Dev", 22, "display", 800);
+    g.text("Dev", L.x + 14, L.y + 28, { size: 22, font: "display", weight: 800 });
+    g.text("nsx-dev-use1 / commerce", L.x + 24 + dW, L.y + 27, { size: 11, color: "exp", maxW: L.w - dW - 140 });
+    g.chip(L.x + L.w - 12, L.y + 22, "read & write", "exp", { size: 10, align: "right" });
+    const cwid = tall ? Math.min(250, L.w * 0.48) : Math.min(280, L.w - 48), chh = tall ? Math.min(100, L.h - 110) : Math.min(132, L.h * 0.26);
+    const C = { x: tall ? L.x + 16 : L.x + (L.w - cwid) / 2, y: L.y + 48, w: cwid, h: chh };
+    crate(g, C, { lines: CRATE_LINES, seal: true, sealLabel: "#419", sr: 13 });
+    // build caption (beats 0–1), then pods (beat 2+)
+    const buildA = s.swapOut(2), podA = s.at(2);
+    if (buildA > 0.01) g.wrap("Built by Jenkins commerce/dev: #419 passed all 9 stages at 11:04.", tall ? C.x : L.x + 20, C.y + C.h + 28, tall ? C.w : L.w - 40, { size: 11.5, font: "ui", color: "ink-2", lh: 15, a: buildA, maxLines: 3 });
+    if (podA > 0.01) {
+      const P0 = tall ? { x: L.x + L.w * 0.56, y: L.y + 50, w: L.w * 0.44 - 16 } : { x: L.x + 20, y: C.y + C.h + 20, w: L.w - 40 };
+      const pw = tall ? P0.w : (P0.w - 12) / 2, phh = 46;
+      for (let k = 0; k < 2; k++) {
+        const px = tall ? P0.x : P0.x + k * (pw + 12), py = tall ? P0.y + k * (phh + 10) : P0.y;
+        g.rect(px, py, pw, phh, { fill: "card", stroke: "exe", lw: 1.3, r: 8, a: podA });
+        g.text("order-service", px + 10, py + 19, { size: 12, font: "ui", weight: 600, a: podA, maxW: pw - 34 });
+        g.text("2.14.0-rc2 · pod", px + 10, py + 35, { size: 10.5, color: "ink-2", a: podA, maxW: pw - 20 });
+        g.circle(px + pw - 13, py + 14, 4.5, { fill: "ok", a: podA });
+      }
+      const capY = tall ? P0.y + 2 * (phh + 10) + 14 : P0.y + phh + 24;
+      g.text("2 of 2 pods · Running in Dev 11:09", P0.x, capY, { size: 11.5, font: "ui", weight: 600, color: "ok", a: podA, maxW: P0.w });
+    }
+    // Dev audit, oldest first, growing with the beats (GroundBridge audit lines)
+    if (!tall) {
+      const AU = [["Oct 12", "Returned to Draft — temperature changed", 0], ["11:04", "Evaluation 8 of 8 on cfg-7f3a9c", 1], ["11:09", "Deployed to Dev · 4 of 4 gates", 2], ["15:12", "Promotion to QA requested by Venkatesh", 3], ["15:14", "Maya Chen approved promotion to QA", 3]];
+      const ay0 = L.y + L.h - 18 - AU.length * 22;
+      if (ay0 > C.y + C.h + 120) {
+        g.line(L.x + 14, ay0 - 26, L.x + L.w - 14, ay0 - 26, { color: "hair", lw: 1 });
+        g.text("AUDIT · OLDEST FIRST", L.x + 14, ay0 - 8, { size: 10, color: "ink-3", ls: 0.8 });
+        AU.forEach(([tm, txt, k], i) => {
+          const a = k === 0 ? 1 : s.at(k), y = ay0 + 14 + i * 22;
+          g.text(tm, L.x + 14, y, { size: 10.5, color: "ink-3", a });
+          g.text(txt, L.x + 64, y, { size: 11.5, font: "ui", color: k === 0 ? "bad" : "ink", a, maxW: L.w - 78 });
+        });
+      }
+    }
+    // right panel, beat 0: what the bundle is built from
+    const a0 = s.swapOut(1);
+    if (a0 > 0.01) {
+      g.text(tall ? "BUILT FROM · SEALED INTO THE BUNDLE ABOVE" : "BUILT FROM · THE BUNDLE CARD", R.x, R.y + 14, { size: 10.5, color: "ink-3", ls: 0.8, a: a0, maxW: R.w });
+      const rowH = Math.min(46, (R.h - 64) / 6);
+      INPUTS.forEach(([k, v], i) => {
+        const y = R.y + 30 + i * rowH, h = rowH - 8;
+        g.rect(R.x, y, R.w, h, { fill: "card", stroke: "hair", lw: 1.1, r: 8, a: a0 });
+        g.text(k, R.x + 12, y + h / 2 + 4, { size: 10.5, color: "ink-3", a: a0 });
+        g.text(v, R.x + 112, y + h / 2 + 4.5, { size: 12.5, font: "ui", a: a0, maxW: R.w - 124 });
+        if (!tall) g.curve([R.x - 3, y + h / 2], [lerp(C.x + C.w, R.x, 0.5), y + h / 2], [C.x + C.w + 6, C.y + 22 + i * ((C.h - 34) / 5)], { color: "exe", lw: 1.1, head: 6, a: a0 * 0.7 });
+      });
+      g.text("together: configuration " + FP, R.x, R.y + 30 + 6 * rowH + 10, { size: 11.5, color: "exe", weight: 600, a: a0, maxW: R.w });
+    }
+    // right panel, beats 1–2: four gates on one configuration
+    const a1 = s.swapIn(1) * s.swapOut(3);
+    if (a1 > 0.01) {
+      const gx = R.x + (tall ? 20 : 0), gw = R.w - (gx - R.x), all = ramp(b, 0.95, 0.12);
+      g.text("RELEASE GATES · ALL FOUR ON " + FP, gx, R.y + 14, { size: 10.5, color: "ink-3", ls: 0.8, a: a1, maxW: gw - 110 });
+      g.chip(R.x + R.w, R.y + 10, "4 of 4 in Dev", "ok", { size: 10.5, align: "right", a: a1 * all });
+      const gH = Math.min(80, (R.h - 40) / 4);
+      GATES_V3.forEach(([n, ev], i) => {
+        const y = R.y + 32 + i * gH, on = ramp(b, 0.45 + i * 0.12, 0.15);
+        g.rect(gx, y, gw, gH - 10, { fill: "card", stroke: "hair", lw: 1.1, r: 8, a: a1 });
+        lamp(g, gx + 17, y + 18, 6.5, "none", a1);
+        if (on > 0.02) lamp(g, gx + 17, y + 18, 6.5, "pass", a1 * on);
+        g.text(n, gx + 34, y + 23, { size: 12.5, font: "ui", weight: 600, a: a1, maxW: gw - 46 });
+        g.wrap(ev, gx + 34, y + 41, gw - 46, { size: 10.5, color: "ink-2", lh: 14, maxLines: 2, a: a1 });
+      });
+      const sx = tall ? R.x + 6 : R.x - 13, sTop = R.y + 50, sBot = R.y + 32 + 3 * gH + 18, sa = a1 * all;
+      if (sa > 0.01) {
+        g.line(sx, sTop, sx, sBot, { color: "exe", lw: 1.4, a: sa });
+        for (let i = 0; i < 4; i++) g.line(sx, R.y + 50 + i * gH, gx - 1, R.y + 50 + i * gH, { color: "exe", lw: 1.1, a: sa });
+        if (!tall) g.arrow(sx, (sTop + sBot) / 2, C.x + C.w + 6, C.y + 68, { color: "exe", lw: 1.4, head: 8, a: sa });
+        else { g.line(sx, sTop, sx, C.y + C.h - 8, { color: "exe", lw: 1.4, a: sa }); g.arrow(sx, C.y + C.h - 8, C.x - 2, C.y + C.h - 8, { color: "exe", lw: 1.4, head: 7, a: sa }); }
+      }
+    }
+    // right panel, beats 3–4: QA, promotion of the same bundle
+    const a3 = s.swapIn(3), a4 = s.at(4);
+    if (a3 > 0.01) {
+      g.rect(R.x, R.y, R.w, R.h, { fill: "card", stroke: "ink-3", lw: 1.3, r: 10, dash: [6, 5], a: a3 });
+      const qW = g.tw("QA", 22, "display", 800);
+      g.text("QA", R.x + 14, R.y + 28, { size: 22, font: "display", weight: 800, a: a3 });
+      g.text("nsx-qa-use1 / commerce", R.x + 24 + qW, R.y + 27, { size: 11, color: "ink-3", a: a3, maxW: R.w - qW - 130 });
+      g.chip(R.x + R.w - 12, R.y + 22, "read, exec", "exp", { size: 10, align: "right", a: a3 });
+      const sw = Math.min(250, R.w - 48), S = { x: R.x + (R.w - sw) / 2, y: R.y + 52, w: sw, h: 92 };
+      const p0 = tall ? [C.x + C.w * 0.5, C.y + C.h + 6] : [C.x + C.w + 6, C.y + C.h / 2], p1 = tall ? [S.x + S.w * 0.3, S.y - 6] : [S.x - 6, S.y + S.h / 2];
+      g.arrow(p0[0], p0[1], p1[0], p1[1], { color: "ctl", lw: 2, head: 9, a: a3 });
+      if (!tall) {
+        const mx = (p0[0] + p1[0]) / 2, my = (p0[1] + p1[1]) / 2, mw = Math.abs(p1[0] - p0[0]) + 30;
+        g.text("requested 15:12", mx, my + 22, { size: 11, color: "ctl", weight: 600, align: "center", a: a3, maxW: mw });
+        g.text("1 of 2 signed", mx, my + 36, { size: 11, color: "ctl", align: "center", a: a3, maxW: mw });
+      } else {
+        g.text("promotion requested 15:12 · 1 of 2 signed", (p0[0] + p1[0]) / 2 + 14, (p0[1] + p1[1]) / 2 + 4, { size: 11, color: "ctl", weight: 600, a: a3 * (1 - podA * 0), maxW: W - pad - ((p0[0] + p1[0]) / 2 + 14) });
+      }
+      g.wrap("This run shows up when the window switches to QA.", R.x + 14, R.y + R.h - (tall ? 16 : 22), R.w - 28, { size: 11, color: "ink-3", a: a3, maxLines: 1 });
+      const mv = a3 * (1 - a4);
+      if (mv > 0.01) {
+        crate(g, S, { dash: [5, 4], a: mv * 0.9, lines: [["arrives unchanged", { font: "ui", size: 12, color: "ink-3" }], [SHA, { size: 11, color: "ink-3" }]] });
+        const u = ease((t * 0.28) % 1), bx = lerp(p0[0], p1[0], u), by = lerp(p0[1], p1[1], u) - Math.sin(Math.PI * u) * 26;
+        g.pill(bx, by, SHA, { size: 10.5, stroke: "exe", color: "exe", lw: 1.5, r: 6, align: "center", a: mv * Math.sin(Math.PI * Math.min(1, u * 1.05)) });
+        const rb = { x: S.x, y: S.y + S.h + 20, w: S.w, h: 46 };
+        g.hatch(rb.x, rb.y, rb.w, rb.h, { color: "bad", a: mv * 0.8, r: 6 });
+        g.rect(rb.x + 10, rb.y + 9, rb.w - 20, rb.h - 18, { fill: "card", r: 5, a: mv });
+        g.text("✕  rebuild for QA · nothing is rebuilt", rb.x + rb.w / 2, rb.y + rb.h / 2 + 4, { size: 11, color: "bad", weight: 600, align: "center", a: mv, maxW: rb.w - 28 });
+      }
+      if (a4 > 0.01) {
+        crate(g, S, { dash: [5, 4], a: a4, lines: [["the same bundle", { font: "ui", weight: 600, size: 12.5 }], [SHA, { size: 11, color: "ink-2" }], [FP, { size: 11, color: "exe" }]], seal: true, sealLabel: "#419", sr: 12, sealA: 0.6 });
+        const row = R.w > 520, sy0 = S.y + S.h + 20;
+        const bw = row ? (R.w - 28 - 20) / 3 : R.w - 28, bh = row ? 66 : Math.min(60, (R.y + R.h - sy0 - 44) / 3 - 10);
+        AFTER.forEach(([k, v], i) => {
+          const x = R.x + 14 + (row ? i * (bw + 10) : 0), y = sy0 + (row ? 0 : i * (bh + 10));
+          g.rect(x, y, bw, bh, { fill: "sheet", stroke: "exe", lw: 1.2, r: 8, dash: [4, 4], a: a4 });
+          g.text(k, x + 12, y + 20, { size: 10.5, color: "ink-3", a: a4, maxW: bw - 20 });
+          g.wrap(v, x + 12, y + 38, bw - 24, { size: 12, font: "ui", weight: 600, lh: 15, maxLines: 2, a: a4 });
+        });
+        const capY = row ? sy0 + bh + 22 : sy0 + 3 * (bh + 10) + 12;
+        g.text("after both sign · not run yet in the design", R.x + 14, capY, { size: 11, color: "ink-3", a: a4, maxW: R.w - 28 });
+      }
+    }
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- scrolly 2: bound approvals ---------------- */
+  const EVI = [["ok", "Release gates", "4 of 4 in Dev on this configuration"], ["ok", "Evaluations", "8 of 8 · injection and PII cases pass"], ["ok", "Security scan", "0 high · 1 medium (accepted)"], ["kno", "Downstream consumers", "8 · 1 conflicting edge in Dev (loyalty-consumer, unrelated)"]];
+  const SUMMARY = ["New outbound call to fraud-risk-api uses workload identity, no static secret.", "Customer data sent: order id, amount, customer id. No card data. PII redaction verified by case T08.", "Timeouts fail closed: the order waits for review rather than shipping."];
+  const AUDIT_V3 = [["15:14", "Maya Chen approved promotion to QA"], ["15:12", "Promotion to QA requested by Venkatesh"], ["11:09", "Deployed to Dev · 4 of 4 gates"], ["11:04", "Evaluation 8 of 8 on cfg-7f3a9c"], ["Oct 12", "Returned to Draft — temperature changed"]];
+  function nlines(g, text, maxW, size, fam) { const ws = String(text).split(/\s+/); let line = "", n = 1; for (const w of ws) { const t2 = line ? line + " " + w : w; if (g.tw(t2, size, fam, 500) > maxW && line) { n++; line = w; } else line = t2; } return n; }
+
+  function evidencePanel(g, P, a, ha) {
+    g.text("EVIDENCE", P.x, P.y, { size: 10.5, color: "ink-3", ls: 0.8, a: ha });
+    let y = P.y + 12;
+    EVI.forEach(([c, n, v]) => {
+      g.rect(P.x, y, P.w, 40, { fill: "card", stroke: "hair", lw: 1, r: 8, a });
+      g.circle(P.x + 14, y + 15, 4.5, { fill: c, a });
+      g.text(n, P.x + 26, y + 19, { size: 12.5, font: "ui", weight: 600, a, maxW: P.w - 40 });
+      g.text(v, P.x + 26, y + 33, { size: 10.5, color: "ink-2", a, maxW: P.w - 36 });
+      y += 46;
+    });
+    y += 6;
+    const bw = P.w - 40, nl = SUMMARY.map((t) => Math.min(2, nlines(g, t, bw, 11.5, "ui")));
+    const h = 34 + nl.reduce((p, q) => p + q, 0) * 15 + (SUMMARY.length - 1) * 4 + 8;
+    g.rect(P.x, y, P.w, h, { fill: g.rgba("ctl", 0.05), stroke: "hair", lw: 1, r: 8, a });
+    g.text("Security summary for this change", P.x + 14, y + 22, { size: 12.5, font: "ui", weight: 600, a, maxW: P.w - 28 });
+    let yy = y + 42;
+    SUMMARY.forEach((t, i) => { g.circle(P.x + 18, yy - 4, 2.2, { fill: "ink-2", a }); yy = g.wrap(t, P.x + 28, yy, bw, { size: 11.5, font: "ui", color: "ink-2", lh: 15, maxLines: 2, a }) + 4; });
+  }
+  function signoffPanel(g, P, a, ha, fire, t) {
+    g.text("SIGN-OFF · DEV → QA", P.x, P.y, { size: 10.5, color: "ink-3", ls: 0.8, a: ha });
+    let y = P.y + 30;
+    const cleared = fire > 0.5;
+    const chipT = cleared ? "cleared" : "Approved 15:14", chipW = g.tw(chipT, 10.5, "mono", 600) + 20;
+    if (!cleared) g.circle(P.x + 16, y, 15, { fill: "ok", a }); else g.circle(P.x + 16, y, 15, { fill: "card", stroke: "bad", lw: 1.4, dash: [3, 3], a });
+    g.text("MC", P.x + 16, y + 4, { size: 10.5, weight: 700, color: cleared ? "bad" : "#FFFFFF", align: "center", a });
+    g.text("Maya Chen", P.x + 40, y - 2, { size: 13, font: "ui", weight: 600, a, maxW: P.w - 50 - chipW });
+    g.text("Commerce application owner", P.x + 40, y + 14, { size: 11, font: "ui", color: "ink-3", a, maxW: P.w - 40 });
+    if (cleared) g.pill(P.x + P.w, y - 6, chipT, { size: 10.5, align: "right", stroke: "bad", color: "bad", lw: 1.2, dash: [3, 3], pad: 10, a });
+    else g.chip(P.x + P.w, y - 6, chipT, "ok", { size: 10.5, align: "right", a });
+    y = g.wrap("“Fraud path reviewed with Risk Engineering. Event contract unchanged.”", P.x + 40, y + 34, P.w - 40, { size: 13, font: "body", color: cleared ? "ink-3" : "ink-2", lh: 16, maxLines: 3, a }) + 14;
+    g.circle(P.x + 16, y, 15, { fill: "card", stroke: "ink-3", lw: 1.3, dash: [3, 3], a });
+    g.text("LF", P.x + 16, y + 4, { size: 10.5, weight: 700, color: "ink-3", align: "center", a });
+    g.text("Lena Fischer", P.x + 40, y - 2, { size: 13, font: "ui", weight: 600, a, maxW: P.w - 120 });
+    g.text("Application Security · reminded in Teams", P.x + 40, y + 14, { size: 11, font: "ui", color: "ink-3", a, maxW: P.w - 40 });
+    g.pill(P.x + P.w, y - 6, "Pending", { size: 10.5, align: "right", stroke: "ink-3", color: "ink-2", lw: 1.2, dash: [3, 3], pad: 10, a });
+    y += 40;
+    y = g.wrap("Each approver's permissions are checked again when they sign.", P.x, y + 4, P.w, { size: 12, font: "ui", color: "ctl", weight: 600, lh: 16, a }) + 6;
+    const CH = ["Lena signs", "her permissions are checked again", "bound to the same bundle and " + FP, "2 of 2 signed"];
+    const nh = 26, gap = 10, cx = P.x + 22;
+    CH.forEach((c, i) => {
+      const yy = y + i * (nh + gap);
+      g.rect(cx, yy, P.w - 22, nh, { fill: "card", stroke: i === 1 ? "ctl" : "ink-3", lw: 1.2, r: 6, dash: [4, 3], a });
+      g.text(c, cx + 10, yy + nh / 2 + 4, { size: 11.5, font: "ui", weight: i === 1 ? 600 : 500, color: i === 1 ? "ctl" : "ink-2", a, maxW: P.w - 42 });
+      if (i < CH.length - 1) g.arrow(cx + 16, yy + nh + 1, cx + 16, yy + nh + gap - 1, { color: "ink-3", lw: 1.1, head: 5, a });
+    });
+    const u = (t * 0.35) % 1, py = y + nh / 2 + u * 3 * (nh + gap);
+    g.circle(P.x + 8, py, 4, { fill: "ctl", a: a * Math.sin(Math.PI * u) });
+    g.line(P.x + 8, y + nh / 2, P.x + 8, y + 3 * (nh + gap) + nh / 2, { color: "hair", lw: 1.2, a });
+    g.text("in the design: not yet", P.x + P.w, y + 4 * (nh + gap) + 8, { size: 10.5, color: "ink-3", align: "right", a, maxW: P.w });
+    return y + 4 * (nh + gap) + 16;
+  }
+  function auditPanel(g, P, a, ha, fire) {
+    g.text("AUDIT · GROUNDBRIDGE", P.x, P.y, { size: 10.5, color: "ink-3", ls: 0.8, a: ha });
+    let y = P.y + 26;
+    AUDIT_V3.forEach(([tm, txt], i) => {
+      const last = i === AUDIT_V3.length - 1;
+      if (last) g.rect(P.x - 6, y - 15, P.w + 6, 23, { fill: g.rgba("bad", 0.08), r: 5, a });
+      g.text(tm, P.x, y, { size: 11, color: "ink-3", a });
+      g.text(txt, P.x + 54, y, { size: 12, font: "ui", color: last ? "bad" : "ink", weight: last ? 600 : 500, a, maxW: P.w - 58 });
+      y += 25;
+    });
+    y += 12;
+    g.text("the rule has fired once already", P.x, y, { size: 11, color: "bad", a, maxW: P.w });
+    g.text(fire > 0.5 ? "replay: an input changed now → Draft, approval clears" : "replay: the same rule, if it fired now", P.x, y + 20, { size: 11, color: fire > 0.5 ? "bad" : "ink-3", weight: fire > 0.5 ? 600 : 500, a, maxW: P.w });
+  }
+
+  Field.scene("bind", (g, s) => {
+    const { W, H } = g, b = s.b, t = s.t, tall = H > W * 0.95;
+    const pad = 22, top = Math.max(60, g.safeTop + 20);
+    const LW = tall ? W - 2 * pad : (W - 2 * pad - 28) * 0.6, RX = tall ? pad : pad + LW + 28, RW = tall ? W - 2 * pad : W - pad - RX;
+    const rA = s.at(3), cyc = (t % 6) / 6, fire = rA * Field.win(cyc, 0.3, 0.85, 0.06, 0.1);
+    // the request
+    let y = top;
+    const chipT = fire > 0.5 ? "Draft · approvals cleared" : "1 of 2 signed";
+    const cw0 = g.chip(pad, y + 6, chipT, fire > 0.5 ? "bad" : "ctl", { size: 11 });
+    g.text("Requested by you · 15:12 · Dev → QA", pad + cw0 + 10, y + 10, { size: 11.5, font: "ui", color: "ink-3", maxW: LW - cw0 - 10 });
+    y += 40;
+    g.text("Promote order-service 2.14.0-rc2 to QA", pad, y, { size: tall ? 16 : 17.5, font: "ui", weight: 600, maxW: LW });
+    y = g.wrap("Adds fraud review before payment authorization. High-risk orders wait for manual review. The order event stays on v2.", pad, y + 22, LW, { size: 12, font: "ui", color: "ink-2", lh: 16, maxLines: 3 });
+    // bound to
+    y += 8;
+    g.text("THIS APPROVAL IS BOUND TO", pad, y, { size: 10.5, color: "ink-3", ls: 0.8 });
+    const wy = y + 26, wh = 64, ww = (LW - 20) / 3, by = y + 12;
+    const WELLS = [["Bundle", SHA], ["From", "nsx-dev-use1 / commerce"], ["Configuration", FP]];
+    const ba = s.at(0);
+    g.line(pad + ww / 2, by, pad + 2 * (ww + 10) + ww / 2, by, { color: "ctl", lw: 1.4, a: ba });
+    WELLS.forEach(([k, v], i) => {
+      const x = pad + i * (ww + 10), red = i === 2 && fire > 0.02;
+      g.line(x + ww / 2, by, x + ww / 2, wy - 2, { color: red ? "bad" : "ctl", lw: 1.4, a: ba });
+      g.rect(x, wy, ww, wh, { fill: "sheet", stroke: red ? "bad" : "ctl", lw: red ? 2 : 1.2, r: 8 });
+      g.text(k, x + 12, wy + 20, { size: 11, font: "ui", color: "ink-3" });
+      g.wrap(v, x + 12, wy + 40, ww - 22, { size: 11.5, lh: 15, maxLines: 2, color: red ? "bad" : "ink" });
+      if (red) { const vw = g.tw(v, 11.5, "mono", 500); g.line(x + 10, wy + 36, x + 14 + vw, wy + 36, { color: "bad", lw: 1.5, a: fire }); g.text("no longer matches", x + 12, wy + 57, { size: 10, color: "bad", weight: 600, a: fire, maxW: ww - 22 }); }
+    });
+    g.circle(pad + LW - 8, by, 5, { fill: "ctl", a: ba });
+    g.line(pad + 2 * (ww + 10) + ww / 2, by, pad + LW - 8, by, { color: "ctl", lw: 1.4, a: ba });
+    // lower panels
+    const yA = wy + wh + 28;
+    if (!tall) {
+      const aE = s.at(1), aS = s.at(2), aU = s.at(3);
+      evidencePanel(g, { x: pad, y: yA, w: LW }, aE, Math.max(0.4, aE));
+      const yS = signoffPanel(g, { x: RX, y: top + 4, w: RW }, aS, Math.max(0.4, aS), fire, t);
+      auditPanel(g, { x: RX, y: yS + 22, w: RW }, aU, Math.max(0.4, aU), fire);
+    } else {
+      const P = { x: pad, y: yA, w: W - 2 * pad };
+      const aE = s.at(1) * s.swapOut(2), aS = s.swapIn(2) * s.swapOut(3), aU = s.swapIn(3);
+      if (b < 0.6) g.text("evidence, sign-off and audit follow", P.x, P.y, { size: 11, color: "ink-3", a: 1 - s.at(1) });
+      if (aE > 0.01) evidencePanel(g, P, aE, aE);
+      if (aS > 0.01) signoffPanel(g, P, aS, aS, fire, t);
+      if (aU > 0.01) auditPanel(g, P, aU, aU, fire);
+    }
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- prototype release states (handbook 7.5) ---------------- */
+  Field.scene("states", (g, s) => {
+    const { W, H } = g, tall = H > W * 0.95, pad = 26, top = Math.max(50, g.safeTop + 18);
+    const cyc = (s.t % 10) / 10;
+    const NAMES = ["Draft", "Staging", "Approval requested"], SUBS = ["initial state", "records releaseConfig", "approvals cleared again"];
+    let R, GH;
+    if (!tall) {
+      const gw = 190, gx = W - pad - gw, nw = 200, nh = 62, y = top + 104;
+      const x0 = pad + 10, x2 = gx - 56 - nw, x1 = (x0 + x2) / 2;
+      R = [x0, x1, x2].map((x) => ({ x, y, w: nw, h: nh }));
+      GH = { x: gx, y: top + 30, w: gw, cols: 1 };
+    } else {
+      const nw = Math.min(270, W * 0.46), nh = 58, x = pad + 10, gap = 104;
+      R = [0, 1, 2].map((i) => ({ x, y: top + 26 + i * (nh + gap), w: nw, h: nh }));
+      GH = { x: pad, y: R[2].y + nh + 96, w: W - 2 * pad, cols: 2 };
+    }
+    R.forEach((r) => { r.cx = r.x + r.w / 2; r.cy = r.y + r.h / 2; });
+    const [D, S, A] = R;
+    // timeline of the token
+    const atD = cyc < 0.12 || cyc > 0.9, atS = cyc > 0.24 && cyc < 0.34, atA = cyc > 0.46 && cyc < 0.72;
+    const curI = atD ? 0 : atS ? 1 : atA ? 2 : -1;
+    // forward arrows and labels
+    const fwd = [["all four gates pass · Promote to staging"], ["gates still pass · Request production approval"]];
+    [[D, S], [S, A]].forEach(([p, q], i) => {
+      if (!tall) {
+        g.arrow(p.x + p.w + 6, p.cy, q.x - 6, q.cy, { color: "ctl", lw: 1.8, head: 9 });
+        g.wrap(fwd[i][0], (p.x + p.w + q.x) / 2, p.cy - 36, q.x - p.x - p.w - 12, { size: 11, color: "ctl", align: "center", lh: 14, maxLines: 3 });
+      } else {
+        g.arrow(p.x + 46, p.y + p.h + 6, q.x + 46, q.y - 6, { color: "ctl", lw: 1.8, head: 9 });
+        g.wrap(fwd[i][0], p.x + 62, (p.y + p.h + q.y) / 2 - 4, Math.max(120, p.w - 70), { size: 11, color: "ctl", lh: 14, maxLines: 3 });
+      }
+    });
+    // self loop on Approval requested
+    if (!tall) {
+      g.curve([A.x + A.w - 46, A.y - 3], [A.x + A.w - 10, A.y - 74], [A.x + A.w - 112, A.y - 5], { color: "ctl", lw: 1.4, head: 8 });
+      g.text("record or revise reviewer decisions", A.x + A.w - 120, A.y - 44, { size: 11, color: "ctl", align: "right", maxW: A.x + A.w - 120 - (S.x + S.w) });
+    } else {
+      g.curve([A.x + 60, A.y + A.h + 3], [A.x + 110, A.y + A.h + 66], [A.x + 160, A.y + A.h + 5], { color: "ctl", lw: 1.4, head: 8 });
+      g.text("record or revise reviewer decisions", A.x + 176, A.y + A.h + 44, { size: 11, color: "ctl", maxW: W - pad - (A.x + 172) });
+    }
+    // return arrows to Draft
+    let b1, b2;
+    if (!tall) {
+      b1 = [[S.cx, S.y + S.h + 4], [(S.cx + D.cx) / 2, S.y + S.h + 70], [D.cx + 30, D.y + D.h + 4]];
+      b2 = [[A.cx, A.y + A.h + 4], [(A.cx + D.cx) / 2, A.y + A.h + 168], [D.cx - 20, D.y + D.h + 4]];
+    } else {
+      b1 = [[S.x + S.w + 4, S.cy], [S.x + S.w + 84, (S.cy + D.cy) / 2], [D.x + D.w + 4, D.cy + 8]];
+      b2 = [[A.x + A.w + 4, A.cy], [A.x + A.w + 176, (A.cy + D.cy) / 2], [D.x + D.w + 4, D.cy - 8]];
+    }
+    const flash = Field.win(cyc, 0.66, 0.92, 0.03, 0.06);
+    [b1, b2].forEach((c) => g.curve(c[0], c[1], c[2], { color: "bad", lw: 1.5 + flash * 0.8, dash: [6, 5], head: 9 }));
+    const backLab = "a fingerprinted value changes: back to Draft, releaseConfig and approvals cleared, audit line";
+    if (!tall) g.wrap(backLab, (A.cx + D.cx) / 2, A.y + A.h + 112, 440, { size: 11.5, color: "bad", align: "center", lh: 15, maxLines: 2 });
+    else { const lx = A.x + A.w + 100; g.wrap(backLab, lx, S.cy - 30, W - pad - lx, { size: 11, color: "bad", lh: 14, maxLines: 6 }); }
+    // nodes
+    R.forEach((r, i) => {
+      const cur = i === curI;
+      g.rect(r.x, r.y, r.w, r.h, { fill: cur ? g.rgba("ctl", 0.1) : "card", stroke: cur ? "ctl" : "ink-3", lw: cur ? 2.2 : 1.4, r: 12 });
+      g.text(NAMES[i], r.cx, r.y + 27, { size: 16, font: "ui", weight: 600, align: "center", color: cur ? "ctl" : "ink", maxW: r.w - 16 });
+      g.text(SUBS[i], r.cx, r.y + 47, { size: 10.5, color: "ink-3", align: "center", maxW: r.w - 16 });
+    });
+    // approvals stamped at Approval requested, then cleared
+    const stA = ramp(cyc, 0.52, 0.03) * (1 - ramp(cyc, 0.7, 0.03)), stB = ramp(cyc, 0.58, 0.03) * (1 - ramp(cyc, 0.7, 0.03));
+    [["CO", stA], ["AS", stB]].forEach(([ini, a], k) => {
+      const x = tall ? A.x + A.w - 20 - k * 28 : A.x + A.w - 18 - k * 30, y = tall ? A.y - 12 : A.y + A.h + 20;
+      g.circle(x, y, 11, { fill: "card", stroke: "ink-3", lw: 1.1, dash: [3, 3] });
+      g.circle(x, y, 11, { fill: "ok", a });
+      g.text(ini, x, y + 3.5, { size: 8.5, weight: 700, color: a > 0.5 ? "#FFFFFF" : "ink-3", align: "center" });
+    });
+    if (flash > 0.02) {
+      const fx = tall ? A.x + 176 : A.x + A.w + 6, fy = tall ? A.y + A.h + 16 : A.y + A.h + 50;
+      g.chip(fx, fy, "temperature changed", "bad", { size: 10.5, a: flash });
+    }
+    // moving token
+    const arc = (p, q, u) => tall ? g.bez([p.x - 2, p.cy], [p.x - 40, (p.cy + q.cy) / 2], [q.x - 2, q.cy], u) : g.bez([p.cx, p.y - 2], [(p.cx + q.cx) / 2, p.y - 70], [q.cx, q.y - 2], u);
+    let tk = null;
+    if (cyc > 0.12 && cyc < 0.24) tk = arc(D, S, ease((cyc - 0.12) / 0.12));
+    else if (cyc > 0.34 && cyc < 0.46) tk = arc(S, A, ease((cyc - 0.34) / 0.12));
+    else if (cyc > 0.72 && cyc < 0.9) tk = g.bez(b2[0], b2[1], b2[2], ease((cyc - 0.72) / 0.18));
+    if (tk) { g.circle(tk[0], tk[1], 7, { fill: cyc > 0.72 ? "bad" : "exe", stroke: "#FFFFFF", lw: 2 }); }
+    // states the prototype does not have
+    const ghosts = ["Deployed", "Rejected", "Rolled back", "Cancelled"];
+    g.text("NOT IN THE PROTOTYPE", GH.x, GH.y, { size: 10.5, color: "ink-3", ls: 0.8 });
+    const gwc = GH.cols === 1 ? GH.w : (GH.w - 12) / 2;
+    ghosts.forEach((n, i) => {
+      const c = GH.cols === 1 ? 0 : i % 2, r = GH.cols === 1 ? i : Math.floor(i / 2);
+      const x = GH.x + c * (gwc + 12), y = GH.y + 14 + r * 50;
+      g.hatch(x, y, gwc, 38, { color: "ink-3", a: 0.5, r: 6 });
+      g.rect(x + gwc / 2 - g.tw(n, 12.5, "ui", 600) / 2 - 8, y + 9, g.tw(n, 12.5, "ui", 600) + 16, 20, { fill: "sheet", r: 4 });
+      g.text(n, x + gwc / 2, y + 24, { size: 12.5, font: "ui", weight: 600, color: "ink-3", align: "center" });
+    });
+  }, { anim: true, restT: 6, zoom: 1, minW: 620, maxW: 1200 });
+
+  /* ---------------- lab: release gates, the prototype's logic ---------------- */
+  const MODELS = { "risk-3": { name: "Risk Reasoner 3", status: "Approved" }, "custom-10": { name: "Custom HTTPS endpoint", status: "Registered · untested" } };
+  const FIXED = { prompt: "fraud review instructions (held fixed in this lab)", agentNodes: ["Input", "Retrieve context", "Risk Reasoner 3", "Fraud Risk API", "Policy gate", "Decision"], agentPattern: "Sequential", maxTokens: 2048, topP: 1, reasoning: "Standard", messages: [] };
+  const CODE = ["OrderService.java · base", "OrderService.java · base + prepared risk branch (fraudRisk.assess, pendingReview, order.confirmed.v2)"];
+  const FIELDS = ["guard", "threshold", "temperature", "model", "prompt", "agentNodes", "agentPattern", "maxTokens", "topP", "reasoning", "messages", "policies", "code"];
+  const ROLES = ["Commerce owner", "Application Security"];
+  const policiesOf = (st) => ({ pii: !!st.pii, injection: true, regional: true, approval: true, audit: true, budget: !!st.budget });
+  const partsOf = (st, applied) => [!!st.guard, st.thr, st.temp, st.model, FIXED.prompt, FIXED.agentNodes, FIXED.agentPattern, FIXED.maxTokens, FIXED.topP, FIXED.reasoning, FIXED.messages, policiesOf(st), CODE[applied ? 1 : 0]];
+  const keyOf = (st, applied) => JSON.stringify(partsOf(st, applied));
+  function hash8(str) { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); } return (h >>> 0).toString(16).padStart(8, "0"); }
+  const fresh0 = () => ({ applied: false, tested: false, runs: [], evaluation: [], evaluatedConfig: "", release: "Draft", releaseConfig: "", approvals: {}, audit: ["Workspace created"], prevKey: null, prevParts: null, changed: null, inval: null, refuse: null, acted: false, log: "Start with step 1: apply the prepared source change, then run checks." });
+  let LAB = fresh0();
+  // handbook 7.1: the eight deterministic cases
+  function evaluate(st) {
+    const gd = !!st.guard, th = st.thr;
+    return [["T01", true], ["T02", th <= 0.94], ["T03", gd], ["T04", gd], ["T05", true], ["T06", th <= 0.82], ["T07", true], ["T08", gd]].map(([id, p]) => ({ id, passed: p }));
+  }
+  // handbook 7.4: the four gate predicates, with a reason for the board
+  function gatesOf(st, key) {
+    const G = [];
+    G.push(LAB.applied && LAB.tested ? { s: "pass", why: "3 / 3 local scenario checks passed" } : { s: "none", why: LAB.applied ? "change applied; run checks" : "apply the change, then run checks" });
+    const run = LAB.runs.find((r) => r.config === key);
+    G.push(run ? { s: "pass", why: run.id + " has this fingerprint" } : LAB.runs.length ? { s: "stale", why: `${LAB.runs.length} run${LAB.runs.length > 1 ? "s" : ""}, none on this fingerprint` } : { s: "none", why: "no run yet" });
+    const p = LAB.evaluation.filter((c) => c.passed).length;
+    G.push(!LAB.evaluation.length ? { s: "none", why: "no evaluation on record" } : LAB.evaluatedConfig !== key ? { s: "stale", why: `${p}/8 recorded on ${hash8(LAB.evaluatedConfig)}` } : p < 8 ? { s: "fail", why: `${p}/8 passed on this fingerprint` } : { s: "pass", why: "8/8 on this fingerprint" });
+    const m = MODELS[st.model], pol = policiesOf(st);
+    G.push(m.status !== "Approved" ? { s: "fail", why: `model is ${m.status}` } : !st.guard ? { s: "fail", why: "safety guard is off" } : !(pol.pii && pol.injection && pol.regional && pol.approval && pol.audit) ? { s: "fail", why: "sensitive data protection is off" } : { s: "pass", why: "Approved model · guard and 5 policies on" });
+    return G;
+  }
+  const freshOf = (key) => LAB.evaluatedConfig === key && LAB.releaseConfig === key;
+  function setInputs() {
+    const set = (id, v) => { const el = document.getElementById(id); if (!el) return; if (el.type === "checkbox") el.checked = v; else el.value = String(v); };
+    set("model", "risk-3"); set("guard", true); set("thr", 0.8); set("temp", 0.2); set("pii", true); set("budget", true);
+  }
+  function labAction(name, st) {
+    const key = keyOf(st, LAB.applied), G = gatesOf(st, key), n = G.filter((x) => x.s === "pass").length, now = performance.now();
+    const say = (t) => { LAB.log = t; };
+    const refuse = () => { LAB.refuse = { at: now, g: G.map((x, i) => (x.s !== "pass" ? i : -1)).filter((i) => i >= 0) }; };
+    LAB.acted = true;
+    if (name === "apply") {
+      if (LAB.applied) return say("The prepared change is already applied. The prototype disables this button once it is.");
+      LAB.applied = true; LAB.tested = false; LAB.evaluation = []; LAB.evaluatedConfig = "";
+      LAB.audit.unshift("Applied prepared source change · COM-2841");
+      say("Applied. The source text is part of the fingerprint, so the key changed; checks reset and the evaluation was cleared.");
+    } else if (name === "check") {
+      LAB.tested = LAB.applied;
+      say(LAB.applied ? "3 / 3 local scenario checks passed. The prototype adds no audit line for checks." : "Source check failed: the prepared change is not applied yet.");
+    } else if (name === "run") {
+      const id = "run-" + String(LAB.runs.length + 1).padStart(4, "0"), dec = 0.91 >= st.thr ? "manual_review" : "approve";
+      LAB.runs.unshift({ id, config: key });
+      LAB.audit.unshift(`Experiment ${id} · ${dec} · ${MODELS[st.model].name}`);
+      say(`${id}: ${dec} at risk 0.91, threshold ${st.thr.toFixed(2)}. It keeps fingerprint ${hash8(key)}.`);
+    } else if (name === "eval") {
+      LAB.evaluation = evaluate(st); LAB.evaluatedConfig = key;
+      const p = LAB.evaluation.filter((c) => c.passed).length, fails = LAB.evaluation.filter((c) => !c.passed).map((c) => c.id);
+      LAB.audit.unshift(`Evaluation · ${p}/8 passed`);
+      say(`Evaluation ${p}/8 on fingerprint ${hash8(key)}${fails.length ? ". Failed: " + fails.join(", ") : ""}.`);
+    } else if (name === "promote") {
+      if (LAB.release !== "Draft") return say(`The release is already at ${LAB.release}.`);
+      if (n < 4) { refuse(); return say(`Refused: ${n} of 4 gates pass on this fingerprint.`); }
+      LAB.release = "Staging"; LAB.releaseConfig = key; LAB.approvals = {};
+      LAB.audit.unshift(`Promoted to staging · ${hash8(key)}`);
+      say("Staging. releaseConfig records this fingerprint and approvals start empty. Next, request approval.");
+    } else if (name === "request") {
+      if (LAB.release !== "Staging") return say(LAB.release === "Draft" ? "Request promotion first: the release is still Draft." : "Approval is already requested.");
+      if (n < 4) { refuse(); return say("Refused: the gates must still pass."); }
+      LAB.release = "Approval requested"; LAB.approvals = {};
+      LAB.audit.unshift("Production approval requested");
+      say("Approval requested. Both reviewer roles can now decide.");
+    } else if (name === "owner" || name === "sec") {
+      const role = name === "owner" ? ROLES[0] : ROLES[1];
+      if (LAB.release !== "Approval requested") return say("Nothing to approve: no request is open.");
+      if (!freshOf(key)) return say("Refused: the evaluation and the staged release do not match this fingerprint.");
+      LAB.approvals[role] = "Approved";
+      LAB.audit.unshift(`${role} · Approved · "prepared rationale"`);
+      const both = ROLES.every((r) => LAB.approvals[r] === "Approved");
+      say(both ? "Review complete: 2 / 2 approvals. The release stays at Approval requested; nothing deploys." : `${role} approved: 1 / 2.`);
+    } else if (name === "replay" || name === "reset") {
+      setInputs(); LAB = fresh0(); LAB.acted = true;
+      if (name === "replay") {
+        const d = { guard: true, thr: 0.8, temp: 0.2, model: "risk-3", pii: true, budget: true }, k = keyOf(d, true);
+        Object.assign(LAB, { applied: true, tested: true, runs: [{ id: "run-0001", config: k }], evaluation: evaluate(d), evaluatedConfig: k, release: "Approval requested", releaseConfig: k, approvals: { [ROLES[0]]: "Approved" } });
+        LAB.audit = [`${ROLES[0]} · Approved · "prepared rationale"`, "Production approval requested", `Promoted to staging · ${hash8(k)}`, "Evaluation · 8/8 passed", "Experiment run-0001 · manual_review · Risk Reasoner 3", "Applied prepared source change · COM-2841", "Workspace created"];
+        LAB.log = "Replayed the walkthrough to 1 of 2 signed, like the v3 screen. Now move the temperature slider.";
+      }
+    }
+  }
+  // provider-style wrapper (handbook 7.5): runs after every change
+  function labState(st) {
+    const parts = partsOf(st, LAB.applied), key = JSON.stringify(parts), now = performance.now();
+    if (LAB.prevKey !== null && key !== LAB.prevKey) {
+      const idx = parts.map((p, i) => (JSON.stringify(p) !== JSON.stringify(LAB.prevParts[i]) ? i : -1)).filter((i) => i >= 0);
+      LAB.changed = { at: now, idx };
+      if (LAB.release !== "Draft") {
+        LAB.inval = { at: now, from: LAB.release };
+        LAB.release = "Draft"; LAB.releaseConfig = ""; LAB.approvals = {};
+        LAB.audit.unshift("Configuration changed · release returned to Draft · approvals cleared");
+        LAB.log = `Changed ${FIELDS[idx[0]]}, so the fingerprint changed. The release returned to Draft and approvals cleared.`;
+      } else if (!LAB.acted) {
+        const prevG = gatesOf(st, LAB.prevKey), G = gatesOf(st, key), n = G.filter((x) => x.s === "pass").length;
+        const revived = [1, 2].some((i) => G[i].s === "pass" && prevG[i].s !== "pass");
+        LAB.log = `Changed ${FIELDS[idx[0]]}. Fingerprint ${hash8(key)}: ${n} of 4 gates pass on it.` + (revived ? " Earlier evidence on this exact fingerprint counts again; staging and approvals do not come back." : "");
+      }
+    }
+    LAB.prevKey = key; LAB.prevParts = parts; LAB.acted = false;
+    const n = gatesOf(st, key).filter((x) => x.s === "pass").length;
+    const o = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    o("o-gates", `${n} / 4`); o("o-status", LAB.release); o("o-log", LAB.log);
+  }
+
+  function drawStatus(g, x, y, w, now) {
+    const names = ["Draft", "Staging", "Approval requested"], fs = 13;
+    const ws = names.map((n) => g.tw(n, fs, "ui", 600) + 30), gap = Math.max(40, (w - ws.reduce((p, q) => p + q, 0)) / 2);
+    const lab = ["all 4 gates", "gates still pass"];
+    let xx = x; const cx = [];
+    names.forEach((n, i) => {
+      const cur = LAB.release === n;
+      g.rect(xx, y, ws[i], 32, { fill: cur ? g.rgba("ctl", 0.12) : "card", stroke: cur ? "ctl" : "hair", lw: cur ? 2 : 1.2, r: 16 });
+      g.text(n, xx + ws[i] / 2, y + 21, { size: fs, font: "ui", weight: 600, color: cur ? "ctl" : "ink-3", align: "center" });
+      cx.push(xx + ws[i] / 2);
+      if (i < 2) { g.arrow(xx + ws[i] + 6, y + 16, xx + ws[i] + gap - 6, y + 16, { color: "ink-3", lw: 1.3, head: 7 }); g.text(lab[i], xx + ws[i] + gap / 2, y + 8, { size: 10, color: "ink-3", align: "center", maxW: gap - 14 }); }
+      xx += ws[i] + gap;
+    });
+    const age = LAB.inval ? (now - LAB.inval.at) / 1000 : 99;
+    if (age < 4) {
+      const a = 1 - ramp(age, 3, 1), fi = names.indexOf(LAB.inval.from);
+      g.curve([cx[fi], y + 35], [(cx[fi] + cx[0]) / 2, y + 74], [cx[0], y + 36], { color: "bad", lw: 1.8, dash: [5, 4], head: 8, a });
+      g.text("fingerprint changed → Draft · approvals cleared", (cx[fi] + cx[0]) / 2, y + 70, { size: 11, color: "bad", weight: 600, align: "center", a, maxW: w });
+    } else g.text("prototype states · v3 names the next environment QA", x, y + 56, { size: 10.5, color: "ink-3", maxW: w });
+    return 80;
+  }
+  function drawFP(g, x, y, w, st, key, now, compact) {
+    const pol = policiesOf(st), on = (v) => (v ? "on" : "off");
+    const vals = [on(st.guard), st.thr.toFixed(2), st.temp.toFixed(1), st.model, "(fixed)", "6 steps", "Sequential", "2048", "1", "Standard", "[ ]", `pii ${on(pol.pii)} · budget ${on(pol.budget)} · 4 more on`, LAB.applied ? "base + risk branch" : "base"];
+    const fixed = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0];
+    const show = compact ? [0, 1, 2, 3, 11, 12] : FIELDS.map((_, i) => i);
+    const rh = compact ? 19 : 18, rows = compact ? 3 : show.length, h = 62 + rows * rh + (compact ? 24 : 6);
+    g.rect(x, y, w, h, { fill: "card", stroke: "exe", lw: 1.4, r: 10 });
+    g.text("CONFIGURATION FINGERPRINT", x + 14, y + 24, { size: 15, font: "display", weight: 700, maxW: w * 0.55 });
+    g.text("fp " + hash8(key), x + w - 14, y + 25, { size: 19, weight: 600, color: "exe", align: "right" });
+    g.text("prototype: JSON string · production: content digest", x + 14, y + 44, { size: 10, color: "ink-3", maxW: w - 28 });
+    const cols = compact ? 2 : 1, colW = (w - 28) / cols, kw = compact ? 88 : 96, ch = LAB.changed && now - LAB.changed.at < 2600 ? LAB.changed : null;
+    show.forEach((i, k) => {
+      const c = compact ? Math.floor(k / 3) : 0, r = compact ? k % 3 : k, cx = x + 14 + c * colW, cy = y + 66 + r * rh;
+      if (ch && ch.idx.includes(i)) g.rect(cx - 6, cy - 13, colW - 4, rh - 1, { fill: g.rgba("bad", 0.16), r: 4, a: 1 - ramp((now - ch.at) / 1000, 1.6, 1) });
+      g.text(FIELDS[i], cx, cy, { size: 10.5, color: "ink-3" });
+      g.text(vals[i], cx + kw, cy, { size: 11, color: fixed[i] ? "ink-3" : "ink", weight: fixed[i] ? 500 : 600, maxW: colW - kw - 10 });
+    });
+    if (compact) g.text("held fixed: prompt, agentNodes, agentPattern, maxTokens, topP, reasoning, messages", x + 14, y + 66 + 3 * rh + 6, { size: 10, color: "ink-3", maxW: w - 28 });
+    return h;
+  }
+  function drawGates(g, x, y, w, G, now, compact) {
+    g.text("FOUR GATES · SAME FINGERPRINT", x, y + 10, { size: 10.5, color: "ink-3", ls: 0.8, maxW: w });
+    const NM = ["Workspace scenario checks", "Experiment executed", "Fresh regression suite", "Approved model & guardrails"], WD = { pass: "pass", stale: "stale", fail: "blocked", none: "waiting" };
+    const rhh = compact ? 46 : 50, ref = LAB.refuse && now - LAB.refuse.at < 1500 ? LAB.refuse : null;
+    G.forEach((gt, i) => {
+      const yy = y + 24 + i * rhh;
+      g.rect(x, yy, w, rhh - 8, { fill: "card", stroke: gt.s === "pass" ? g.rgba("ok", 0.5) : "hair", lw: 1.1, r: 8 });
+      lamp(g, x + 17, yy + 15, 6.5, gt.s);
+      if (ref && ref.g.includes(i)) { const p = (now - ref.at) / 1500; g.circle(x + 17, yy + 15, 10 + p * 10, { stroke: "bad", lw: 2, a: 1 - p }); }
+      const col = gt.s === "pass" ? "ok" : gt.s === "fail" ? "bad" : gt.s === "stale" ? "ink-2" : "ink-3";
+      const wd = WD[gt.s], wdw = g.tw(wd, 10.5, "mono", 600);
+      g.text(NM[i], x + 32, yy + 19, { size: 12.5, font: "ui", weight: 600, maxW: w - 52 - wdw });
+      g.text(wd, x + w - 12, yy + 19, { size: 10.5, weight: 600, color: col, align: "right" });
+      g.text(gt.why, x + 32, yy + (compact ? 32 : 34), { size: 10.5, color: gt.s === "fail" ? "bad" : "ink-2", maxW: w - 44 });
+    });
+    return 24 + 4 * rhh;
+  }
+  function drawEvidence(g, x, y, w, key) {
+    g.text("EVIDENCE · KEPT WITH ITS FINGERPRINT", x, y + 10, { size: 10.5, color: "ink-3", ls: 0.8, maxW: w });
+    const chips = LAB.runs.slice(0, 6).map((r) => [`${r.id} · ${hash8(r.config)}`, "exe", r.config === key]);
+    if (LAB.evaluation.length) { const p = LAB.evaluation.filter((c) => c.passed).length; chips.push([`eval ${p}/8 · ${hash8(LAB.evaluatedConfig)}`, "tel", LAB.evaluatedConfig === key]); }
+    if (LAB.releaseConfig) chips.push([`staged · ${hash8(LAB.releaseConfig)}`, "ctl", LAB.releaseConfig === key]);
+    let cx = x, cy = y + 34;
+    if (!chips.length) g.text("no runs or evaluations yet", x, cy + 4, { size: 11, color: "ink-3" });
+    chips.forEach(([lab, c, fresh]) => {
+      const wc = g.tw(lab, 11, "mono", 600) + 22;
+      if (cx + wc > x + w) { cx = x; cy += 28; }
+      if (fresh) g.chip(cx, cy, lab, c, { size: 11 });
+      else g.pill(cx, cy, lab, { size: 11, fill: "card", stroke: "ink-3", color: "ink-3", lw: 1.1, dash: [4, 3], pad: 10 });
+      cx += wc + 8;
+    });
+    g.text("solid: this fingerprint · dashed: an earlier one", x, cy + 30, { size: 10, color: "ink-3", maxW: w });
+    return cy + 36 - y;
+  }
+  function drawApprovals(g, x, y, w, key, now, compact) {
+    const both = ROLES.every((r) => LAB.approvals[r] === "Approved"), cnt = ROLES.filter((r) => LAB.approvals[r] === "Approved").length;
+    g.text("APPROVALS · " + (both ? "REVIEW COMPLETE" : cnt + " / 2"), x, y + 10, { size: 10.5, color: both ? "ok" : "ink-3", ls: 0.8, maxW: w });
+    const V3 = ["v3: Maya Chen", "v3: Lena Fischer"], INI = ["CO", "AS"], open = LAB.release === "Approval requested";
+    const cleared = LAB.inval && now - LAB.inval.at < 4000;
+    ROLES.forEach((r, i) => {
+      const yy = y + (compact ? 36 : 40) + i * (compact ? 36 : 40), ok = LAB.approvals[r] === "Approved";
+      if (ok) g.circle(x + 15, yy, 14, { fill: "ok" }); else g.circle(x + 15, yy, 14, { fill: "card", stroke: cleared ? "bad" : open ? "ctl" : "hair", lw: 1.3, dash: [3, 3] });
+      g.text(INI[i], x + 15, yy + 4, { size: 10, weight: 700, color: ok ? "#FFFFFF" : "ink-3", align: "center" });
+      g.text(r, x + 38, yy - 1, { size: 12.5, font: "ui", weight: 600, maxW: w - 140 });
+      g.text(V3[i], x + 38, yy + 14, { size: 10, color: "ink-3", maxW: w - 140 });
+      const stt = ok ? "Approved" : cleared ? "cleared" : open ? "waiting" : "no request";
+      g.text(stt, x + w - 4, yy + 4, { size: 11, weight: 600, color: ok ? "ok" : cleared ? "bad" : open ? "ctl" : "ink-3", align: "right" });
+    });
+    const fr = freshOf(key);
+    const fy0 = compact ? y + 106 : y + 118;
+    g.text(`fresh: evaluatedConfig and releaseConfig = configKey ${fr ? "✓" : "✕"}`, x, fy0, { size: 10, color: fr ? "ok" : "ink-3", maxW: w });
+    if (both) g.text("nothing deploys: the release stays at Approval requested", x, fy0 + 17, { size: 10, color: "ink-2", maxW: w });
+    return compact ? 128 : 142;
+  }
+  function drawAudit(g, x, y, w, h) {
+    g.text("AUDIT · NEWEST FIRST", x, y + 10, { size: 10.5, color: "ink-3", ls: 0.8 });
+    const n = Math.max(1, Math.floor((h - 26) / 19));
+    LAB.audit.slice(0, n).forEach((l, i) => {
+      const bad = /returned to Draft/.test(l);
+      g.text(l, x, y + 32 + i * 19, { size: 11, color: bad ? "bad" : i === 0 ? "ink" : "ink-2", weight: i === 0 || bad ? 600 : 500, maxW: w });
+    });
+  }
+  Field.scene("rellab", (g, s) => {
+    const st = s.state; if (st.thr === undefined) return;
+    const { W, H } = g, now = performance.now(), pad = 22, top = Math.max(60, g.safeTop + 22);
+    const key = keyOf(st, LAB.applied), G = gatesOf(st, key);
+    let y = top;
+    y += drawStatus(g, pad, y, W - 2 * pad, now) + 6;
+    if (W >= 760) {
+      const cw = (W - 2 * pad - 26) / 2, xR = pad + cw + 26;
+      let yl = y, yr = y;
+      yl += drawFP(g, pad, yl, cw, st, key, now, false) + 22;
+      yl += drawEvidence(g, pad, yl, cw, key) + 18;
+      yr += drawGates(g, xR, yr, cw, G, now, false) + 14;
+      yr += drawApprovals(g, xR, yr, cw, key, now, false) + 18;
+      const ya = Math.max(yl, yr);
+      g.line(pad, ya - 8, W - pad, ya - 8, { color: "hair", lw: 1 });
+      drawAudit(g, pad, ya, W - 2 * pad, H - ya - pad);
+    } else {
+      const w = W - 2 * pad;
+      y += drawFP(g, pad, y, w, st, key, now, true) + 16;
+      y += drawGates(g, pad, y, w, G, now, true) + 8;
+      y += drawEvidence(g, pad, y, w, key) + 12;
+      y += drawApprovals(g, pad, y, w, key, now, true) + 12;
+      g.line(pad, y - 8, W - pad, y - 8, { color: "hair", lw: 1 });
+      drawAudit(g, pad, y, w, H - y - pad);
+    }
+  }, {
+    controls: "rel-ctl", anim: true, restT: 4, zoom: 1.06, minW: 620, maxW: 1000,
+    format: (id, v) => (id === "thr" ? v.toFixed(2) : id === "temp" ? v.toFixed(1) : ""),
+    onAction: (name, st) => labAction(name, st),
+    onState: (st) => labState(st),
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3", who: ["this design"], what: "A release is a sealed bundle (<code>sha256:7f3a…c91e</code>) built and checked in Dev against four gates on one configuration fingerprint (<code>cfg-7f3a9c</code>). Promotion moves that exact bundle to QA. The application owner and Application Security both sign, each rechecked when they sign, and any change that matters returns the release to Draft and clears approvals. Vault keeps released artifacts immutable, with lineage.", vs: "<b>The baseline for this chapter.</b> The design states the rules but leaves the mechanics open: how the fingerprint is computed, and how GroundBridge signs a bundle." },
+      { name: "Kargo", who: ["Akuity", "Argo CD ecosystem"], what: "Freight is a \"meta-artifact\" that references specific revisions of artifacts such as images and manifests. A Stage can take Freight only after it is verified in an upstream Stage, or when someone explicitly approves it for that Stage. Verification runs automatically after each successful promotion and can be re-run on demand.", vs: "<b>Closest to \"nothing is rebuilt\".</b> Freight moves from stage to stage the way Vector's bundle does. Kargo's approval makes Freight available to a Stage; Vector's design asks two named roles to sign a request bound to the bundle and its configuration fingerprint.", src: [["Core concepts", "https://docs.kargo.io/user-guide/core-concepts/"], ["Working with Stages", "https://docs.kargo.io/user-guide/how-to-guides/working-with-stages"]] },
+      { name: "Spinnaker Manual Judgment", who: ["Spinnaker", "open source CD"], what: "A Manual Judgment stage interrupts a pipeline execution for a manual check. It can offer judgment inputs such as continue or rollback, later stages can branch on the choice with an expression, and a notification can fire while the stage is awaiting judgment.", vs: "The judgment is a stage inside one pipeline run. Vector's design attaches the signature to the bundle and its fingerprint instead, and a configuration change clears it.", src: [["Safe deployments codelab", "https://spinnaker.io/docs/guides/tutorials/codelabs/safe-deployments/"]] },
+      { name: "GitHub environments", who: ["GitHub Actions"], what: "An environment can list up to six users or teams as required reviewers, and one approval lets the job proceed. Prevent self-review stops the person who started a deployment from approving it, and environment secrets stay locked until a reviewer approves.", vs: "GitHub asks for one approval from a list. Vector's design asks for two different roles, the owner and Application Security, and checks each approver's permissions again when they sign.", src: [["Deployments and environments", "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"]] },
+      { name: "SLSA provenance and Sigstore", who: ["OpenSSF", "supply chain"], what: "SLSA asks the build platform to produce provenance that identifies the output by cryptographic digest. At Build L2 consumers can check that provenance is authentic, typically through the build platform's signature; at L3 it must be strongly resistant to forgery by tenants. Sigstore's Cosign signs container images and attaches the signatures in the registry using the OCI 1.1 referrers specification.", vs: "These prove where an artifact came from. Vault shows the same idea as \"signed by GroundBridge\" with a lineage list, but the design names no signing scheme, and the prototype's fingerprint is not a digest at all.", src: [["SLSA v1.0 requirements", "https://slsa.dev/spec/v1.0/requirements"], ["Cosign · signing containers", "https://docs.sigstore.dev/cosign/signing/signing_with_containers/"]] },
+      { name: "MLflow Model Registry", who: ["MLflow", "model versions"], what: "Each new model registered under the same name gets the next version number, and each version links to the run, logged model or notebook that produced it. Aliases such as champion are mutable references that can be moved to another version.", vs: "Like Vault's lineage for one kind of artifact. Vault records the model as <code>alias@3</code>; because aliases can move, the production proposal says to record the effective deployment that was used (handbook 14.7).", src: [["MLflow Model Registry", "https://mlflow.org/docs/latest/ml/model-registry"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · GroundBridge releases, Approvals and Vault boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Vector, annotated (v3 explainer film) · chapter 06, GroundBridge", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+      ["Atlas handbook · 3.4–3.5 walkthrough and failure exercises · 4.6 Run checks · 6.2–6.3 runs and configuration controls", ""],
+      ["Atlas handbook · 7.1–7.8 evaluation, gates, transitions, approval inbox, manifest, policies · 11.1–11.2 state and fingerprint layout", ""],
+      ["Atlas handbook · 14.6 storage roles · 14.7 approvals bound to the exact proposal · 14.10 releases · 14.12 delivery sequence", ""],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

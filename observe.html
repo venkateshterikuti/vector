@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Observe and cost · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .hero h1 em { color: var(--tel); }
+  .two-q { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .two-q > div { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .two-q h4 { font-family: var(--f-display); font-weight: 700; font-size: 1.35rem; text-transform: uppercase; line-height: 1.05; }
+  .two-q p { font-size: 0.97rem; color: var(--ink-2); }
+  .two-q .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  @media (max-width: 760px) { .two-q { grid-template-columns: minmax(0, 1fr); } }
+  .proto-stack { display: grid; gap: 16px; min-width: 0; }
+  .proto-stack h3 { font-size: 1.6rem; }
+  .caveats { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.95rem; color: var(--ink-2); }
+  table.tbl td.v { white-space: nowrap; font-variant-numeric: tabular-nums; font-family: var(--f-mono); font-size: 0.86rem; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost" aria-current="page">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">13</span> Observe and ask · telemetry and cost</span>
+        <h1>What happened, what it <em>cost</em></h1>
+        <p class="dek">Telemetry answers two separate questions, what happened and what it cost. A run can finish in 1.8 s and still make the wrong call, so quality gets a measure of its own.</p>
+        <div class="files">
+          <span class="tag t-tel"><i></i>v3 · Optimus Logger</span>
+          <span class="tag t-tel"><i></i>v3 · Traces</span>
+          <span class="tag t-tel"><i></i>v3 · Cost</span>
+          <span class="tag">handbook 9.1–9.4</span>
+          <span class="tag">handbook 14.2 · 14.6</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="Latency p95 for order-service in Dev from 09:00. A dashed marker shows build #419 deployed at 11:09; the line jumps to a 324 ms peak and settles near 185 ms. A note below explains that 86% of slow requests wait on fraud-risk-api.">
+        <span class="ruler">optimus logger · order-service · dev</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="questions">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">Two questions, three screens</span>
+        <h2>Timing and money are separate records</h2>
+        <p class="lede">In the v3 sidebar, Observe and govern holds three telemetry screens beside Sentinel. Two explain behaviour, one explains spend, and all three follow the Dev picker in the title bar.</p>
+      </header>
+      <div class="two-q">
+        <div>
+          <span class="k-label">What happened</span>
+          <h4>Optimus Logger and Traces</h4>
+          <div class="tags"><span class="tag t-tel">metrics</span><span class="tag t-tel">logs</span><span class="tag t-tel">traces</span><span class="tag t-exe">deploy marks</span><span class="tag t-tel">AI run waterfalls</span></div>
+          <p>Optimus Logger, the team's existing observability tool, shows a service's metrics, logs and traces with each deploy marked on the line. Traces breaks one AI run into timed spans and records its tokens.</p>
+        </div>
+        <div>
+          <span class="k-label">What it cost</span>
+          <h4>Cost</h4>
+          <div class="tags"><span class="tag t-tel">team</span><span class="tag t-tel">application</span><span class="tag t-tel">resource</span><span class="tag t-ctl">Dev budget</span><span class="tag">illustrative figures</span></div>
+          <p>Every AI run, evaluation and workspace in Dev is charged to a team and an application. The figures are attributed from trace metadata and reconciled with the cloud bill each night.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="happened">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Optimus Logger · what happened at 11:09</span>
+        <h2>The deploy is on the chart</h2>
+        <p class="lede">Optimus Logger shows order-service in Dev as one screen of metrics, logs and traces. Build #419 is drawn on the latency line, so the investigation starts at the moment things changed.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">11:04 → 11:09 · the deploy</span><h4>Build #419 lands in Dev</h4><p>#419 passed all nine stages at 11:04 and deployed order-service 2.14.0-rc2 to Dev at 11:09, two pods on <code>nsx-dev-use1/commerce</code>. The traffic Optimus Logger reads here is synthetic checkout load.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">After 11:09 · the line moves</span><h4>p95 up 18 percent</h4><p>Latency jumps at the deploy marker, peaks at 324 ms inside the anomaly band and settles near 185 ms. The tile reads 182 ms, up 18% since #419. Errors peaked at 1.8% at 11:16 and now sit at 0.21%. The Dev SLO of 99.5% still has 71% of its 30-day budget left.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Dependencies · p95 in range</span><h4>One call explains most of it</h4><p>#419 added a call to fraud-risk-api. The screen's note says 86% of slow requests wait on it and links 142 slow traces. The other calls stay quick: payments-gateway at 96 ms, inventory-service at 44 ms, customer-profile-api at 38 ms.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">fraud-risk-api p99 · RISK-412</span><h4>The regression came with 2.4.0</h4><p>fraud-risk-api's p99 was 176 ms on 2.3.9 last week and is 412 ms on 2.4.0, tracked as RISK-412. A cache fix on <code>perf/p99-cache</code> brings it to 188 ms in a load test on workspace ws-vt-02. That branch is not pushed yet, so the drawing shows it dashed.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Logs · 2,418 lines in range</span><h4>Every log line carries its trace</h4><p>The log pane tells the same story line by line: fraud-risk-api answering in 418 ms and 402 ms against a 300 ms budget, and one payments-gateway 3DS timeout. Each line ends in a trace ID, and "Open slowest trace" goes from the chart to a single request.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="incident" data-label="Upper half: the latency p95 chart with the #419 deploy marker at 11:09. Lower half changes per step: the build reaching Dev, four KPI tiles, the dependency map with fraud-risk-api at 412 ms, fraud-risk-api p99 by version, and log lines with trace IDs."><span class="ruler">optimus logger · what happened</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="run">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Traces · one AI run</span>
+        <h2>One AI run, six spans</h2>
+        <p class="lede">Traces records each run of the fraud-review agent as a waterfall. The same record carries the tokens, an estimated cost and the application it is charged to, and it points to the evaluations of the same configuration.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">run-0003 · completed 10:38</span><h4>One order, one decision</h4><p>The agent read order ORD-10482, a 3-day-old account spending 2,840.00 USD and shipping to a country that differs from billing. It returned <code>manual_review</code> with a risk score of 0.91, above the 0.80 threshold. The customer's email shows as <code>[redacted]</code>, and the output passed its schema check.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Waterfall · 6 spans · 1,840 ms</span><h4>Where the time goes</h4><p>Authorize context 60 ms, retrieve enterprise graph 140 ms, invoke fraud-risk-api 220 ms, model reasoning 1,280 ms, policy and schema check 90 ms, return decision 50 ms. Model reasoning runs from 420 ms to 1,700 ms, so it takes 1,280 of the 1,840 ms.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Selected span · model reasoning</span><h4>Tokens in, tokens out</h4><p>The span names Risk Reasoner 3 on Bedrock us-east-1 at temperature 0.2, prompt fraud-review v7, with PII redaction and the injection shield on. It used 2,980 tokens in and 432 out, the run's 3,412. The agent has used 10.4k tokens today, and its budget alert is set at 50k a day.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Charged to Commerce Orders</span><h4>The run knows who pays</h4><p>The trace records its caller, Venkatesh on workspace ws-vt-01, and charges the run to Commerce Orders at an estimated $0.0041. Three runs today come to $0.012. The Cost screen is built from the same metadata, and its application table links back with "Open traces".</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Same configuration · cfg-7f3a9c</span><h4>Fast and right are measured apart</h4><p>"Speed and quality are measured separately." This run's configuration passed Evals 8 of 8 and counts toward release gate 2. In AllSpark, the same order on a local Llama model finished in 0.92 s for $0.0009, approved the order and passed 6 of 8 cases.</p><p class="go"><a href="evals.html">Evals · chapter 10</a><a href="allspark.html">AllSpark · chapter 09</a></p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="run" data-label="Trace of run-0003: a header with 1.84 s, 3,412 tokens and $0.0041, a six-row waterfall on a 0 to 1,840 ms ruler, and a lower panel that changes per step: input and output payloads, where the time goes, token counts, the attribution chain to Commerce Orders, and a speed versus quality comparison of three models."><span class="ruler">traces · run-0003</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pays">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Cost · who pays</span>
+        <h2>Spend is attributed, then reconciled</h2>
+        <p class="lede">The Cost screen answers the second question for Dev. Its header says "illustrative figures", and every number below comes from that screen as drawn.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Team · last 30 days</span><h4>$4,340 across four teams</h4><p>Every AI run, evaluation and workspace in Dev is charged to a team and an application. Commerce Platform spent $1,820, Risk Engineering $1,160, Employee Experience $790 and Developer Experience $570.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Application · by resource</span><h4>What each application spends on</h4><p>The same $4,340 splits into inference $2,540, evaluation $700 and infrastructure $1,100. fraud-review-agent is the largest application at $1,480. Shared clusters, Kafka and smaller apps make up $800, most of it infrastructure.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Infrastructure in Dev · $1,100</span><h4>Nodes, workspaces, Kafka</h4><p>EKS nodes on nsx-dev-use1 cost $610, workspaces $240, MSK on msk-dev-use1 $150 and everything else $100. Workspaces sleep after 60 minutes idle. On Compute, Venkatesh's workspaces cost $3.84 today, and ws-vt-03 is billed to Wheeljack.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Budget · savings</span><h4>72.3% of the Dev budget</h4><p>Dev's budget is $6,000 and 72.3% of it is used. Sentinel alerts at 80% and pauses batch jobs at 100%. From 30 days of traces the screen suggests $1,180 of savings: route simple checks to a smaller model, cache context per permission scope, and sleep idle workspaces and batch evals.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Each night</span><h4>Estimates meet the bill</h4><p>Run, evaluation and workspace costs start as estimates attributed from trace metadata. Each night the design reconciles them with the cloud bill. The handbook's production proposal keeps finance and provider billing as the authority on reconciled cost.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="pays" data-label="The Cost screen as a drawing: spend by team, a flow from inference, evaluation and infrastructure into four applications, infrastructure in Dev with today's workspaces, the Dev budget meter with savings suggestions, and a nightly reconciliation of trace estimates with the cloud bill."><span class="ruler">cost · dev · illustrative figures</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Three screens on the v3 canvas</h2>
+        <p class="lede">Optimus Logger and Traces answer what happened; Cost answers what it cost. Each sits under Observe and govern in the sidebar and shows Dev only. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Observe.webp" data-w="1600" data-h="1000" data-crop="236,84,1356,900" data-title="Optimus Logger — order-service in Dev (v3)">
+          <span class="pin c-tel" data-x="530" data-y="232">1</span>
+          <span class="pin c-tel" data-x="866" data-y="232">2</span>
+          <span class="pin c-ok" data-x="1536" data-y="226">3</span>
+          <span class="pin c-exe" data-x="600" data-y="378">4</span>
+          <span class="pin" data-x="1534" data-y="321">5</span>
+          <span class="pin c-tel" data-x="1532" data-y="460">6</span>
+          <span class="pin c-tel" data-x="1094" data-y="758">7</span>
+          <span class="pin" data-x="1452" data-y="743">8</span>
+          <span class="ring" data-box="1208,477,346,112"></span>
+          <span class="ring" data-box="1118,712,46,252"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 13.1 · Optimus Logger</span>
+          <h3>One service, one screen</h3>
+          <ol class="pins">
+            <li><span><b>Latency p95.</b> 182 ms, "↑ 18% since #419".</span></li>
+            <li><span><b>Error rate.</b> 0.21%, peaked 1.8% at 11:16.</span></li>
+            <li><span><b>SLO.</b> Dev target 99.5% over 30 days, 71% budget left.</span></li>
+            <li><span><b>Deploy marker.</b> "#419 deployed 11:09" on the latency chart, with the anomaly band right after it and the 324 ms peak.</span></li>
+            <li><span><b>What happened at 11:09.</b> A written explanation with links to 142 slow traces, deploy #419 and RISK-412.</span></li>
+            <li><span><b>fraud-risk-api p99 by version.</b> 176 ms on 2.3.9, 412 ms on 2.4.0, 188 ms with the cache fix on ws-vt-02.</span></li>
+            <li><span><b>Trace IDs.</b> Every log line ends in one, so a WARN line opens its request.</span></li>
+            <li><span><b>Dependencies.</b> fraud-risk-api at 412 ms among the calls out; web-checkout and mobile-bff call in.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Traces.webp" data-w="1600" data-h="1000" data-crop="236,84,1356,900" data-title="Traces — run-0003 of the fraud-review agent (v3)">
+          <span class="pin c-tel" data-x="1186" data-y="140">1</span>
+          <span class="pin" data-x="540" data-y="346">2</span>
+          <span class="pin c-exe" data-x="1000" data-y="386">3</span>
+          <span class="pin c-tel" data-x="1530" data-y="347">4</span>
+          <span class="pin c-tel" data-x="1530" data-y="483">5</span>
+          <span class="pin c-ok" data-x="1530" data-y="572">6</span>
+          <span class="pin" data-x="522" data-y="893">7</span>
+          <span class="pin c-tel" data-x="1174" data-y="906">8</span>
+          <span class="ring" data-box="572,367,662,38"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 13.2 · Traces</span>
+          <h3>The run, its spans, its bill</h3>
+          <ol class="pins">
+            <li><span><b>Run summary.</b> 1.84 s end to end, 3,412 tokens, $0.0041 estimated, and the decision: Review, risk 0.91 ≥ 0.80.</span></li>
+            <li><span><b>Runs for Commerce Orders.</b> Three today, 10.4k tokens, $0.012. run-0001 and run-0003 went to review at 0.91; run-0002 approved at 0.23.</span></li>
+            <li><span><b>Waterfall.</b> Six spans on a 0 to 1,840 ms ruler, model reasoning selected.</span></li>
+            <li><span><b>Tokens.</b> 2,980 in · 432 out on the model span.</span></li>
+            <li><span><b>Charged to Commerce Orders.</b> The caller is Venkatesh on ws-vt-01.</span></li>
+            <li><span><b>Same configuration.</b> Evals 8 of 8 on cfg-7f3a9c; "Counts toward release gate 2".</span></li>
+            <li><span><b>The note.</b> "Speed and quality are measured separately", with a link to Evals.</span></li>
+            <li><span><b>Tokens per day.</b> 10.4k on Tuesday, with budget alerts at 50k a day.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Cost.webp" data-w="1600" data-h="1000" data-crop="236,84,1356,900" data-title="Cost — where the money goes in Dev (v3, illustrative figures)">
+          <span class="pin" data-x="424" data-y="103">1</span>
+          <span class="pin c-tel" data-x="1317" data-y="122">2</span>
+          <span class="pin c-ctl" data-x="872" data-y="214">3</span>
+          <span class="pin c-tel" data-x="1204" data-y="214">4</span>
+          <span class="pin c-tel" data-x="1540" data-y="328">5</span>
+          <span class="pin c-tel" data-x="460" data-y="644">6</span>
+          <span class="pin" data-x="822" data-y="954">7</span>
+          <span class="pin c-exe" data-x="1540" data-y="644">8</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 13.3 · Cost</span>
+          <h3>Where the money goes</h3>
+          <ol class="pins">
+            <li><span><b>"Cost · illustrative figures".</b> The screen labels its own numbers.</span></li>
+            <li><span><b>Three lenses.</b> Team, Application or Resource, over 7 or 30 days.</span></li>
+            <li><span><b>Dev budget.</b> 72.3% of $6,000.</span></li>
+            <li><span><b>Cost per completed task.</b> $0.021, down 9% this month.</span></li>
+            <li><span><b>Savings from traces.</b> Three suggestions worth $1,180, each with its reason.</span></li>
+            <li><span><b>By application.</b> Inference, evaluation and infrastructure per application, with "Open traces".</span></li>
+            <li><span><b>The promise.</b> "Figures are attributed from trace metadata and reconciled with the cloud bill each night."</span></li>
+            <li><span><b>Infrastructure in Dev.</b> EKS nodes, workspaces, MSK; workspaces sleep after 60 min idle.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prototype">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>One number drawn as six spans</h2>
+        <p class="lede">Atlas has a Traces &amp; usage screen and a Cost intelligence screen. Neither reads telemetry. The waterfall is computed from one recorded latency per run, and the cost dashboard is a fixed table of its own.</p>
+      </header>
+      <div class="split">
+        <div class="proto-stack">
+          <span class="k-label">Traces &amp; usage · handbook 9.1–9.2</span>
+          <div class="prose">
+            <p>For a run with recorded latency <code>L</code>, the screen synthesizes six spans. Five are fixed and total 560 ms; the model span takes the rest, with a floor of 100 ms. Each bar is placed by dividing by <code>L</code>, and the ruler shows 0, L/2 and L.</p>
+            <p>Every current model descriptor has a latency of at least 780 ms, so the spans always add up to <code>L</code>. Risk Reasoner 3's descriptor is 1,840 ms, which gives the same 1,280 ms model span the v3 screen shows. Below 660 ms the floor would push the total past <code>L</code> and the bars past the ruler.</p>
+            <p>Every run appears as Completed, because the shared run function records only successful fixture runs. There is no OTel collector, trace backend, distributed correlation or provider measurement, and no connection to Optimus Logger.</p>
+          </div>
+          <div class="code">
+            <div class="hd"><span>operate.tsx · waterfall, as handbook 9.2 describes it</span><span>restated as code</span></div>
+<pre><span class="c">// a run with recorded latency L (ms)</span>
+spans = [
+  [<span class="s">"Authorize context"</span>,          <span class="n">60</span>],  <span class="c">// RBAC + source permissions</span>
+  [<span class="s">"Retrieve enterprise graph"</span>,  <span class="n">140</span>],  <span class="c">// 13 entities; citations</span>
+  [<span class="s">"Invoke fraud-risk-api"</span>,      <span class="n">220</span>],  <span class="c">// synthetic result 0.91</span>
+  [<span class="s">"Model reasoning"</span>, <span class="k">max</span>(<span class="n">100</span>, L <span class="k">-</span> <span class="n">560</span>)],
+  [<span class="s">"Policy &amp; schema validation"</span>, <span class="n">90</span>],  <span class="c">// from the captured guard</span>
+  [<span class="s">"Return decision"</span>,             <span class="n">50</span>],  <span class="c">// structured response</span>
+]
+left(i)  = <span class="k">sum</span>(durations before i) <span class="k">/</span> L
+width(i) = duration(i) <span class="k">/</span> L
+ruler    = <span class="n">0</span>, L<span class="k">/</span><span class="n">2</span>, L      <span class="c">// L &lt; 660 → bars pass the ruler</span></pre>
+          </div>
+        </div>
+        <div class="proto-stack">
+          <span class="k-label">Cost intelligence · handbook 9.3</span>
+          <div class="prose">
+            <p>Cost intelligence does not read the runs at all. It keeps fixed allocations by team, environment and application, with columns for inference, evaluation and infrastructure, a grouping selector and a period selector.</p>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Figure</th><th class="num">Value</th><th>How the prototype gets it</th></tr></thead>
+              <tbody>
+                <tr><td>Each grouping, last 30 days</td><td class="num v">$19,230</td><td>Team, Environment and Application rows each sum to it</td></tr>
+                <tr><td>Last 7 days</td><td class="num v">$4,999.80</td><td>30-day values × 0.26, shown as $5,000; a scale factor, not a date filter</td></tr>
+                <tr><td>Budget meter</td><td class="num v">76.9%</td><td>$19,230 ÷ the shared monthly budget, $25,000 by default; the bar caps at 100%, the number does not</td></tr>
+                <tr><td>Cost per completed task</td><td class="num v">$0.024</td><td>A fixed label</td></tr>
+                <tr><td>Governance spend</td><td class="num v">$14,826</td><td>A separate fixture; it does not reconcile with $19,230</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="caveats">
+            <li>Chart widths use the unscaled values ÷ 9,000, so the 7-day chart does not rescale, and the Production row runs past the $9k axis.</li>
+            <li>The optimization cards (smaller-model routing, permission-scoped caching, batching evaluations) have no buttons, measured savings or routing behind them.</li>
+            <li>The Development row totals $4,340, the same as the v3 Dev spend, but splits it 3,050 / 750 / 540 where the v3 screen shows 2,540 / 700 / 1,100.</li>
+          </ul>
+          <p class="note">Handbook 9.4: "Do not use the fixture values to choose providers or estimate an actual enterprise budget."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Stretch the model span</h2>
+        <p class="lede">Move the recorded latency and the prototype's waterfall rebuilds itself from that one number. Below 660 ms the six spans no longer fit on the ruler.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="wf-ctl">
+          <div class="ctl"><label for="L">Recorded model latency L <output for="L"></output></label>
+            <input type="range" id="L" min="400" max="3000" step="10" value="1840">
+          </div>
+          <div class="ctl"><label for="desc">Model descriptor</label>
+            <select class="sel" id="desc">
+              <option value="">Custom value from the slider</option>
+              <option value="780">Enterprise Fast · 780 ms</option>
+              <option value="840">Mistral · Private · 840 ms</option>
+              <option value="920">Llama · Private · 920 ms</option>
+              <option value="1120">GPT · Enterprise · 1,120 ms</option>
+              <option value="1350">Gemini · Pro · 1,350 ms</option>
+              <option value="1480">Claude · Enterprise · 1,480 ms</option>
+              <option value="1500">Newly registered model · 1,500 ms</option>
+              <option value="1540">Claude · Bedrock · 1,540 ms</option>
+              <option value="1840" selected>Risk Reasoner 3 · 1,840 ms</option>
+              <option value="2460">Open Reasoner 70B · 2,460 ms</option>
+            </select>
+          </div>
+          <label class="switch">Draw as the prototype does (ruler 0 … L) <input type="checkbox" id="proto" checked></label>
+          <div class="btnrow"><button class="btn" type="button" data-act="edge">Try L = 600 ms</button><button class="btn" type="button" data-act="v3">Back to run-0003</button></div>
+          <div class="readout">
+            <div><b id="o-total">–</b><span>total span time</span></div>
+            <div><b id="o-model">–</b><span>model span</span></div>
+            <div><b id="o-over">–</b><span>past the ruler</span></div>
+            <div><b id="o-share">–</b><span>model share</span></div>
+          </div>
+          <p class="logline" id="wf-why" aria-live="polite"></p>
+          <p class="note">Computed from the Atlas prototype's documented waterfall (handbook 9.2): five fixed spans totalling 560 ms and a model span of max(100, L − 560), placed by dividing by L. The presets are the prototype's nine model descriptors plus the 1,500 ms default for a newly registered model. With L = 1,840 ms it matches the v3 design's run-0003.</p>
+        </div>
+        <div class="board" data-stage="wflab" data-label="A six-row waterfall on a ruler from 0 to L. When L is below 660 ms the bars run past the end of the ruler and the overrun is hatched in red. Below, a scale from 400 to 3,000 ms marks the nine model descriptors and the 660 ms edge."><span class="ruler">traces &amp; usage · atlas prototype</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>1.84 s</b><span>run-0003 end to end, in six spans</span></div>
+        <div><b>2,980 / 432</b><span>tokens in / out on the model span</span></div>
+        <div><b>86%</b><span>of slow requests wait on fraud-risk-api</span></div>
+        <div><b>176 → 412</b><span>ms, fraud-risk-api p99 from 2.3.9 to 2.4.0 (RISK-412)</span></div>
+        <div><b>$4,340</b><span>Dev spend, last 30 days (illustrative)</span></div>
+        <div><b>72.3%</b><span>of the $6,000 Dev budget used</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>Traces &amp; usage draws six spans from one recorded latency per run and shows every run as Completed. Cost intelligence is a separate fixed table ($19,230 per grouping, × 0.26 for 7 days), and Governance keeps its own $14,826. There is no telemetry backend and no live Optimus Logger connection.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>Optimus Logger for order-service: KPIs, latency with deploy marks, a written explanation, logs with trace IDs, dependencies</li><li>Traces: six-span waterfall per AI run, tokens in and out, estimated cost, charged to Commerce Orders, linked to Evals on the same configuration</li><li>Cost (illustrative): team, application and resource views, Dev budget, savings from traces, nightly reconciliation with the cloud bill</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>A telemetry and cost plane with correlated spans, quality results, usage estimation, bill reconciliation and retention, which must tell operational success apart from answer quality (14.2). Trace, quality and cost analytics in a time-series or columnar store with attribution, retention and controlled content access (14.6). Provider billing stays authoritative for reconciled cost (14.10). Optimus Logger's API, schema, auth and trace identifiers are still open decisions (16.5).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same questions, other tools</h2>
+        <p class="lede">The LLM tracing tools below price each call from its token counts and a rate table. The cloud cost tools start from the bill and allocate it. Vector's design keeps both, in one environment, and reconciles them each night.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="sentinel.html"><span>← Chapter 12</span><b>Sentinel</b></a>
+    <a class="fwd" href="bee.html"><span>Chapter 14 →</span><b>@B</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, eout, clamp, lerp } = Field;
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const fmtS = (n) => (n < 0 ? "−" : "") + fmt(Math.abs(n));
+
+  /* ---------------- shared: the latency series (shape illustrative, marks from the v3 screen) ---------------- */
+  const DEPLOY = 11 + 9 / 60;
+  const LAT = (() => {
+    const p = [];
+    for (let t = 9; t < DEPLOY - 0.02; t += 1 / 6) p.push([t, 152 + 5 * Math.sin(t * 7.3) + 3 * Math.sin(t * 17.1)]);
+    p.push([DEPLOY, 151]);
+    p.push([11.21, 262], [11.27, 324], [11.33, 298], [11.42, 238], [11.5, 203], [11.6, 191]);
+    for (let t = 11.75; t <= 15.34; t += 1 / 6) p.push([t, 185 + 4 * Math.sin(t * 6.1) + 2.5 * Math.sin(t * 15.7)]);
+    return p;
+  })();
+  const iDeploy = LAT.findIndex((q) => q[0] === DEPLOY);
+  const PEAK = LAT.find((q) => q[1] === 324);
+  const latAt = (h) => { for (let i = 1; i < LAT.length; i++) if (LAT[i][0] >= h) { const a = LAT[i - 1], c = LAT[i]; return lerp(a[1], c[1], (h - a[0]) / (c[0] - a[0])); } return LAT[LAT.length - 1][1]; };
+
+  function latChart(g, R, o) {
+    const a = o.a === undefined ? 1 : o.a, ts = o.ts || 11.5, n = LAT.length, ann = (o.ann || 0) * a;
+    const C = g.chart({ x0: R.x0, y0: R.y0, x1: R.x1, y1: R.y1, xmin: 9, xmax: 15.4, ymin: 0, ymax: 400,
+      yticks: [0, 100, 200, 300, 400], xticks: o.xticks || [9, 10, 11, 12, 13, 14, 15], fx: (h) => (h < 10 ? "0" : "") + h + ":00", tsize: ts, a });
+    const dx = C.sx(DEPLOY);
+    g.rect(dx, R.y0, C.sx(11.7) - dx, R.y1 - R.y0, { fill: g.rgba("tel", 0.08), a: ann });
+    const da = ramp(o.upto, iDeploy - 1, 1) * a;
+    g.line(dx, R.y0, dx, R.y1, { color: "exe", lw: 1.4, dash: [4, 4], a: da });
+    g.chip(dx + 6, R.y0 + 11, "#419 deployed 11:09", "exe", { size: 10.5, a: da });
+    const pts = LAT.map((q) => [C.sx(q[0]), C.sy(q[1])]);
+    const k = Math.min(n - 1, Math.floor(o.upto)), u = o.upto - k;
+    const dr = pts.slice(0, k + 1);
+    if (k < n - 1 && u > 0) dr.push([lerp(pts[k][0], pts[k + 1][0], u), lerp(pts[k][1], pts[k + 1][1], u)]);
+    if (dr.length > 1) {
+      g.poly(dr.concat([[dr[dr.length - 1][0], R.y1], [dr[0][0], R.y1]]), { fill: g.rgba("tel", 0.07), close: true, a });
+      g.poly(dr, { color: "tel", lw: 2.2, a });
+      const e = dr[dr.length - 1];
+      g.circle(e[0], e[1], 3.4, { fill: "tel", a });
+    }
+    if (ann > 0.01) {
+      const px = C.sx(PEAK[0]), py = C.sy(324), gy = C.sy(185);
+      g.circle(px, py, 4.5, { fill: "tel", stroke: "sheet", lw: 2, a: ann });
+      g.text("324 ms", px + 9, py + 4, { size: ts, weight: 600, color: "tel", a: ann });
+      g.line(dx + 3, gy, R.x1, gy, { color: "ink-3", lw: 1, dash: [2, 4], a: ann * 0.9 });
+      g.text("~185 ms", C.sx(14.5), gy - 13, { size: ts, weight: 600, color: "tel", align: "center", a: ann });
+      if (o.dims) {
+        const dmx = dx - 14;
+        g.line(dmx - 5, py, px - 6, py, { color: "ink-3", lw: 1, dash: [2, 3], a: ann });
+        g.line(dmx - 5, gy, dx - 2, gy, { color: "ink-3", lw: 1, dash: [2, 3], a: ann });
+        g.dim(py, gy, dmx, "", { vertical: true, color: "ink-2", a: ann });
+        g.text("spike", dmx - 10, (py + gy) / 2 + 4, { size: ts - 1, color: "ink-2", align: "right", a: ann });
+      }
+    }
+    return C;
+  }
+
+  /* ---------------- hero ---------------- */
+  const HERO_FACTS = [
+    ["86% of slow requests wait on fraud-risk-api", "#419 added the call before order confirmation"],
+    ["fraud-risk-api p99: 412 ms since 2.4.0", "176 ms on 2.3.9 last week · tracked as RISK-412"],
+    ["A cache fix brings its p99 to 188 ms", "perf/p99-cache · load test on workspace ws-vt-02"],
+  ];
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g, t = s.t;
+    const pad = 22, top = Math.max(48, g.safeTop + 14);
+    const h1 = "order-service · latency p95";
+    g.text(h1, pad, top, { size: 14, font: "ui", weight: 600 });
+    g.text("ms · Dev", pad + g.tw(h1, 14, "ui", 600) + 10, top, { size: 11.5, color: "ink-3" });
+    g.chip(W - pad, top - 4, "Optimus Logger", "tel", { size: 10.5, align: "right" });
+    const R = { x0: pad + 32, y0: top + 24, x1: W - pad - 6, y1: H - 158 };
+    const draw = clamp(t / 2.4), ann = ramp(t, 2.2, 0.6);
+    const C = latChart(g, R, { upto: draw * (LAT.length - 1), ann, ts: 11.5, dims: true });
+    g.text("illustrative shape", R.x1 - 4, R.y0 + 15, { size: 10, color: "ink-3", align: "right" });
+    g.text("p95 tile: 182 ms, ↑ 18% since #419", R.x1 - 4, C.sy(185) + 22, { size: 10.5, color: "ink-2", align: "right", a: ann });
+    // the note box
+    const by = R.y1 + 38, bh = H - by - 14, ba = ramp(t, 2.5, 0.5);
+    const lx = C.sx(12.5), ly = C.sy(latAt(12.5));
+    g.circle(lx, ly, 3.5, { fill: "tel", a: ba });
+    g.line(lx, ly + 4, lx, by, { color: "tel", lw: 1.2, a: ba });
+    g.rect(pad, by, W - 2 * pad, bh, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    g.rect(pad, by + 8, 3, bh - 16, { fill: "tel", r: 1.5 });
+    g.text("WHAT HAPPENED AT 11:09", pad + 18, by + 24, { size: 10.5, color: "ink-3", ls: 1 });
+    const ph = Math.max(0, t - 2.5), idx = Math.floor(ph / 4.5) % 3, loc = ph - Math.floor(ph / 4.5) * 4.5;
+    const fa = ba * Math.min(ramp(loc, 0, 0.4), 1 - ramp(loc, 4.0, 0.45));
+    const [f1, f2] = HERO_FACTS[idx];
+    g.text(f1, pad + 18, by + 52, { size: g.narrow ? 15 : 16, font: "ui", weight: 600, a: fa, maxW: W - 2 * pad - 36 });
+    g.text(f2, pad + 18, by + 74, { size: 11.5, color: "ink-2", a: fa, maxW: W - 2 * pad - 36 });
+    for (let i = 0; i < 3; i++) g.circle(W - pad - 16 - (2 - i) * 12, by + 20, 3, { fill: i === idx ? "tel" : "hair", a: ba });
+  }, { anim: true, restT: 4.2, zoom: 1.25, minW: 600, maxW: 900 });
+
+  /* ---------------- incident: what happened at 11:09 ---------------- */
+  function label(g, txt, x, y, a) { g.text(txt, x, y, { size: 10.5, color: "ink-3", ls: 1, a }); }
+
+  function pDeploy(g, P0, a, tall) {
+    const blockH = tall ? 280 : 160, P = { x: P0.x, w: P0.w, y: P0.y + Math.max(0, (P0.h - blockH) / 2 - 10) };
+    label(g, "BUILD #419 → DEV", P.x, P.y + 16, a);
+    const sq = Math.min(26, (Math.min(P.w, 420) - 8 * 6) / 9), sy = P.y + 34;
+    for (let i = 0; i < 9; i++) {
+      const x = P.x + i * (sq + 6);
+      g.rect(x, sy, sq, sq, { fill: g.rgba("ok", 0.14), stroke: "ok", lw: 1.2, r: 5, a });
+      g.text("✓", x + sq / 2, sy + sq / 2 + 4.5, { size: 12, color: "ok", weight: 700, align: "center", a });
+    }
+    g.text("9 of 9 stages passed · 11:04", P.x, sy + sq + 22, { size: 12, color: "ok", weight: 600, a });
+    const rowEnd = P.x + 9 * (sq + 6) - 6;
+    let bx, by, bw;
+    if (tall) { bx = P.x; by = sy + sq + 64; bw = P.w; g.arrow(P.x + 40, sy + sq + 32, P.x + 40, by - 6, { color: "exe", lw: 1.6, head: 8, a }); }
+    else { bx = rowEnd + 64; by = P.y + 26; bw = P.x + P.w - bx; g.arrow(rowEnd + 10, sy + sq / 2, bx - 8, sy + sq / 2, { color: "exe", lw: 1.6, head: 8, a }); }
+    const bh = 128;
+    g.box(bx, by, bw, bh, { color: "exe", wash: 0.06, a });
+    g.text("Deployed to Dev · 11:09", bx + 16, by + 28, { size: 15, font: "ui", weight: 600, a });
+    [["order-service 2.14.0-rc2 · 2/2 pods", "ink-2"], ["nsx-dev-use1 / commerce", "exe"], ["traffic: synthetic checkout load", "ink-2"]].forEach(([tx, c], i) =>
+      g.text(tx, bx + 16, by + 56 + i * 21, { size: 12, color: c, a, maxW: bw - 32 }));
+  }
+
+  const KPI = [["LATENCY P95", "182 ms", "↑ 18% since #419", "tel"], ["ERROR RATE", "0.21%", "peaked 1.8% at 11:16", "tel"], ["THROUGHPUT", "86 req/min", "synthetic load", "ink"], ["SLO · DEV TARGET 99.5%", "71%", "budget left · 30 days", "ok"]];
+  function pKpi(g, P, a) {
+    const gap = 12, tw = (P.w - gap) / 2, th = Math.min(140, (P.h - gap) / 2);
+    KPI.forEach(([k, v, sub, c], i) => {
+      const x = P.x + (i % 2) * (tw + gap), y = P.y + Math.floor(i / 2) * (th + gap);
+      g.rect(x, y, tw, th, { fill: "card", stroke: i < 2 ? g.rgba("tel", 0.5) : "hair", lw: 1.2, r: 10, a });
+      g.text(k, x + 16, y + 26, { size: 10.5, color: "ink-3", ls: 0.8, a, maxW: tw - 32 });
+      g.text(v, x + 16, y + 68, { size: 38, font: "display", weight: 800, color: c, a, maxW: tw - 32 });
+      g.text(sub, x + 16, y + 94, { size: 12, color: i === 0 ? "tel" : "ink-2", weight: i === 0 ? 600 : 500, a, maxW: tw - 32 });
+      if (i === 3) { g.rect(x + 16, y + th - 24, tw - 32, 6, { fill: "grid", r: 3, a }); g.rect(x + 16, y + th - 24, (tw - 32) * 0.71, 6, { fill: "ok", r: 3, a }); }
+    });
+  }
+
+  function along(g, x1, y1, x2, y2, t, speed, c, a, n = 3) {
+    for (let k = 0; k < n; k++) { const u = (t * speed + k / n) % 1; g.circle(lerp(x1, x2, u), lerp(y1, y2, u), 3, { fill: c, a: a * Math.sin(Math.PI * u) }); }
+  }
+  function pDeps(g, P, a, t, narrow) {
+    label(g, "DEPENDENCIES · P95 IN RANGE", P.x, P.y + 16, a);
+    const callers = [["web-checkout", "58 rpm"], ["mobile-bff", "28 rpm"]];
+    const callees = [["fraud-risk-api", "412 ms", true], ["payments-gateway", "96 ms"], ["customer-profile-api", "38 ms"], ["inventory-service", "44 ms"]];
+    const cwL = Math.max(...callers.map(([n]) => g.tw(n, 12.5, "ui", 600))) + 8;
+    const cw = narrow ? 124 : 156, gapA = narrow ? 48 : 60, gapB = narrow ? 36 : 70, rwMax = narrow ? 999 : 300;
+    const rw0 = P.w - cwL - gapA - cw - gapB, rw = Math.min(rwMax, rw0);
+    const off = Math.max(0, (rw0 - rw) / 2);
+    const x0 = P.x + off, y0 = P.y + 34, y1 = P.y + P.h - 70, cy = (y0 + y1) / 2;
+    const bxL = x0 + cwL + gapA, rx = bxL + cw + gapB;
+    g.box(bxL, cy - 28, cw, 56, { color: "exe", wash: 0.08, a });
+    g.text("order-service", bxL + cw / 2, cy - 3, { size: 14, font: "ui", weight: 600, align: "center", a });
+    g.text("2.14.0-rc2", bxL + cw / 2, cy + 16, { size: 11, color: "ink-2", align: "center", a });
+    callers.forEach(([nm, v], i) => {
+      const y = cy + (i - 0.5) * 70;
+      g.text(nm, x0, y - 2, { size: 12.5, font: "ui", weight: 600, a });
+      g.text(v, x0, y + 15, { size: 11, color: "ink-3", a });
+      const ex = bxL - 6, ey = cy + (i - 0.5) * 18;
+      g.arrow(x0 + cwL, y + 4, ex, ey, { color: "ink-3", lw: 1.2, head: 7, a });
+      along(g, x0 + cwL, y + 4, ex, ey, t, 0.5, "exe", a, 2);
+    });
+    const rh = Math.min(48, (y1 - y0) / 4);
+    callees.forEach(([nm, v, hot], i) => {
+      const y = cy + (i - 1.5) * rh;
+      g.rect(rx, y - 15, rw, 30, { fill: hot ? g.rgba("tel", 0.08) : "card", stroke: hot ? "tel" : "hair", lw: hot ? 1.8 : 1.2, r: 8, a });
+      g.text(nm, rx + 12, y + 4.5, { size: 12.5, font: "ui", weight: 600, a, maxW: rw - 76 });
+      g.text(v, rx + rw - 12, y + 4.5, { size: 12, weight: 600, color: hot ? "bad" : "ink-2", align: "right", a });
+      const sx = bxL + cw + 6, sy = cy + (i - 1.5) * 9;
+      g.arrow(sx, sy, rx - 6, y, { color: hot ? "tel" : "ink-3", lw: hot ? 1.8 : 1.2, head: 7, a });
+      along(g, sx, sy, rx - 6, y, t, hot ? 0.16 : 0.6, hot ? "tel" : "exe", a, hot ? 4 : 2);
+    });
+    const yb = P.y + P.h - 38;
+    g.text("86% of slow requests wait on fraud-risk-api", P.x, yb, { size: 13.5, font: "ui", weight: 600, color: "tel", a, maxW: P.w });
+    let px = P.x;
+    ["142 slow traces", "deploy #419", "RISK-412"].forEach((l) => { px += g.pill(px, yb + 24, l, { size: 11, h: 22, pad: 9, lw: 1.1, color: "ink-2", a }) + 8; });
+  }
+
+  function pP99(g, P, a, narrow) {
+    label(g, "FRAUD-RISK-API P99", P.x, P.y + 16, a);
+    const rows = [["2.3.9 · last week", 176, "", 0], ["2.4.0 · now", 412, "RISK-412 · in review", 1], ["perf/p99-cache · ws-vt-02", 188, "load test · not pushed", 2]];
+    const lc = narrow ? 0 : 220, bx0 = P.x + lc, bx1 = P.x + P.w - 64;
+    const sx = (v) => bx0 + (v / 450) * (bx1 - bx0);
+    const rh = narrow ? 70 : 64, ry0 = P.y + (narrow ? 74 : 66);
+    const yAx = ry0 + rh * 2 + 30;
+    g.line(sx(300), ry0 - 22, sx(300), yAx, { color: "ink-3", lw: 1.2, dash: [3, 4], a });
+    g.text("budget 300 ms", sx(300), ry0 - 28, { size: 10.5, color: "ink-2", align: "center", a });
+    rows.forEach(([nm, v, note, k], i) => {
+      const y = ry0 + i * rh;
+      if (narrow) {
+        g.text(nm, P.x, y - 14, { size: 12.5, font: "ui", weight: 600, a });
+        if (note) g.text(note, P.x + P.w, y - 14, { size: 10.5, color: k === 1 ? "bad" : "exe", align: "right", a });
+      } else {
+        g.text(nm, P.x, y + 1, { size: 12.5, font: "ui", weight: 600, a, maxW: lc - 14 });
+        if (note) g.text(note, P.x, y + 18, { size: 10.5, color: k === 1 ? "bad" : "exe", a });
+      }
+      const w = sx(v) - bx0;
+      if (k === 2) g.rect(bx0, y - 9, w, 18, { fill: g.rgba("exe", 0.1), stroke: "exe", lw: 1.4, dash: [4, 3], r: 4, a });
+      else g.rect(bx0, y - 9, w, 18, { fill: k === 1 ? "bad" : "ink-3", r: 4, a: a * (k === 1 ? 0.9 : 0.55) });
+      g.text(v + " ms", sx(v) + 8, y + 4.5, { size: 12.5, weight: 600, color: k === 1 ? "bad" : "ink", a });
+    });
+    [0, 100, 200, 300, 400].forEach((v) => { g.line(sx(v), yAx - 4, sx(v), yAx, { color: "hair", lw: 1, a }); g.text(String(v), sx(v), yAx + 14, { size: 10.5, color: "ink-3", align: "center", a }); });
+    g.line(bx0, yAx - 4, sx(450), yAx - 4, { color: "hair", lw: 1, a });
+    g.text("ms", sx(450), yAx + 14, { size: 10.5, color: "ink-3", align: "right", a });
+  }
+
+  const LOGS = [
+    ["15:19:59.204", "INFO", "order ORD-10521 confirmed · payment pay_8f2c · 143 ms", "a7c1…"],
+    ["15:19:58.877", "WARN", "fraud-risk-api slow response 418 ms (budget 300 ms)", "e02b…"],
+    ["15:19:58.630", "INFO", "inventory reserved 3 items for ORD-10520", "91dd…"],
+    ["15:19:57.912", "ERROR", "payments-gateway 3DS timeout after 1500 ms · retry 1 of 2", "5b4e…"],
+    ["15:19:57.338", "INFO", "customer profile cache hit · cus_44190", "c3a0…"],
+    ["15:19:56.701", "WARN", "fraud-risk-api slow response 402 ms (budget 300 ms)", "17fe…"],
+  ];
+  function pLogs(g, P, a, narrow) {
+    label(g, "LOGS · LIVE · 2,418 LINES IN RANGE", P.x, P.y + 16, a);
+    g.text("Error 36", P.x + P.w, P.y + 16, { size: 10.5, color: "bad", align: "right", a });
+    const rh = narrow ? 30 : 28, y0 = P.y + 34, fs = narrow ? 10.5 : 11;
+    const tsW = g.tw(narrow ? "15:19:59" : "15:19:59.204", fs) + 10, lvW = g.tw("ERROR", fs, "mono", 600) + 14, idW = g.tw("e02b…", fs) + 4;
+    LOGS.forEach(([ts, lv, msg, id], i) => {
+      const y = y0 + i * rh, hot = msg.startsWith("fraud-risk-api");
+      if (hot) g.rect(P.x - 6, y, P.w + 12, rh - 2, { fill: g.rgba("tel", 0.08), r: 5, a });
+      const by = y + rh / 2 + 4;
+      g.text(narrow ? ts.slice(0, 8) : ts, P.x, by, { size: fs, color: "ink-3", a });
+      g.text(lv, P.x + tsW, by, { size: fs, weight: 600, color: lv === "INFO" ? "ink-3" : "bad", a });
+      g.text(msg, P.x + tsW + lvW, by, { size: fs, color: "ink", a, maxW: P.w - tsW - lvW - idW - 10 });
+      g.text(id, P.x + P.w, by, { size: fs, color: hot ? "tel" : "ink-3", weight: hot ? 600 : 500, align: "right", a });
+    });
+    // trace link from the first WARN line
+    const yW = y0 + rh + rh / 2, yEnd = y0 + LOGS.length * rh + 30;
+    const pw = g.tw("Open slowest trace →", 12, "ui", 600) + 24;
+    const pcx = P.x + P.w - pw / 2, pcy = Math.min(P.y + P.h - 20, yEnd + 22);
+    g.curve([P.x + P.w + 4, yW], [P.x + P.w + 4, (yW + pcy) / 2 + 30], [pcx + pw / 2 - 6, pcy - 12], { color: "tel", lw: 1.3, head: 7, a: a * 0.9 });
+    g.pill(pcx, pcy, "Open slowest trace →", { size: 12, font: "ui", weight: 600, align: "center", color: "tel", stroke: "tel", lw: 1.3, h: 26, a });
+    g.wrap("Each line ends in a trace ID, so a slow line opens its own request.", P.x, pcy - 4, P.w - pw - 24, { size: 11.5, color: "ink-2", lh: 16, a, maxLines: 2 });
+  }
+
+  Field.scene("incident", (g, s) => {
+    const { W, H, narrow } = g, t = s.t, tall = H > W * 0.95;
+    const pad = 24, top = Math.max(50, g.safeTop + 14);
+    const chH = tall ? Math.min(300, H * 0.37) : H * 0.44;
+    g.text("order-service · latency p95 · ms", pad, top, { size: 13.5, font: "ui", weight: 600 });
+    g.chip(W - pad, top - 4, "Optimus Logger · Dev", "tel", { size: 10.5, align: "right" });
+    const R = { x0: pad + 30, y0: top + 22, x1: W - pad - 4, y1: top + chH - 30 };
+    const n = LAT.length;
+    const C = latChart(g, R, { upto: lerp(iDeploy, n - 1, s.at(1)), ann: s.at(1), ts: 11, xticks: narrow ? [9, 11, 13, 15] : undefined });
+    const la = s.at(4);
+    if (la > 0.01) {
+      const lx = C.sx(15 + 19.9 / 60);
+      g.line(lx, R.y0 + 30, lx, R.y1, { color: "ink-2", lw: 1.4, a: la });
+      g.text("logs below", lx - 6, R.y0 + 40, { size: 10.5, color: "ink-2", align: "right", a: la });
+    }
+    const da = s.at(2) * (1 - s.at(4));
+    if (da > 0.01) {
+      const x = C.sx(13), y = C.sy(latAt(13));
+      g.callout(x, y, x + 24, R.y0 + 44, "86% wait on fraud-risk-api", { size: 11, color: "tel", weight: 600, a: da });
+    }
+    const P = { x: pad, y: top + chH + 8, w: W - 2 * pad }; P.h = H - P.y - 18;
+    const al = (k) => (k === 0 ? 1 : s.swapIn(k)) * (k === 4 ? 1 : s.swapOut(k + 1));
+    const A = [0, 1, 2, 3, 4].map(al);
+    if (A[0] > 0.01) pDeploy(g, P, A[0], tall);
+    if (A[1] > 0.01) pKpi(g, P, A[1]);
+    if (A[2] > 0.01) pDeps(g, P, A[2], t, narrow);
+    if (A[3] > 0.01) pP99(g, P, A[3], narrow);
+    if (A[4] > 0.01) pLogs(g, P, A[4], narrow);
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- run: one AI run, six spans ---------------- */
+  const SPANS = [
+    { n: "Authorize context", d: 60, c: "ctl" },
+    { n: "Retrieve enterprise graph", d: 140, c: "kno" },
+    { n: "Invoke fraud-risk-api", d: 220, c: "exe" },
+    { n: "Model reasoning", d: 1280, c: "exe" },
+    { n: "Policy and schema check", d: 90, c: "ctl" },
+    { n: "Return decision", d: 50, c: "exe" },
+  ];
+  const STATS = [["1.84 s", "end to end", "ink"], ["3,412", "tokens", "ink"], ["$0.0041", "estimated", "tel"], ["Review", "risk 0.91 ≥ 0.80", "ink"]];
+
+  function codeCard(g, x, y, w, h, title, chip, lines, a, hl) {
+    g.rect(x, y, w, h, { fill: "card", stroke: "hair", lw: 1.2, r: 10, a });
+    g.text(title, x + 14, y + 24, { size: 13, font: "ui", weight: 600, a });
+    if (chip) g.chip(x + w - 12, y + 19, chip, "ok", { size: 10, align: "right", a });
+    const lh = Math.min(17, (h - 44) / lines.length);
+    lines.forEach((l, i) => g.text(l, x + 14, y + 46 + i * lh, { size: 11, color: hl && hl.test(l) ? "tel" : "ink-2", weight: hl && hl.test(l) ? 600 : 500, a, maxW: w - 28 }));
+  }
+
+  function pIO(g, P, a, tall) {
+    const IN = ['"order_id": "ORD-10482"', '"customer_id": "cus_44190"', '"amount": 2840.00', '"currency": "USD"', '"ship_to_country": "NL"', '"account_age_days": 3', '"email": "[redacted]"'];
+    const OUT = ['"decision": "manual_review"', '"risk_score": 0.91', '"reasons": [', '  "new account, 3 days"', '  "amount 4.1× customer median"', '  "ship country differs from billing"', ']'];
+    if (tall) {
+      const h = Math.min(160, (P.h - 12) / 2);
+      codeCard(g, P.x, P.y, P.w, h, "Input · order payload", "", IN, a, /redacted/);
+      codeCard(g, P.x, P.y + h + 12, P.w, h, "Output · validated against schema", "Schema OK", OUT, a, /manual_review|0\.91/);
+    } else {
+      const w = (P.w - 16) / 2, h = Math.min(190, P.h);
+      codeCard(g, P.x, P.y, w, h, "Input · order payload", "", IN, a, /redacted/);
+      g.arrow(P.x + w + 2, P.y + h / 2, P.x + w + 14, P.y + h / 2, { color: "ink-3", lw: 1.3, head: 7, a });
+      codeCard(g, P.x + w + 16, P.y, w, h, "Output", "Schema OK", OUT, a, /manual_review|0\.91/);
+    }
+  }
+
+  function pSplit(g, P, a) {
+    label(g, "WHERE 1,840 MS GOES", P.x, P.y + 16, a);
+    const x0 = P.x, x1 = P.x + P.w, sx = (ms) => lerp(x0, x1, ms / 1840), y = P.y + 74, h = 26;
+    let acc = 0;
+    SPANS.forEach((sp) => { g.rect(sx(acc) + 0.5, y, Math.max(1, sx(acc + sp.d) - sx(acc) - 1), h, { fill: sp.c, r: 3, a: a * (sp.d === 1280 ? 0.9 : 0.65) }); acc += sp.d; });
+    g.dim(sx(420), sx(1700), y - 18, "model reasoning · 1,280 ms", { size: 11.5, color: "exe", a });
+    g.dim(sx(0), sx(420), y + h + 20, "420 ms", { size: 11, color: "ink-2", a });
+    g.dim(sx(1700), sx(1840), y + h + 20, "140 ms", { size: 11, color: "ink-2", a });
+    g.text("three spans before", sx(210), y + h + 44, { size: 10.5, color: "ink-3", align: "center", a });
+    g.text("two after", sx(1840), y + h + 44, { size: 10.5, color: "ink-3", align: "right", a });
+    const ty = y + h + 84;
+    g.wrap("The five spans around the model total 560 ms. Model reasoning takes the other 1,280 ms, about seven tenths of the run.", P.x, ty, P.w, { size: 12.5, font: "ui", color: "ink-2", lh: 18, a, maxLines: 3 });
+    g.text("The Atlas prototype builds this split from one number. Try it in the lab below.", P.x, Math.min(P.y + P.h - 6, ty + 62), { size: 11, color: "exp", a, maxW: P.w });
+  }
+
+  function pTokens(g, P, a, tall) {
+    const KV = tall
+      ? [["Model", "Risk Reasoner 3"], ["Provider", "Bedrock · us-east-1"], ["Tokens", "2,980 in · 432 out"], ["Guards", "PII redaction · injection shield"]]
+      : [["Span", "420 ms → 1,700 ms"], ["Model", "Risk Reasoner 3"], ["Provider", "Bedrock · us-east-1"], ["Tokens", "2,980 in · 432 out"], ["Temperature", "0.2"], ["Prompt", "fraud-review v7"], ["Guards", "PII redaction · injection shield"]];
+    const kh = tall ? 19 : 26, iw = tall ? P.w : P.w * 0.44, ih = tall ? 56 + KV.length * kh + 30 : P.h;
+    g.rect(P.x, P.y, iw, ih, { fill: "card", stroke: "tel", lw: 1.3, r: 10, a });
+    g.text("Selected span · Model reasoning", P.x + 14, P.y + 24, { size: 13, font: "ui", weight: 600, a, maxW: iw - 28 });
+    KV.forEach(([k, v], i) => { g.text(k, P.x + 14, P.y + 52 + i * kh, { size: 11, color: "ink-3", a }); g.text(v, P.x + 110, P.y + 52 + i * kh, { size: 11.5, color: k === "Tokens" ? "tel" : "ink", weight: k === "Tokens" ? 600 : 500, a, maxW: iw - 124 }); });
+    g.line(P.x + 14, P.y + ih - 34, P.x + iw - 14, P.y + ih - 34, { color: "hair", lw: 1, a });
+    g.text("Sentinel · masked 2 emails in run-0003 input · 10:38", P.x + 14, P.y + ih - 14, { size: 10.5, color: "ctl", a, maxW: iw - 28 });
+    const rx = tall ? P.x : P.x + iw + 20, rw = tall ? P.w : P.w - iw - 20, ry = tall ? P.y + ih + 16 : P.y;
+    label(g, "TOKENS ON THIS SPAN", rx, ry + 14, a);
+    const tx0 = rx, tx1 = rx + rw, tsx = (v) => lerp(tx0, tx1, v / 3412), ty = ry + 26;
+    g.rect(tsx(0), ty, tsx(2980) - tsx(0) - 1, 20, { fill: "tel", r: 3, a: a * 0.8 });
+    g.rect(tsx(2980) + 1, ty, tsx(3412) - tsx(2980) - 1, 20, { fill: "tel", r: 3, a: a * 0.35 });
+    g.text("2,980 in", tx0, ty + 38, { size: 12, weight: 600, color: "tel", a });
+    g.text("432 out", tx1, ty + 38, { size: 12, weight: 600, color: "tel", align: "right", a });
+    g.text("= 3,412", (tx0 + tx1) / 2, ty + 38, { size: 11, color: "ink-2", align: "center", a });
+    // tokens per day
+    const cy0 = ty + 66, cy1 = P.y + P.h - 22;
+    label(g, "TOKENS PER DAY · FRAUD-REVIEW AGENT", rx, cy0, a);
+    const D = [["Wed", 8.2], ["Thu", 12.4], ["Fri", 9.1], ["Sat", 3.0], ["Sun", 2.2], ["Mon", 14.8], ["Tue", 10.4]];
+    const top = cy0 + 30, sy = (v) => lerp(cy1, top, v / 50), bw = (rw - 6 * 10) / 7;
+    g.line(rx, sy(50), rx + rw, sy(50), { color: "ctl", lw: 1.3, dash: [5, 4], a });
+    g.text("budget alert · 50k / day", rx + rw, sy(50) - 6, { size: 10.5, color: "ctl", align: "right", a });
+    D.forEach(([d, v], i) => {
+      const x = rx + i * (bw + 10);
+      g.rect(x, sy(v), bw, cy1 - sy(v), { fill: "tel", r: 3, a: a * (i === 6 ? 0.85 : 0.3) });
+      g.text(v.toFixed(1) + "k", x + bw / 2, sy(v) - 5, { size: 10, color: i === 6 ? "tel" : "ink-3", align: "center", weight: i === 6 ? 600 : 500, a });
+      g.text(d, x + bw / 2, cy1 + 14, { size: 10, color: "ink-3", align: "center", a });
+    });
+  }
+
+  function pCharge(g, P, a, tall, t) {
+    const N = [["run-0003", "$0.0041 estimated", "exe"], ["Caller", "Venkatesh · ws-vt-01", "exp"], ["Charged to", "Commerce Orders", "tel"], ["Cost screen", "team · application · resource", "tel"]];
+    if (!tall) {
+      const gap = 34, w = (P.w - gap * 3) / 4, h = 70, y = P.y + 30;
+      N.forEach(([k, v, c], i) => {
+        const x = P.x + i * (w + gap);
+        g.box(x, y, w, h, { color: c, wash: 0.07, a });
+        g.text(k, x + 12, y + 24, { size: 11, color: "ink-3", a });
+        g.wrap(v, x + 12, y + 45, w - 24, { size: 12.5, font: "ui", weight: 600, lh: 16, a, maxLines: 2 });
+        if (i < 3) { g.arrow(x + w + 4, y + h / 2, x + w + gap - 4, y + h / 2, { color: "ink-3", lw: 1.4, head: 7, a }); along(g, x + w + 4, y + h / 2, x + w + gap - 6, y + h / 2, t, 0.5, "tel", a, 1); }
+      });
+      const cx1 = P.x + 3 * (w + gap) + w / 2, cx0 = P.x + w / 2;
+      g.curve([cx1, y + h + 4], [(cx0 + cx1) / 2, y + h + 70], [cx0, y + h + 6], { color: "tel", lw: 1.2, dash: [4, 4], head: 7, a });
+      g.text('"Open traces" links back from the application table', (cx0 + cx1) / 2, y + h + 58, { size: 11, color: "tel", align: "center", a });
+      const sy = y + h + 104;
+      label(g, "AI RUNS FOR COMMERCE ORDERS · TODAY", P.x, sy, a);
+      [["3", "runs"], ["10.4k", "tokens"], ["$0.012", "cost"]].forEach(([v, k], i) => {
+        const x = P.x + i * 150; g.text(v, x, sy + 40, { size: 32, font: "display", weight: 800, color: i === 2 ? "tel" : "ink", a }); g.text(k, x, sy + 58, { size: 11, color: "ink-3", a });
+      });
+    } else {
+      const gap = 18, h = 50, w = P.w - 40;
+      N.forEach(([k, v, c], i) => {
+        const y = P.y + i * (h + gap);
+        g.box(P.x, y, w, h, { color: c, wash: 0.07, a });
+        g.text(k, P.x + 12, y + 20, { size: 10.5, color: "ink-3", a });
+        g.text(v, P.x + 12, y + 39, { size: 12.5, font: "ui", weight: 600, a, maxW: w - 24 });
+        if (i < 3) g.arrow(P.x + 40, y + h + 2, P.x + 40, y + h + gap - 2, { color: "ink-3", lw: 1.3, head: 7, a });
+      });
+      g.curve([P.x + w + 4, P.y + 3 * (h + gap) + h / 2], [P.x + w + 40, P.y + 1.75 * (h + gap)], [P.x + w + 6, P.y + h / 2], { color: "tel", lw: 1.2, dash: [4, 4], head: 7, a });
+      const sy = P.y + 4 * (h + gap) + 14;
+      g.text('Dashed: "Open traces" links back from the application table.', P.x, sy, { size: 11, color: "tel", a, maxW: P.w });
+      g.text("Today for Commerce Orders: 3 runs · 10.4k tokens · $0.012", P.x, sy + 22, { size: 11.5, color: "ink-2", a, maxW: P.w });
+    }
+  }
+
+  const MODELS = [
+    ["Risk Reasoner 3", 1.84, 8, "manual_review · 0.91", "$0.0041", ""],
+    ["General Reasoner", 1.21, 7, "manual_review · 0.87", "$0.0052", "missed T07 contract"],
+    ["Local Llama", 0.92, 6, "approve · 0.64", "$0.0009", "wrong decision"],
+  ];
+  function pQuality(g, P, a, tall) {
+    g.rect(P.x, P.y, P.w, 40, { fill: g.rgba("ok", 0.08), stroke: g.rgba("ok", 0.6), lw: 1.2, r: 8, a });
+    g.text("Same configuration · Evals 8 of 8 on cfg-7f3a9c · counts toward release gate 2", P.x + 14, P.y + 25, { size: tall ? 10.5 : 11.5, color: "ok", weight: 600, a, maxW: P.w - 28 });
+    label(g, "ALLSPARK · SAME ORDER ORD-10482, THREE MODELS", P.x, P.y + 70, a);
+    const nameW = tall ? 0 : 150, gap = 16;
+    const latX0 = P.x + nameW, latW = tall ? P.w * 0.5 : (P.w - nameW) * 0.42, evX0 = latX0 + latW + gap + 40, dot = tall ? 13 : 15;
+    const rh = tall ? 74 : 62, y0 = P.y + 100;
+    g.text("latency", latX0, y0 - 4, { size: 10, color: "ink-3", a });
+    g.text("evals passed", evX0, y0 - 4, { size: 10, color: "ink-3", a });
+    MODELS.forEach(([nm, s, ev, dec, cost, note], i) => {
+      const y = y0 + 12 + i * rh, wrong = i === 2;
+      let by = y + 8;
+      if (tall) { g.text(nm, P.x, y + 4, { size: 12.5, font: "ui", weight: 600, a }); g.text(cost, P.x + P.w, y + 4, { size: 11, color: "tel", align: "right", a }); by = y + 20; }
+      else { g.text(nm, P.x, by + 5, { size: 12.5, font: "ui", weight: 600, a }); }
+      const lw = latW * (s / 2);
+      g.rect(latX0, by - 8, lw, 16, { fill: "tel", r: 3, a: a * (i === 0 ? 0.85 : 0.45) });
+      g.text(s.toFixed(2) + " s", latX0 + lw + 6, by + 4.5, { size: 11.5, weight: 600, color: "ink", a });
+      for (let k = 0; k < 8; k++) g.circle(evX0 + k * dot + dot / 2, by, dot * 0.36, { fill: k < ev ? "ok" : "bad", a: a * (k < ev ? 0.85 : 0.9) });
+      const nx = evX0 + 8 * dot + 8;
+      g.text(ev + "/8", nx, by + 4.5, { size: 11.5, weight: 600, color: ev === 8 ? "ok" : "bad", a });
+      const sub = dec + (note ? " · " + note : "") + (tall ? "" : " · " + cost);
+      g.text(sub, tall ? P.x : latX0, by + 24, { size: 10.5, color: wrong ? "bad" : "ink-2", weight: wrong ? 600 : 500, a, maxW: P.w - (tall ? 0 : nameW) });
+    });
+    const fy = y0 + 12 + 3 * rh + 8;
+    if (fy < P.y + P.h - 4) g.text("Fastest and cheapest, and the wrong call.", P.x, fy, { size: 12.5, font: "ui", weight: 600, color: "bad", a });
+  }
+
+  Field.scene("run", (g, s) => {
+    const { W, H, narrow } = g, b = s.b, t = s.t, tall = H > W * 0.95;
+    const pad = 24, top = Math.max(50, g.safeTop + 14);
+    g.text("run-0003", pad, top + 18, { size: 30, font: "display", weight: 800 });
+    g.text("fraud-review agent · completed 10:38 · cfg-7f3a9c", pad, top + 40, { size: 11.5, color: "ink-2", maxW: W - 2 * pad });
+    const sw = STATS.map(([v, k]) => Math.max(g.tw(v, 22, "display", 800), g.tw(k, 10.5)) + 22);
+    const sy = tall ? top + 76 : top + 12;
+    let sx = tall ? pad : W - pad - sw.reduce((x, y) => x + y, 0) + 22;
+    STATS.forEach(([v, k, c], i) => { g.text(v, sx, sy, { size: 22, font: "display", weight: 800, color: c }); g.text(k, sx, sy + 16, { size: 10.5, color: "ink-3" }); sx += sw[i]; });
+    // waterfall
+    const wy0 = tall ? top + 116 : top + 74, rh = tall ? 26 : 30;
+    const lc = narrow ? 172 : 214, dc = 66, tx0 = pad + lc, tx1 = W - pad - dc;
+    const X = (ms) => lerp(tx0, tx1, ms / 1840);
+    [0, 460, 920, 1380, 1840].forEach((v) => { g.text(v === 0 ? "0 ms" : fmt(v), X(v), wy0, { size: 10.5, color: "ink-3", align: v === 0 ? "left" : v === 1840 ? "right" : "center" }); g.line(X(v), wy0 + 6, X(v), wy0 + 10 + 6 * rh, { color: "grid", lw: 1 }); });
+    const sel = s.at(2);
+    let acc = 0;
+    const grow = clamp((b - 0.2) / 0.6) * 6;
+    SPANS.forEach((sp, i) => {
+      const y = wy0 + 10 + i * rh, cy = y + rh / 2;
+      if (i === 3 && sel > 0.01) g.rect(pad - 8, y + 1, W - 2 * pad + 16, rh - 2, { fill: g.rgba("tel", 0.09), r: 6, a: sel });
+      g.circle(pad + 4, cy, 3.6, { fill: sp.c });
+      g.text(sp.n, pad + 14, cy + 4.5, { size: narrow ? 12 : 12.5, font: "ui", weight: i === 3 ? 600 : 500, maxW: lc - 22 });
+      const p = clamp(grow - i);
+      if (p > 0) g.rect(X(acc), y + rh * 0.26, Math.max(3, (X(acc + sp.d) - X(acc)) * p), rh * 0.48, { fill: sp.c, r: 4, a: 0.85 });
+      g.text(fmt(sp.d) + " ms", W - pad, cy + 4.5, { size: 11.5, weight: i === 3 ? 600 : 500, color: "ink", align: "right", a: ramp(p, 0.6, 0.3) });
+      acc += sp.d;
+    });
+    const wyEnd = wy0 + 10 + 6 * rh;
+    g.dim(X(420), X(1700), wyEnd + 18, "420 → 1,700 ms", { size: 11, color: "exe", a: s.at(1) });
+    // lower panel
+    const P = { x: pad, y: wyEnd + 44, w: W - 2 * pad }; P.h = H - P.y - 16;
+    const al = (k) => (k === 0 ? 1 : s.swapIn(k)) * (k === 4 ? 1 : s.swapOut(k + 1));
+    const A = [0, 1, 2, 3, 4].map(al);
+    if (A[0] > 0.01) pIO(g, P, A[0], tall);
+    if (A[1] > 0.01) pSplit(g, P, A[1]);
+    if (A[2] > 0.01) pTokens(g, P, A[2], tall);
+    if (A[3] > 0.01) pCharge(g, P, A[3], tall, t);
+    if (A[4] > 0.01) pQuality(g, P, A[4], tall);
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- pays: who pays ---------------- */
+  const CAT = [["Inference", 2540, 1], ["Evaluation", 700, 0.5], ["Infrastructure", 1100, 0]];
+  const catFill = (g, k, a) => (k === 2 ? g.rgba("ink-3", 0.55 * a) : g.rgba("tel", (k === 0 ? 0.85 : 0.42) * a));
+  const APPS = [["fraud-review-agent", [1020, 260, 200]], ["knowledge-copilot", [810, 150, 160]], ["developer-assistant", [640, 110, 190]], ["Shared and other", [70, 180, 550]]];
+
+  function pTeams(g, P, a, narrow) {
+    label(g, "SPEND BY TEAM · 30 DAYS", P.x, P.y + 16, a);
+    const T = [["Commerce Platform", 1820], ["Risk Engineering", 1160], ["Employee Experience", 790], ["Developer Experience", 570]];
+    const lc = narrow ? 156 : 200, bx0 = P.x + lc, bx1 = P.x + P.w - 70, sx = (v) => lerp(bx0, bx1, v / 2000), rh = clamp((P.h - 230) / 4, 50, 76);
+    T.forEach(([nm, v], i) => {
+      const y = P.y + 54 + i * rh;
+      g.text(nm, P.x, y + 5, { size: 13, font: "ui", weight: 600, a, maxW: lc - 12 });
+      g.rect(bx0, y - 10, sx(v) - bx0, 20, { fill: "tel", r: 4, a: a * 0.8 });
+      g.text("$" + fmt(v), P.x + P.w, y + 5, { size: 13, weight: 600, align: "right", a });
+    });
+    const ty = P.y + 54 + 4 * rh + 20;
+    g.line(P.x, ty - 18, P.x + P.w, ty - 18, { color: "hair", lw: 1, a });
+    label(g, "THE SAME $4,340 BY RESOURCE", P.x, ty + 4, a);
+    let acc = 0; const tx = (v) => lerp(P.x, P.x + P.w, v / 4340);
+    CAT.forEach(([nm, v], k) => {
+      g.rect(tx(acc) + 1, ty + 18, tx(acc + v) - tx(acc) - 2, 24, { fill: catFill(g, k, 1), r: 4, a });
+      const lbl = nm + " $" + fmt(v) + " · " + Math.round((100 * v) / 4340) + "%";
+      const mid = (tx(acc) + tx(acc + v)) / 2, fits = g.tw(lbl, 11) < tx(acc + v) - tx(acc) - 8;
+      if (fits) g.text(lbl, mid, ty + 62, { size: 11, color: "ink-2", align: "center", a });
+      else { g.text(nm, mid, ty + 62, { size: 10.5, color: "ink-2", align: "center", a }); g.text("$" + fmt(v) + " · " + Math.round((100 * v) / 4340) + "%", mid, ty + 77, { size: 10.5, color: "ink-2", align: "center", a }); }
+      acc += v;
+    });
+  }
+
+  function ribbon(g, x0, y0a, y0b, x1, y1a, y1b, fill) {
+    const c = g.ctx, xm = (x0 + x1) / 2;
+    c.beginPath(); c.moveTo(x0, y0a); c.bezierCurveTo(xm, y0a, xm, y1a, x1, y1a); c.lineTo(x1, y1b); c.bezierCurveTo(xm, y1b, xm, y0b, x0, y0b); c.closePath();
+    c.fillStyle = fill; c.fill();
+  }
+  function pApps(g, P, a, narrow, b) {
+    label(g, "BY APPLICATION · 30 DAYS", P.x, P.y + 16, a);
+    const lL = narrow ? 112 : 150, lR = narrow ? 150 : 210, nw = 12;
+    const xL = P.x + lL, xR = P.x + P.w - lR - nw;
+    const gap = 14, y0 = P.y + 40, avail = P.h - 60 - gap * 3, k = avail / 4340;
+    const L = []; let y = y0 + (gap * 3 - gap * 2) / 2;
+    CAT.forEach(([nm, v], i) => { L.push({ y, h: v * k }); y += v * k + gap; });
+    const Rr = []; y = y0;
+    APPS.forEach(([nm, vs]) => { const tot = vs[0] + vs[1] + vs[2]; Rr.push({ y, h: tot * k, tot }); y += tot * k + gap; });
+    const offL = L.map((n) => n.y), offR = Rr.map((n) => n.y);
+    const ra = a * ramp(b, 0.35, 0.5);
+    APPS.forEach(([nm, vs], j) => vs.forEach((v, c) => {
+      const h = v * k;
+      ribbon(g, xL + nw, offL[c], offL[c] + h, xR, offR[j], offR[j] + h, catFill(g, c, 0.55 * ra));
+      offL[c] += h; offR[j] += h;
+    }));
+    CAT.forEach(([nm, v], i) => {
+      g.rect(xL, L[i].y, nw, L[i].h, { fill: catFill(g, i, 1), r: 2, a });
+      g.text(nm, xL - 10, L[i].y + L[i].h / 2 - 2, { size: 12, font: "ui", weight: 600, align: "right", a });
+      g.text("$" + fmt(v), xL - 10, L[i].y + L[i].h / 2 + 14, { size: 11, color: "ink-2", align: "right", a });
+    });
+    APPS.forEach(([nm, vs], j) => {
+      g.rect(xR, Rr[j].y, nw, Rr[j].h, { fill: j === 3 ? "ink-3" : "tel", r: 2, a: a * (j === 3 ? 0.6 : 0.9) });
+      g.text(nm, xR + nw + 10, Rr[j].y + Rr[j].h / 2 - 2, { size: 12, font: "ui", weight: 600, a, maxW: lR - 14 });
+      g.text("$" + fmt(Rr[j].tot), xR + nw + 10, Rr[j].y + Rr[j].h / 2 + 14, { size: 11, color: "ink-2", a });
+    });
+  }
+
+  function pInfra(g, P, a, narrow) {
+    label(g, "INFRASTRUCTURE IN DEV · 30 DAYS · $1,100", P.x, P.y + 16, a);
+    const B = [["EKS nodes", "nsx-dev-use1", 610], ["Workspaces", "", 240], ["MSK", "msk-dev-use1", 150], ["Other", "", 100]];
+    const lc = narrow ? 170 : 220, bx0 = P.x + lc, bx1 = P.x + P.w - 60, sx = (v) => lerp(bx0, bx1, v / 700), rh = clamp((P.h - 290) / 4, 44, 64), wr = rh > 50 ? 32 : 28;
+    B.forEach(([nm, sub, v], i) => {
+      const y = P.y + 50 + i * rh;
+      g.text(nm, P.x, y + 5, { size: 13, font: "ui", weight: 600, a });
+      if (sub) g.text(sub, P.x + g.tw(nm, 13, "ui", 600) + 8, y + 5, { size: 11, color: "ink-3", a });
+      g.rect(bx0, y - 9, sx(v) - bx0, 18, { fill: "exe", r: 4, a: a * (i === 1 ? 0.85 : 0.5) });
+      g.text("$" + v, P.x + P.w, y + 5, { size: 12.5, weight: 600, align: "right", a });
+    });
+    const wy = P.y + 50 + 4 * rh + 14;
+    g.line(P.x, wy - 18, P.x + P.w, wy - 18, { color: "hair", lw: 1, a });
+    label(g, "YOUR WORKSPACES TODAY · COMPUTE", P.x, wy + 4, a);
+    const WS = [["ws-vt-01", "feature/fraud-review", "Running", "$2.10"], ["ws-vt-02", "perf/p99-cache", "Sleeping", "$0.96"], ["ws-vt-03", "feat/env-terminals", "Running", "billed to Wheeljack"], ["ws-vt-04", "spike/adaptive-cards", "Stopped · deleted in 22 h", "$0.78"]];
+    WS.forEach(([id, br, st, v], i) => {
+      const y = wy + 30 + i * wr;
+      const c = st === "Running" ? "exe" : "ink-3";
+      g.circle(P.x + 5, y - 4, 4, { fill: st === "Running" ? "exe" : "card", stroke: c, lw: 1.4, a });
+      g.text(id, P.x + 18, y, { size: 12, weight: 600, a });
+      if (!narrow) g.text(br, P.x + 110, y, { size: 11, color: "ink-3", a });
+      g.text(st, P.x + (narrow ? 100 : 300), y, { size: 11.5, color: c, a, maxW: narrow ? 190 : 230 });
+      g.text(v, P.x + P.w, y, { size: 12, weight: 600, color: v.startsWith("$") ? "ink" : "exp", align: "right", a });
+    });
+    const fy = wy + 30 + 4 * wr + 6;
+    g.line(P.x, fy - 12, P.x + P.w, fy - 12, { color: "hair", lw: 1, a });
+    g.text("$3.84 today", P.x + P.w, fy + 6, { size: 12.5, weight: 600, color: "tel", align: "right", a });
+    g.text("sleep after 60 min idle", P.x, fy + 6, { size: 11, color: "ink-2", a });
+  }
+
+  function pBudget(g, P, a, narrow) {
+    label(g, "DEV BUDGET", P.x, P.y + 16, a);
+    g.text("72.3%", P.x, P.y + 58, { size: 40, font: "display", weight: 800, color: "tel", a });
+    g.text("of $6,000 used", P.x + g.tw("72.3%", 40, "display", 800) + 12, P.y + 56, { size: 12.5, color: "ink-2", a });
+    const my = P.y + 98, mx0 = P.x, mx1 = P.x + P.w - 4, mx = (f) => lerp(mx0, mx1, f);
+    g.rect(mx0, my, mx1 - mx0, 14, { fill: "grid", r: 7, a });
+    g.rect(mx0, my, mx(0.723) - mx0, 14, { fill: "tel", r: 7, a: a * 0.85 });
+    g.line(mx(0.8), my - 10, mx(0.8), my + 22, { color: "ctl", lw: 1.6, a });
+    g.text("Sentinel alerts · 80%", mx(0.8), my - 15, { size: 11, color: "ctl", weight: 600, align: narrow ? "right" : "center", a });
+    g.line(mx(1), my - 4, mx(1), my + 30, { color: "ctl", lw: 1.6, a });
+    g.text("pauses batch jobs · 100%", mx(1), my + 44, { size: 11, color: "ctl", weight: 600, align: "right", a });
+    g.text("Cost per completed task  $0.021 · ↓ 9% this month", P.x, my + 44, { size: 11, color: "ink-2", a, maxW: narrow ? P.w * 0.5 : P.w * 0.55 });
+    const sy0 = my + 86;
+    g.line(P.x, sy0 - 22, P.x + P.w, sy0 - 22, { color: "hair", lw: 1, a });
+    label(g, "POSSIBLE SAVINGS · $1,180 · SUGGESTED FROM 30 DAYS OF TRACES", P.x, sy0, a);
+    const S = [["Route simple checks to a smaller model", "38% of fraud-review calls score below 0.2. A small model agrees 99.1% of the time.", 620], ["Cache context per permission scope", "Graph context repeats in 61% of runs within an hour.", 340], ["Sleep idle workspaces and batch evals", "Idle workspaces still bill their nodes. Non-urgent suites can use batch pricing overnight.", 220]];
+    const rh = clamp((P.y + P.h - sy0 - 40) / 3, narrow ? 92 : 78, 120);
+    S.forEach(([tt, why, v], i) => {
+      const y = sy0 + 30 + i * rh;
+      g.text(tt, P.x, y, { size: 13, font: "ui", weight: 600, a, maxW: P.w - 70 });
+      g.text("−$" + v, P.x + P.w, y, { size: 13, weight: 600, color: "tel", align: "right", a });
+      g.rect(P.x, y + 9, (P.w * 0.5) * (v / 620), 5, { fill: "tel", r: 2.5, a: a * 0.5 });
+      g.wrap(why, P.x, y + 32, P.w - 70, { size: 11, color: "ink-2", lh: 15, a, maxLines: 2 });
+    });
+  }
+
+  function moon(g, x, y, r, a) { g.circle(x, y, r, { fill: "ink", a }); g.circle(x + r * 0.45, y - r * 0.3, r * 0.85, { fill: "sheet", a }); }
+  function pRecon(g, P, a, narrow, t) {
+    label(g, "EACH NIGHT · RECONCILIATION", P.x, P.y + 16, a);
+    const tall = narrow;
+    const bw = tall ? (P.w - 16) / 2 : P.w * 0.34, bh = tall ? 120 : clamp((P.h - 190) / 2, 112, 150);
+    const A1 = { x: P.x, y: P.y + 40, w: bw, h: bh };
+    const A2 = tall ? { x: P.x + bw + 16, y: P.y + 40, w: bw, h: bh } : { x: P.x, y: P.y + 40 + bh + 22, w: bw, h: bh };
+    const box = (Bx, c, title, lines) => {
+      g.box(Bx.x, Bx.y, Bx.w, Bx.h, { color: c, wash: 0.06, a });
+      g.text(title, Bx.x + 14, Bx.y + 26, { size: 13.5, font: "ui", weight: 600, a, maxW: Bx.w - 28 });
+      let yy = Bx.y + 48; lines.forEach((l) => { yy = g.wrap(l, Bx.x + 14, yy, Bx.w - 28, { size: 11, color: "ink-2", lh: 15, a, maxLines: 2 }); });
+    };
+    box(A1, "tel", "Trace metadata", ["AI runs, evaluations, workspaces", "tagged with team, application, env=dev", "estimated as the work happens"]);
+    box(A2, "ink-3", "Cloud bill", ["AWS account northstar-dev", "what was charged, arriving later"]);
+    const M = tall ? { x: P.x + P.w / 2, y: A1.y + bh + 70 } : { x: P.x + P.w * 0.52, y: A1.y + bh + 11 };
+    const r = 26;
+    g.circle(M.x, M.y, r + 10, { fill: "card", stroke: "hair", lw: 1.2, a });
+    moon(g, M.x - 3, M.y + 2, 13, a);
+    g.text("each night", M.x, M.y + r + 28, { size: 11.5, color: "ink-2", align: "center", weight: 600, a });
+    const feeds = [[A1.x + A1.w / 2, A1.y + A1.h, A1.x + A1.w, A1.y + A1.h / 2], [A2.x + A2.w / 2, A2.y + A2.h, A2.x + A2.w, A2.y + A2.h / 2]];
+    feeds.forEach(([xa, ya, xb, yb], i) => {
+      const sx = tall ? xa : xb, sy = tall ? ya + 2 : yb;
+      const ex = M.x + (tall ? (i === 0 ? -r : r) : -r - 12), ey = M.y + (tall ? -r - 8 : (i === 0 ? -10 : 10));
+      g.arrow(sx, sy, ex, ey, { color: i === 0 ? "tel" : "ink-3", lw: 1.5, head: 8, a });
+      along(g, sx, sy, ex, ey, t, 0.4, i === 0 ? "tel" : "ink-3", a, 2);
+    });
+    const Cb = tall ? { x: P.x, y: M.y + r + 50, w: P.w, h: 76 } : { x: P.x + P.w * 0.66, y: M.y - 56, w: P.w * 0.34, h: 112 };
+    g.arrow(tall ? M.x : M.x + r + 12, tall ? M.y + r + 36 : M.y, tall ? M.x : Cb.x - 6, tall ? Cb.y - 6 : Cb.y + Cb.h / 2, { color: "tel", lw: 1.6, head: 8, a });
+    g.box(Cb.x, Cb.y, Cb.w, Cb.h, { color: "tel", wash: 0.1, a });
+    g.text("Cost screen", Cb.x + 14, Cb.y + 26, { size: 13.5, font: "ui", weight: 600, a });
+    g.text("team · application · resource", Cb.x + 14, Cb.y + 48, { size: 11, color: "ink-2", a, maxW: Cb.w - 28 });
+    if (!tall) g.text("$4,340 · last 30 days", Cb.x + 14, Cb.y + 70, { size: 11, color: "tel", weight: 600, a });
+    const py = Math.max(tall ? Cb.y + Cb.h + 20 : A2.y + A2.h + 26, P.y + P.h - 74), ph = Math.min(74, P.y + P.h - py);
+    if (ph > 40) {
+      g.rect(P.x, py, P.w, ph, { fill: "none", stroke: "ink-3", lw: 1.2, dash: [5, 4], r: 8, a });
+      g.wrap("Production proposal (handbook 14.10): finance and provider billing remain authoritative for reconciled cost. The Atlas prototype does not reconcile anything (9.4).", P.x + 14, py + 22, P.w - 28, { size: 11, color: "ink-2", lh: 15, a, maxLines: 3 });
+    }
+  }
+
+  Field.scene("pays", (g, s) => {
+    const { W, H, narrow } = g, b = s.b, t = s.t;
+    const pad = 24, top = Math.max(50, g.safeTop + 14);
+    g.text("Cost · Dev", pad, top + 4, { size: 14, font: "ui", weight: 600 });
+    g.chip(pad + g.tw("Cost · Dev", 14, "ui", 600) + 12, top, "illustrative figures", "ink-3", { size: 10 });
+    g.text("$4,340", W - pad - g.tw("last 30 days", 10.5) - 10, top + 8, { size: 26, font: "display", weight: 800, align: "right" });
+    g.text("last 30 days", W - pad, top + 6, { size: 10.5, color: "ink-3", align: "right" });
+    // lens tabs
+    const tabs = ["Team", "Application", "Resource"], sel = Math.min(2, Math.round(b)), ta = 1 - s.at(3) * 0.6;
+    let tx = pad;
+    tabs.forEach((tb, i) => {
+      const w = g.tw(tb, 11.5, "ui", 600) + 22;
+      g.rect(tx, top + 22, w, 24, { fill: i === sel && b < 2.6 ? "ink" : "card", stroke: "hair", lw: 1, r: 7, a: ta });
+      g.text(tb, tx + w / 2, top + 38, { size: 11.5, font: "ui", weight: 600, color: i === sel && b < 2.6 ? "#FFFFFF" : "ink-2", align: "center", a: ta });
+      tx += w + 6;
+    });
+    const P = { x: pad, y: top + 70, w: W - 2 * pad }; P.h = H - P.y - 16;
+    const al = (k) => (k === 0 ? 1 : s.swapIn(k)) * (k === 4 ? 1 : s.swapOut(k + 1));
+    const A = [0, 1, 2, 3, 4].map(al);
+    if (A[0] > 0.01) pTeams(g, P, A[0], narrow);
+    if (A[1] > 0.01) pApps(g, P, A[1], narrow, b);
+    if (A[2] > 0.01) pInfra(g, P, A[2], narrow);
+    if (A[3] > 0.01) pBudget(g, P, A[3], narrow);
+    if (A[4] > 0.01) pRecon(g, P, A[4], narrow, t);
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ---------------- lab: the prototype's waterfall ---------------- */
+  const LAB_SPANS = [["Authorize context", 60, "ctl"], ["Retrieve enterprise graph", 140, "kno"], ["Invoke fraud-risk-api", 220, "exe"], ["Model reasoning", null, "exe"], ["Policy & schema validation", 90, "ctl"], ["Return decision", 50, "exe"]];
+  const DESC = [["Enterprise Fast", 780], ["Mistral · Private", 840], ["Llama · Private", 920], ["GPT · Enterprise", 1120], ["Gemini · Pro", 1350], ["Claude · Enterprise", 1480], ["Claude · Bedrock", 1540], ["Risk Reasoner 3", 1840], ["Open Reasoner 70B", 2460]];
+  const wf = (L) => { const m = Math.max(100, L - 560), tot = 560 + m; return { m, tot, over: Math.max(0, tot - L), floor: L - 560 < 100 }; };
+
+  Field.scene("wflab", (g, s) => {
+    const st = s.state; if (st.L === undefined) return;
+    const { W, H, narrow } = g, L = st.L, proto = !!st.proto, R = wf(L);
+    const pad = 24, top = Math.max(52, g.safeTop + 16);
+    g.text("Waterfall for a run with L = " + fmt(L) + " ms", pad, top, { size: 14, font: "ui", weight: 600, maxW: W - 2 * pad - 130 });
+    g.chip(W - pad, top - 4, proto ? "ruler 0 … L" : "ruler 0 … total", proto ? "ink-3" : "exp", { size: 10.5, align: "right" });
+    const end = proto ? L : R.tot;
+    const lc = narrow ? 0 : 220, tx0 = pad + lc, avail = W - pad - tx0, tx1 = tx0 + avail * 0.72, ovEnd = W - pad;
+    const X = (ms) => tx0 + (ms / end) * (tx1 - tx0);
+    const ry = top + 46, rh = narrow ? 50 : clamp((H - ry - 290) / 6, 38, 60), rowsEnd = ry + 6 * rh;
+    // ruler
+    [0, end / 2, end].forEach((v, i) => {
+      g.text(i === 0 ? "0" : fmt(v), X(v), ry - 8, { size: 11, color: "ink-2", align: i === 0 ? "left" : i === 2 ? "right" : "center", weight: i === 2 ? 600 : 500 });
+      g.line(X(v), ry - 2, X(v), rowsEnd, { color: i === 2 ? "ink-2" : "grid", lw: i === 2 ? 1.3 : 1, dash: i === 2 ? [4, 3] : null });
+    });
+    g.line(tx0, ry - 2, tx1, ry - 2, { color: "ink-3", lw: 1.2 });
+    // overflow zone
+    if (R.over > 0 && proto) {
+      g.hatch(tx1 + 1, ry, ovEnd - tx1 - 1, rowsEnd - ry, { color: "bad", a: 0.7, r: 4 });
+      g.text("past the ruler · +" + fmt(R.over) + " ms", ovEnd, ry - 8, { size: 11, color: "bad", weight: 600, align: "right" });
+    } else if (R.over > 0 && !proto) {
+      g.line(X(L), ry - 2, X(L), rowsEnd, { color: "bad", lw: 1.4, dash: [4, 3] });
+      g.text("recorded L", X(L), rowsEnd + 16, { size: 11, color: "bad", weight: 600, align: "center" });
+    }
+    let acc = 0;
+    LAB_SPANS.forEach(([nm, d0, c], i) => {
+      const d = d0 === null ? R.m : d0, y = ry + i * rh, isM = d0 === null;
+      const barY = narrow ? y + 24 : y + rh * 0.25, barH = narrow ? 16 : rh * 0.5;
+      const lx = narrow ? pad : pad, ly = narrow ? y + 16 : y + rh / 2 + 4.5;
+      g.text(nm, lx, ly, { size: 12, font: "ui", weight: isM ? 600 : 500, maxW: narrow ? W * 0.6 : lc - 80 });
+      const dTxt = fmt(d) + " ms" + (isM && R.floor ? " (floor)" : "");
+      g.text(dTxt, narrow ? W - pad : tx0 - 12, ly, { size: 11.5, weight: 600, color: isM && R.floor ? "bad" : "ink", align: "right" });
+      const xa = X(acc), xb = X(acc + d);
+      if (xa < ovEnd) {
+        const xe = Math.min(xb, ovEnd);
+        g.rect(xa, barY, Math.max(2, xe - xa), barH, { fill: c, r: 3, a: 0.85 });
+        if (xb > ovEnd) g.text("→", ovEnd - 2, barY + barH - 3, { size: 13, color: "bad", weight: 700, align: "right" });
+      } else {
+        g.text("off the board →", ovEnd - 2, barY + barH - 3, { size: 10.5, color: "bad", weight: 600, align: "right" });
+      }
+      acc += d;
+    });
+    // formula lines
+    const fy = rowsEnd + (R.over > 0 && !proto ? 44 : 30);
+    g.text("model = max(100, L − 560) = max(100, " + fmtS(L - 560) + ") = " + fmt(R.m) + " ms", pad, fy, { size: 12, color: R.floor ? "bad" : "ink", weight: 600, maxW: W - 2 * pad });
+    g.text("total = 560 + model = " + fmt(R.tot) + " ms" + (R.over > 0 ? "  ·  L = " + fmt(L) + " ms" : "  =  L"), pad, fy + 20, { size: 12, color: R.over > 0 ? "bad" : "ok", maxW: W - 2 * pad });
+    // bar positions as the prototype computes them: left = prior / L, width = d / L
+    const py0 = fy + 56;
+    g.text("BAR POSITIONS · LEFT = PRIOR ÷ L · WIDTH = DURATION ÷ L", pad, py0, { size: 10.5, color: "ink-3", ls: 1, maxW: W - 2 * pad });
+    const cols = narrow ? 1 : 2, colW = (W - 2 * pad - (cols - 1) * 28) / cols, prh = 20;
+    let pacc = 0;
+    LAB_SPANS.forEach(([nm, d0], i) => {
+      const d = d0 === null ? R.m : d0, lft = (100 * pacc) / L, wid = (100 * d) / L, rgt = lft + wid;
+      const c = narrow ? 0 : Math.floor(i / 3), r = narrow ? i : i % 3, x = pad + c * (colW + 28), y = py0 + 22 + r * prh;
+      const pct = (v) => (Math.round(v * 10) / 10).toFixed(1) + "%";
+      g.text(nm, x, y, { size: 11, color: "ink-2", maxW: colW * 0.46 });
+      g.text(pct(lft) + " + " + pct(wid), x + colW * 0.78, y, { size: 11, color: "ink-2", align: "right" });
+      g.text("→ " + pct(rgt), x + colW, y, { size: 11, weight: 600, color: rgt > 100.05 ? "bad" : "ink", align: "right" });
+      pacc += d;
+    });
+    // descriptor strip
+    const sy = Math.max(py0 + 22 + (narrow ? 6 : 3) * prh + 64, H - 64), sx0 = pad + 6, sx1 = W - pad - 6, SX = (v) => lerp(sx0, sx1, (v - 400) / 2600);
+    g.text("MODEL DESCRIPTORS · L FROM 400 TO 3,000 MS", pad, sy - 46, { size: 10.5, color: "ink-3", ls: 1 });
+    g.hatch(SX(400), sy - 12, SX(660) - SX(400), 24, { color: "bad", a: 0.6, r: 3 });
+    g.line(sx0, sy, sx1, sy, { color: "ink-3", lw: 1.2 });
+    g.line(SX(660), sy - 16, SX(660), sy + 16, { color: "bad", lw: 1.4 });
+    g.text("660", SX(660), sy + 30, { size: 10.5, color: "bad", weight: 600, align: "center" });
+    g.text("400", sx0, sy + 30, { size: 10.5, color: "ink-3", align: "left" });
+    g.text("3,000", sx1, sy + 30, { size: 10.5, color: "ink-3", align: "right" });
+    DESC.forEach(([nm, v]) => g.circle(SX(v), sy, 4.2, { fill: v === L ? "exp" : "card", stroke: "exe", lw: 1.4 }));
+    g.text("lowest descriptor 780", SX(780) + 8, sy + 30, { size: 10.5, color: "exe", align: "left" });
+    const lxm = SX(L);
+    g.poly([[lxm, sy - 9], [lxm - 6, sy - 19], [lxm + 6, sy - 19]], { fill: "ink", close: true });
+    const ltxt = "L = " + fmt(L);
+    g.text(ltxt, clamp(lxm, sx0 + g.tw(ltxt, 11, "mono", 600) / 2, sx1 - g.tw(ltxt, 11, "mono", 600) / 2), sy - 24, { size: 11, weight: 600, align: "center" });
+  }, {
+    controls: "wf-ctl", anim: false, zoom: 1.3, minW: 620, maxW: 1000,
+    format: (id, v) => (id === "L" ? fmt(v) + " ms" : ""),
+    onAction: (name) => {
+      const r = document.getElementById("L"), d = document.getElementById("desc");
+      if (name === "edge") { r.value = 600; d.value = ""; }
+      if (name === "v3") { r.value = 1840; d.value = "1840"; }
+    },
+    onState: (st) => {
+      const R = wf(st.L);
+      document.getElementById("o-total").textContent = fmt(R.tot) + " ms";
+      document.getElementById("o-model").textContent = fmt(R.m) + " ms";
+      document.getElementById("o-over").textContent = R.over > 0 ? "+" + fmt(R.over) + " ms" : "0 ms";
+      document.getElementById("o-share").textContent = Math.round((100 * R.m) / R.tot) + "%";
+      const why = R.over > 0
+        ? `L − 560 = ${fmtS(st.L - 560)}, so the model span floors at 100 ms. The spans add up to ${fmt(R.tot)} ms, ${fmt(R.over)} ms more than the recorded ${fmt(st.L)} ms, and the last bars sit past the ruler.`
+        : `The five fixed spans take 560 ms and the model span gets the remaining ${fmt(R.m)} ms, so the bars end exactly at the ruler's ${fmt(st.L)} ms.`;
+      document.getElementById("wf-why").textContent = why;
+    },
+  });
+  (function () {
+    const r = document.getElementById("L"), d = document.getElementById("desc");
+    const fromDesc = () => { if (d.value) r.value = d.value; };
+    d.addEventListener("input", fromDesc); d.addEventListener("change", fromDesc);
+    r.addEventListener("input", () => { const m = DESC.find(([, v]) => v === +r.value) || (+r.value === 1500 ? ["", 1500] : null); d.value = m ? String(m[1]) : ""; });
+  })();
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3", who: ["this design"], what: "Optimus Logger shows a service's metrics, logs and traces in Dev, with deploys marked on the latency line and a written note on what changed. Traces gives each AI run a six-span waterfall with tokens in and out, an estimated cost and the application it is charged to. Cost attributes every run, evaluation and workspace in Dev by team, application and resource and reconciles the figures with the cloud bill each night.", vs: "<b>The baseline for this chapter.</b> Speed and cost live on the trace. Quality lives in Evals and meets the trace on the configuration fingerprint <code>cfg-7f3a9c</code>." },
+      { name: "OpenTelemetry GenAI conventions", who: ["OpenTelemetry", "open specification"], what: "Defines spans for GenAI clients: inference (for example <code>chat</code>), embeddings, retrieval, <code>execute_tool</code> and <code>invoke_agent</code>. Token counts go in <code>gen_ai.usage.input_tokens</code> and <code>gen_ai.usage.output_tokens</code>. Instructions, inputs and outputs are not captured by default; capture is opt-in. The documents carry Development status.", vs: "A shared vocabulary rather than a product. Vector's six spans would map onto retrieval, <code>execute_tool</code> and inference spans. The span definitions count tokens and say nothing about price, so a Cost screen like Vector's would sit in whatever backend receives them.", src: [["GenAI spans", "https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-spans.md"], ["Client inference", "https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/client-inference.md"]] },
+      { name: "Datadog LLM Observability", who: ["Datadog", "now Agent Observability"], what: "Traces each request as spans for inferences, workflows and agent steps; the Python SDK captures latency, errors and token usage. Each LLM span is priced from its token counts and the provider's public rates, or from cost values you send, and a trace shows the summed estimate. Cost views group spend by application, provider, model and tags. Evaluations include managed evaluators, custom LLM-as-a-judge criteria and results sent from outside.", vs: "Close to the Traces screen, priced from public rates. Vector's design adds a nightly reconciliation with the cloud bill, and charges each run to a team and an application within one environment.", src: [["Agent Observability", "https://docs.datadoghq.com/llm_observability/"], ["Cost", "https://docs.datadoghq.com/llm_observability/monitoring/cost/"], ["Evaluations", "https://docs.datadoghq.com/llm_observability/evaluations/"]] },
+      { name: "Langfuse", who: ["Langfuse", "open source"], what: "Records usage and cost on each generation or embedding observation. When cost is not sent, Langfuse multiplies usage by prices from a model definition; sent values take priority. Dashboards and a metrics API break cost down by model, tags and users. Scores from LLM-as-a-judge, annotation queues, user feedback or the API record evaluation results.", vs: "The same estimate-per-call idea as Vector's $0.0041. Vector groups spend by team and application, keeps quality in a separate Evals screen bound to a configuration, and plans to reconcile with the bill.", src: [["Token and cost tracking", "https://langfuse.com/docs/observability/features/token-and-cost-tracking"], ["Evaluation overview", "https://langfuse.com/docs/evaluation/overview"]] },
+      { name: "OpenCost", who: ["open source", "Kubernetes"], what: "A vendor-neutral project for measuring and allocating cloud infrastructure and container costs. Its specification charges a workload the larger of requested and used resources, counts the unallocated rest of the cluster as idle cost, spreads shared costs evenly, proportionally or by a custom metric, and aggregates by container, pod, namespace, label, cluster and more. Cloud costs can come from the provider's bill.", vs: "Fits the infrastructure slice of Vector's Cost screen, such as the $610 of EKS nodes on nsx-dev-use1. Vector's design attributes AI runs and evaluations from trace metadata, a separate source from cluster allocation.", src: [["Documentation", "https://opencost.io/docs/"], ["Specification", "https://opencost.io/docs/specification"]] },
+      { name: "FOCUS", who: ["FinOps Foundation", "open specification"], what: "An open specification that normalizes billing data across AI, cloud, SaaS, data center and other vendors into one format. Version 1.4 lists columns such as BilledCost, EffectiveCost, ListCost, ConsumedQuantity, ResourceId and Tags, plus allocation columns such as Allocated Method ID and Allocated Resource ID. AWS, Microsoft, Google Cloud and Oracle are among the listed data generators.", vs: "The bill side of Vector's nightly reconciliation. The v3 design does not name a bill format; FOCUS is one candidate for reading the cloud bill in a stable shape.", src: [["FOCUS", "https://focus.finops.org/"], ["Specification 1.4", "https://focus.finops.org/focus-specification/"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · Optimus Logger, Traces and Cost boards; AllSpark, Evals, Datasets, Sentinel, Compute and Releases for cross-references", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · 9.1 Trace history · 9.2 Waterfall construction · 9.3 Cost intelligence · 9.4 Operational and financial evidence", ""],
+      ["Atlas handbook · 6.2 Shared run sequence · model descriptors in the fixture catalog · 13 troubleshooting ($19,230 vs $14,826) · 16.5 open decisions", ""],
+      ["Atlas handbook · 14.2 Planes · 14.6 Storage roles · 14.10 Releases, ownership and operational evidence (all proposed)", ""],
+      ["Vector Sigma Films · film 06 Governed by Default", "https://claude.ai/artifact/W4XMFpXyBPrftXBEah4xzQ"],
+      ["Vector, annotated (v3 explainer film) · chapter 08", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

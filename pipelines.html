@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Builds that explain themselves · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .switch input:disabled { cursor: not-allowed; opacity: 0.8; }
+  .switch.locked { cursor: default; }
+  .lab .readout b.txt { font-size: 1.25rem; line-height: 1.1; }
+  .lab .seg button { white-space: nowrap; }
+  .who-may td:first-child { font-weight: 600; }
+  .who-may .k { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  .who-may .k.read { color: var(--exe); } .who-may .k.prop { color: var(--ink-3); } .who-may .k.write { color: var(--ctl); }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves" aria-current="page">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">08</span> Build and run · Ratchet, the pipeline agent</span>
+        <h1>Builds that <em>explain</em> themselves</h1>
+        <p class="dek">When build #418 failed, Ratchet read the log, the commits and the schema and said why in one sentence. A person approved a one-line fix, and #419 passed all nine stages.</p>
+        <div class="files">
+          <span class="tag t-exe"><i></i>v3 · Pipelines</span>
+          <span class="tag t-exe"><i></i>v3 · Clusters</span>
+          <span class="tag t-ctl"><i></i>v3 · Sentinel · Approvals</span>
+          <span class="tag t-exp"><i></i>v3 · Home · Threads</span>
+          <span class="tag">handbook 1.4 · 14.7 · 15.3</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="An engineering timeline of the nine pipeline stages. Build #418 passes four stages and stops red at contract tests; the last four stages are hatched as skipped. A leader from Ratchet points at console line 2208. A fix approved at 10:48 drops to build #419, which runs green from contract tests to evals.">
+        <span class="ruler">9 stages · #418 then #419</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why418">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The failure</span>
+        <h2>Why did #418 fail?</h2>
+        <p class="lede">Commit a41c9e2 reached Jenkins as a push, and build #418 started at 10:31 in the <code>commerce/dev</code> folder. It stopped at the fifth of nine stages. Scroll to follow Ratchet, the pipeline agent, from the red stage to the green re-run.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Build #418 · 10:31</span><h4>Red at contract tests</h4><p>Checkout, Build, Unit tests and Sonar pass in under three minutes. Contract tests fail after 22 s, with 1 of 43 tests failed and none flaky, so Image, Deploy to Dev, Integration and Evals never run. The stage timings Vector compares with #417, the last green build, moved by 4 s at most.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Console · lines 2201–2217</span><h4>The log names the field</h4><p>The contract test loads <code>OrderConfirmedV2</code> from <code>order-events.yaml</code>, publishes a sample event for ORD-10482 (fraud score 0.91, decision <code>manual_review</code>) and validates it against v2 with <code>additionalProperties: false</code>. Line 2208 says what broke: <code>$.riskDecision: is not defined in the schema</code>.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Ratchet · three signals</span><h4>The answer cites its evidence</h4><p>Venkatesh asks "Why did #418 fail? Is it my change?" Ratchet names commit a41c9e2, which adds riskDecision to the order.confirmed.v2 event, and cites log line 2208, the commit and <code>order-events.yaml:14</code>. It rules out infrastructure because #417 passed on the same agent and image. The panel reads "High confidence · 3 signals agree".</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Proposed fix · 5c0d7e1</span><h4>One line, approved by a person</h4><p>Ratchet proposes deleting the line that puts riskDecision on the event and leaving a comment that the field stays internal, with a v3 topic tracked in COM-2867. The fix is committed to fraud-review as 5c0d7e1, and the approval is stamped 10:48. Ratchet drafted the change; a person approved the write.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">#419 · 10:50 to 11:09</span><h4>Re-run from the stage that failed</h4><p>#419 starts at 10:50 from contract tests on the same agent and cache. All nine stages pass by 11:04, and order-service 2.14.0-rc2 reaches Dev at 11:09 with 2 of 2 pods on nsx-dev-use1. #418 had already marked PR #214 and COM-2841 as failed (console lines 2216–2217), and the COM-2841 thread records every step with its time.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="s418" data-label="The v3 Pipelines screen redrawn: header for build #418, the nine-stage track, a lower-left panel that changes from stats to the contract-test console to the code fix to the #419 result, and Ratchet's panel on the right with the question, its answer with numbered signals, the proposed fix and the approval."><span class="ruler">Jenkins commerce/dev · order-service</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pod">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Same agent, on the cluster</span>
+        <h2>The pod that keeps restarting</h2>
+        <p class="lede">Ratchet also reads the Dev cluster. In namespace commerce on nsx-dev-use1, 13 of 15 pods are ready. The two that are not belong to loyalty-consumer, and the diagnosis leads back to the order event from the first story.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Clusters · nsx-dev-use1 / commerce</span><h4>13 of 15 pods ready</h4><p>Each square is a pod. order-service runs 2.14.0-rc2 from build #419, 2/2 since 11:09. loyalty-consumer, owned by Customer Platform, shows 0/2 ready on version 1.8.2, with 214 and 209 restarts.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Pod loyalty-consumer-7d9f6-kx2lq</span><h4>214 restarts</h4><p>The container starts, waits 60000 ms for topic <code>order.confirmed.v1</code>, logs that the topic is not present and exits with code 1. Kubernetes restarts it with a delay that grows after each crash; CrashLoopBackOff is the status for that cycle. CPU spikes on each restart; memory sits at 180 MB of 512 MB.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Version drift</span><h4>Dev runs 1.8.2, main declares 1.9.0</h4><p><code>values-dev.yaml</code> pins loyalty-consumer to 1.8.2 (updated Oct 2). In Dev its config map <code>loyalty-cfg</code> sets <code>LOYALTY_TOPIC</code> to order.confirmed.v1, where main has order.confirmed.v2. The v1 topic was retired in msk-dev-use1 on Friday.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Ratchet diagnosis · High confidence</span><h4>It explains the Matrix conflict too</h4><p>Ratchet reads the pod logs, the <code>loyalty-cfg</code> config map and the Matrix edge behind COM-2856. Git declares that loyalty-consumer reads order.confirmed.v2; Kafka has seen no offsets from it for 48 h. The pinned 1.8.2 explains both. In Teams, @B gave Arjun Mehta the same answer from the same sources at 14:31.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">R-2207 · waiting</span><h4>The redeploy waits for its owner</h4><p>At 14:33 Venkatesh asked @B to redeploy 1.9.0 in Dev. That became run R-2207. Its bundle, sha256:61d3…ad82, is verified, and the rollout waits for Sam Patel, the Customer Platform owner. Sentinel states the rule: "Agents (@B, Ratchet) deploy to Dev only after a person approves each action."</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="pod" data-label="The v3 Clusters screen redrawn: a deployments list with one square per pod, loyalty-consumer red. A detail panel changes from cluster tiles to the crash loop, to version drift between main and Dev with the retired Kafka topic, to Ratchet's diagnosis with the Matrix conflict, to run R-2207 waiting for Sam Patel."><span class="ruler">Amazon EKS · nsx-dev-use1 / commerce</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="rules">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">Agents propose, people approve</span>
+        <h2>What Ratchet may do on its own</h2>
+        <p class="lede">Both stories use the same split. Ratchet reads freely within the caller's view and drafts changes. Anything that writes to Git, Jenkins or the cluster waits for a named person.</p>
+      </header>
+      <div class="tbl-wrap">
+        <table class="tbl who-may">
+          <thead><tr><th>Action</th><th>Kind</th><th>Who says yes</th><th>In the v3 design</th></tr></thead>
+          <tbody>
+            <tr><td>Read the console, the commits since the last green build and the schema</td><td><span class="k read">read</span></td><td>No approval</td><td>#418: log 2208, commit a41c9e2, <code>order-events.yaml:14</code>, #417 diff</td></tr>
+            <tr><td>Read pod logs, config maps and Matrix edges</td><td><span class="k read">read</span></td><td>No approval</td><td>loyalty-consumer: pod logs, <code>loyalty-cfg</code>, Matrix edge, COM-2856</td></tr>
+            <tr><td>Propose a fix as a diff</td><td><span class="k prop">proposal</span></td><td>Nothing changes yet</td><td>"Proposed fix" card with the one-line diff and "Open in CodeX"</td></tr>
+            <tr><td>Commit the fix and re-run from contract tests</td><td><span class="k write">write</span></td><td>A person, per action</td><td>Committed 5c0d7e1, approved 10:48; #419 started 10:50</td></tr>
+            <tr><td>Redeploy loyalty-consumer 1.9.0 in Dev</td><td><span class="k write">write</span></td><td>Sam Patel, Customer Platform owner</td><td>R-2207, requested 14:33, still waiting</td></tr>
+            <tr><td>Promote order-service out of Dev</td><td><span class="k write">write</span></td><td>Application owner and Application Security</td><td>A GroundBridge request, not a Ratchet action. Maya Chen approved 15:14; Lena Fischer pending (chapter 11)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where you see it on screen</h2>
+        <p class="lede">Two v3 boards carry the chapter, and Home summarises both stories on the first screen of the day. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Pipelines.webp" data-w="1600" data-h="1000" data-crop="240,96,1360,890" data-title="Pipelines — build #418, order-service, feature/fraud-review (v3)">
+          <span class="pin c-bad" data-x="760" data-y="264">1</span>
+          <span class="pin c-kno" data-x="345" data-y="458">2</span>
+          <span class="pin c-bad" data-x="1000" data-y="576">3</span>
+          <span class="pin c-exe" data-x="1236" data-y="473">4</span>
+          <span class="pin c-exe" data-x="1236" data-y="645">5</span>
+          <span class="pin c-ctl" data-x="1262" data-y="858">6</span>
+          <span class="pin c-ok" data-x="614" data-y="200">7</span>
+          <span class="ring" data-box="572,564,642,25"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 08.1 · Pipelines</span>
+          <h3>The failed build, explained</h3>
+          <ol class="pins">
+            <li><span><b>Stage track.</b> Four green stages, contract tests red at "22 s · 1 failed", then Image skipped and the rest never run.</span></li>
+            <li><span><b>Likely cause.</b> "Changes since #417, last green" lists three commits and tags a41c9e2, "Add fraud review before payment".</span></li>
+            <li><span><b>Console line 2208.</b> <code>$.riskDecision: is not defined in the schema</code>, marked "Explained by agent".</span></li>
+            <li><span><b>Ratchet's answer.</b> "Yes — commit a41c9e2…", plus "#417 passed on the same agent and image, so this is not infrastructure."</span></li>
+            <li><span><b>Confidence and signals.</b> Chips for log 2208, a41c9e2, <code>order-events.yaml:14</code> and the #417 diff, then "High confidence · 3 signals agree".</span></li>
+            <li><span><b>The approval.</b> "Approved 10:48 · #419 started 10:50 from Contract tests, same agent and cache."</span></li>
+            <li><span><b>The outcome.</b> "Fixed in #419 at 11:04 · deployed to Dev 11:09", with commit 5c0d7e1 and 2 of 2 pods.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Clusters.webp" data-w="1600" data-h="1000" data-crop="240,96,1360,890" data-title="Clusters — Amazon EKS nsx-dev-use1, namespace commerce (v3)">
+          <span class="pin" data-x="756" data-y="158">1</span>
+          <span class="pin c-bad" data-x="671" data-y="632">2</span>
+          <span class="pin c-kno" data-x="272" data-y="950">3</span>
+          <span class="pin c-tel" data-x="1520" data-y="884">4</span>
+          <span class="pin c-exe" data-x="1186" data-y="507">5</span>
+          <span class="pin c-ctl" data-x="1186" data-y="716">6</span>
+          <span class="ring" data-box="256,604,898,58"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 08.2 · Clusters</span>
+          <h3>The crash loop, explained</h3>
+          <ol class="pins">
+            <li><span><b>Scope.</b> "nsx-dev-use1 · namespace commerce · 13 of 15 pods ready". The table below draws each pod as a square.</span></li>
+            <li><span><b>The failing row.</b> loyalty-consumer 1.8.2, CrashLoop, 0/2 ready, 214 and 209 restarts, updated Oct 2 from <code>values-dev.yaml</code>.</span></li>
+            <li><span><b>Version drift.</b> "Dev runs loyalty-consumer 1.8.2; main declares 1.9.0", with a link to compare with Git.</span></li>
+            <li><span><b>Events and last log lines.</b> "Back-off restarting failed container" at 15:17; "Topic order.confirmed.v1 not present in metadata after 60000 ms"; "Consumer exited with code 1".</span></li>
+            <li><span><b>Ratchet diagnosis.</b> Marked "High confidence", with the pin, the retired topic and the Matrix conflict on COM-2856, and four source chips.</span></li>
+            <li><span><b>R-2207.</b> "waiting for Sam Patel", with a link to the approval.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Main.webp" data-w="1600" data-h="1000" data-crop="250,180,1330,800" data-title="Home — Tuesday 13 October (v3)">
+          <span class="pin c-ok" data-x="458" data-y="205">1</span>
+          <span class="pin c-bad" data-x="826" data-y="205">2</span>
+          <span class="pin c-exe" data-x="580" data-y="794">3</span>
+          <span class="pin c-ctl" data-x="580" data-y="869">4</span>
+          <span class="pin" data-x="1424" data-y="783">5</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 08.3 · Home</span>
+          <h3>Both stories at a glance</h3>
+          <ol class="pins">
+            <li><span><b>Build #419 deployed, 11:09.</b> "It fixes the #418 contract failure; evals pass 8 of 8."</span></li>
+            <li><span><b>Pod restarting, 214 restarts.</b> "R-2207 redeploys 1.9.0 once Sam Patel approves."</span></li>
+            <li><span><b>Pipelines card.</b> order-service · fraud-review #419, "Passed · deployed 11:09".</span></li>
+            <li><span><b>A paused pipeline.</b> loyalty-consumer · main #77, "Deploy waiting for approval · R-2207".</span></li>
+            <li><span><b>Cluster health.</b> 13 of 15 pods ready, 6 nodes, 38% CPU; loyalty-consumer 0/2.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prototype">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>No pipeline screen yet</h2>
+        <p class="lede">Atlas has no Jenkins, pipeline or cluster view, and the handbook lists Ratchet as a future capability with no dedicated screen or remediation engine (1.4). Three fixtures sit closest to this chapter.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p><b>Run checks</b> in the Workbench is a string predicate. It passes when the prepared change is applied and the source mentions three names. The handbook says it "does not verify ordering, parse Java, inspect control flow, validate the schema, or test runtime behavior" (4.6).</p>
+          <p><b>Evaluation case T07</b> checks <code>order.confirmed.v2</code> compatibility, and its actual value is always "backward compatible", so it always passes (7.1).</p>
+          <p>Together that means the riskDecision failure cannot happen in Atlas today. A source edit that put the field on the v2 event would still pass Run checks and T07. The v3 design's contract test is where the guide first shows the mistake caught.</p>
+          <p>The <b>Incident triage assistant</b> prompt template already states the manners Ratchet keeps in v3: read-only diagnostics first, approval for any remediation. Opening it shows a preview explaining that general inference is unimplemented (6, reference catalog).</p>
+        </div>
+        <div class="code">
+          <div class="hd"><span>Atlas prototype · fixtures</span><span>handbook 4.6 · 7.1 · reference</span></div>
+<pre><span class="c"># Workbench · Run checks (4.6)</span>
+applied
+<span class="k">AND</span> code contains <span class="s">"fraudRisk.assess"</span>
+<span class="k">AND</span> code contains <span class="s">"pendingReview"</span>
+<span class="k">AND</span> code contains <span class="s">"order.confirmed.v2"</span>
+
+<span class="c"># Evaluations · case T07 (7.1)</span>
+T07  order.confirmed.v2 compatibility
+     expected   backward compatible
+     actual     <span class="n">Always backward compatible</span>
+     passes     <span class="n">Always true</span>
+
+<span class="c"># Prompt library · Incident triage assistant</span>
+<span class="c"># Site Reliability · Analysis · v4 · In review</span>
+Summarize {{incident}} using related traces,
+deployments and runbooks. List evidence-backed
+hypotheses in descending likelihood. Recommend
+read-only diagnostics first. Require explicit
+approval for any remediation.</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Run the contract test</h2>
+        <p class="lede">Choose what the change does with riskDecision, then run the nine stages. The v2 schema stays as published, with <code>additionalProperties: false</code>.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="ct-ctl">
+          <div class="ctl"><span class="lbl">Where riskDecision goes</span>
+            <div class="seg" id="route" role="group" aria-label="Where riskDecision goes">
+              <button type="button" value="v2" aria-pressed="true">Add to v2</button><button type="button" value="internal" aria-pressed="false">Keep internal</button><button type="button" value="v3" aria-pressed="false">v3 draft</button>
+            </div>
+          </div>
+          <label class="switch locked">additionalProperties: false on v2 <input type="checkbox" id="strict" checked disabled aria-describedby="strict-why"></label>
+          <p class="note" id="strict-why">Fixed. Eight services consume the published v2 schema. In JSON Schema, <code>additionalProperties: false</code> means "no additional properties will be allowed", so any property the schema does not list makes the event invalid.</p>
+          <div class="btnrow"><button type="button" class="btn primary" data-act="run">Run the stage track</button></div>
+          <div class="readout">
+            <div><b id="o-stages" class="txt">–</b><span>stages passed</span></div>
+            <div><b id="o-contract" class="txt">–</b><span>contract stage</span></div>
+            <div><b id="o-cons" class="txt">–</b><span>v2 consumers it touches</span></div>
+            <div><b id="o-payload" class="txt">–</b><span>v2 payload</span></div>
+          </div>
+          <p class="logline" id="o-why" aria-live="polite"></p>
+          <p class="note">The lab applies the real rule: it lists the payload's properties that OrderConfirmedV2 does not, and fails the stage if there are any. Stage names, log lines and Ratchet's words are the v3 design's; the passing lines are the CodeX terminal's. The design does not say what a v3 build would do, so the lab stops there.</p>
+        </div>
+        <div class="board" data-stage="ctlab" data-label="Lab board: the OrderService code lines that build the event, the order.confirmed.v2 topic with its eight consumers and a dashed v3 draft topic, the nine-stage track running, and a verdict with the console lines and Ratchet's explanation."><span class="ruler">contract test · order.confirmed.v2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>9</b><span>stages in order-service's Jenkins pipeline, Checkout to Evals</span></div>
+        <div><b>3 min 12 s</b><span>build #418, from 10:31 to the failure at contract tests</span></div>
+        <div><b>3</b><span>signals Ratchet cited: log 2208, commit a41c9e2, <code>order-events.yaml:14</code></span></div>
+        <div><b>1</b><span>line removed by fix 5c0d7e1, approved 10:48</span></div>
+        <div><b>214</b><span>restarts on loyalty-consumer-7d9f6-kx2lq, still on 1.8.2</span></div>
+        <div><b>2</b><span>agent write actions waiting in Sentinel: R-2207 and REQ-0042</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>No Jenkins, pipeline or cluster views. Ratchet is a future capability with no screen or remediation engine (1.4). Run checks is a string predicate that does not validate the schema, and eval case T07 always passes. The Incident triage template opens only a preview.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>Pipelines: stage track, changes since last green, console, Ratchet Q&amp;A with signals and confidence, proposed fix, re-run from a stage</li><li>Clusters: pod grid, CrashLoop row, version drift, Ratchet diagnosis, R-2207</li><li>Ratchet v5 (Wheeljack) in Agent studio; Sentinel: agents deploy to Dev only after a person approves each action</li><li>Roadmap Phase 2: "Approved write actions", including re-running stages</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>Tool contracts with typed input and output, risk class, scopes, allowed environments, timeout and retry eligibility. Idempotency keys and a side-effect ledger, so a write that timed out is reconciled before any retry. Approval bound to the exact proposal, environment, policy version and expiry (handbook 14.7).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same failure, other tools</h2>
+        <p class="lede">CI systems show stages and logs, and several now add an AI explanation of a failed job. Contract testing and Kubernetes troubleshooting each have their own established practice. Vector's design leans on all of them and adds the cross-system reading.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="codex.html"><span>← Chapter 07</span><b>Code in Dev</b></a>
+    <a class="fwd" href="allspark.html"><span>Chapter 09 →</span><b>AllSpark</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp } = Field;
+  const RMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ---------------- shared data (v3 design) ---------------- */
+  const ST = [
+    { n: "Checkout", l: ["Checkout"], d: "4 s" },
+    { n: "Build", l: ["Build"], d: "1 m 12 s" },
+    { n: "Unit tests", l: ["Unit", "tests"], d: "48 s" },
+    { n: "Sonar", l: ["Sonar"], d: "31 s" },
+    { n: "Contract tests", l: ["Contract", "tests"], d: "22 s" },
+    { n: "Image", l: ["Image"], d: "" },
+    { n: "Deploy to Dev", l: ["Deploy", "to Dev"], d: "" },
+    { n: "Integration", l: ["Integration"], d: "" },
+    { n: "Evals", l: ["Evals"], d: "" },
+  ];
+  const LOG = {
+    2201: ["INFO", "--- surefire:3.2.5:test (contract-tests) @ order-service ---"],
+    2202: ["INFO", "Running com.northstar.orders.OrderConfirmedContractTest"],
+    2203: ["INFO", "Loading schema order-events.yaml#/OrderConfirmedV2"],
+    2204: ["INFO", "Publishing sample OrderConfirmed for ORD-10482"],
+    2205: ["INFO", "fraudRisk.assess → score 0.91 · decision manual_review"],
+    2206: ["INFO", "Validating payload against v2 (additionalProperties: false)"],
+    2207: ["ERROR", "confirmedEventMatchesSchema Time elapsed: 0.412 s <<< FAILURE!"],
+    2208: ["ERROR", "$.riskDecision: is not defined in the schema"],
+    2209: ["ERROR", "  at OrderConfirmedContractTest.java:38"],
+    2210: ["INFO", "Tests run: 6, Failures: 1, Errors: 0, Skipped: 0"],
+    2211: ["INFO", "-------------------------------------------"],
+    2212: ["ERROR", "BUILD FAILURE"],
+    2213: ["INFO", "Total time: 22.418 s"],
+    2214: ["INFO", "Finished at 2026-10-13T10:34:12-04:00"],
+    2215: ["", "Post stage: archive surefire reports (6 files)"],
+    2216: ["", "Post stage: notify Bitbucket PR #214 → FAILED"],
+    2217: ["", "Post stage: notify Jira COM-2841 → build failed"],
+  };
+  const ANSWER = "Yes — commit a41c9e2. It adds riskDecision to the order.confirmed.v2 event. The v2 schema rejects unknown fields, so the contract test fails at line 38.";
+  const NOTINFRA = "#417 passed on the same agent and image, so this is not infrastructure.";
+
+  /* ---------------- small drawing helpers ---------------- */
+  function fitSize(g, s, maxW, size, font, weight, min) {
+    let z = size; while (z > (min || 8) && g.tw(s, z, font || "mono", weight || 500) > maxW) z -= 0.25; return z;
+  }
+  function ftext(g, s, x, y, maxW, o) {
+    o = o || {};
+    const z = fitSize(g, s, maxW, o.size || 12, o.font, o.weight, o.min);
+    g.text(s, x, y, Object.assign({}, o, { size: z, maxW }));
+    return z;
+  }
+  function rows(g, s, maxW, size, font, weight) {
+    const words = String(s).split(" "), out = []; let line = "";
+    for (const w of words) { const t = line ? line + " " + w : w; if (line && g.tw(t, size, font || "mono", weight || 500) > maxW) { out.push(line); line = w; } else line = t; }
+    if (line) out.push(line); return out;
+  }
+  function para(g, s, x, y, maxW, o) { // wrapped text; returns next y
+    const size = o.size || 12, lh = o.lh || size * 1.4, rs = rows(g, s, maxW, size, o.font, o.weight);
+    const n = o.maxLines ? Math.min(o.maxLines, rs.length) : rs.length;
+    for (let i = 0; i < n; i++) g.text(rs[i], x, y + i * lh, o);
+    return y + n * lh;
+  }
+  function check(g, x, y, r, c, a) { g.poly([[x - r * 0.42, y + r * 0.02], [x - r * 0.1, y + r * 0.34], [x + r * 0.45, y - r * 0.32]], { color: c, lw: Math.max(1.6, r * 0.18), a }); }
+  function cross(g, x, y, r, c, a) { const k = r * 0.32, lw = Math.max(1.6, r * 0.17); g.line(x - k, y - k, x + k, y + k, { color: c, lw, a }); g.line(x + k, y - k, x - k, y + k, { color: c, lw, a }); }
+  function hatchDisc(g, x, y, r, c, a) {
+    if (a <= 0.01) return;
+    const ctx = g.ctx; ctx.save(); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+    ctx.globalAlpha = a * 0.45; ctx.strokeStyle = g.C(c); ctx.lineWidth = 1;
+    ctx.beginPath(); for (let k = -2 * r; k < 2 * r; k += 4.5) { ctx.moveTo(x + k - r, y + r); ctx.lineTo(x + k + r, y - r); } ctx.stroke();
+    ctx.restore(); ctx.globalAlpha = 1;
+    g.circle(x, y, r, { stroke: c, lw: 1.1, dash: [3, 3], a });
+  }
+  // stage node kinds: ok, bad, skip, kept (not re-run), run, wait, open, idle
+  function stageNode(g, x, y, r, kind, a, t) {
+    if (a <= 0.01) return;
+    if (kind === "ok") { g.circle(x, y, r, { fill: "ok", a }); check(g, x, y, r, "#FFFFFF", a); }
+    else if (kind === "bad") { g.circle(x, y, r + 4, { fill: g.rgba("bad", 0.16), a }); g.circle(x, y, r, { fill: "bad", a }); cross(g, x, y, r, "#FFFFFF", a); }
+    else if (kind === "skip") { g.circle(x, y, r, { fill: "sheet", a }); hatchDisc(g, x, y, r, "ink-3", a); }
+    else if (kind === "kept") { g.circle(x, y, r, { fill: g.rgba("ok", 0.08), stroke: "ok", lw: 1.2, dash: [3, 3], a: a * 0.9 }); check(g, x, y, r * 0.85, "ok", a * 0.75); }
+    else if (kind === "run") { const p = (t * 1.4) % 1; g.circle(x, y, r + 2 + p * 6, { stroke: "exe", lw: 1.2, a: a * (1 - p) * 0.8 }); g.circle(x, y, r, { fill: "card", stroke: "exe", lw: 2, a }); g.circle(x, y, r * 0.36, { fill: "exe", a }); }
+    else if (kind === "wait") { g.circle(x, y, r, { fill: g.rgba("ctl", 0.1), stroke: "ctl", lw: 1.6, dash: [3, 3], a }); g.rect(x - r * 0.32, y - r * 0.4, r * 0.2, r * 0.8, { fill: "ctl", a }); g.rect(x + r * 0.12, y - r * 0.4, r * 0.2, r * 0.8, { fill: "ctl", a }); }
+    else if (kind === "open") { g.circle(x, y, r, { fill: "card", stroke: "ink-3", lw: 1.1, dash: [3, 3], a: a * 0.8 }); }
+    else { g.circle(x, y, r, { fill: "card", stroke: "hair", lw: 1.5, a }); }
+  }
+  function track(g, xs, y, kinds, o) {
+    o = o || {}; const r = o.r || 11, a = o.a === undefined ? 1 : o.a;
+    for (let i = 0; i < xs.length - 1; i++) {
+      const k1 = kinds[i], k2 = kinds[i + 1];
+      const lit = (k1 === "ok" || k1 === "kept") && (k2 === "ok" || k2 === "bad" || k2 === "run" || k2 === "kept" || k2 === "wait");
+      const dashed = k1 === "kept" || k2 === "skip" || k2 === "open";
+      g.line(xs[i] + r + 3, y, xs[i + 1] - r - 3, y, { color: lit ? "ok" : "hair", lw: lit ? 2 : 1.5, dash: dashed ? [3, 4] : null, a: a * (k1 === "kept" ? 0.7 : 1) });
+    }
+    xs.forEach((x, i) => stageNode(g, x, y, r, kinds[i], a, o.t || 0));
+  }
+  // stage names centred on each node; up: y is the baseline of the last row
+  function stageLabels(g, xs, y, sp, o) {
+    o = o || {}; const size = o.size || 11.5, lh = size + 2.5, a = o.a === undefined ? 1 : o.a, maxW = sp - 6;
+    let most = 1;
+    ST.forEach((st, i) => {
+      const rs = g.tw(st.n, size, "ui", 600) <= maxW ? [st.n] : st.l;
+      const y0 = o.up ? y - (rs.length - 1) * lh : y;
+      rs.forEach((t, k) => ftext(g, t, xs[i], y0 + k * lh, maxW, { size, font: "ui", weight: 600, color: o.color ? o.color(i) : "ink-2", align: "center", a }));
+      most = Math.max(most, rs.length);
+    });
+    return most;
+  }
+  function rmark(g, x, y, s, a) {
+    s = s || 16; a = a === undefined ? 1 : a;
+    g.rect(x - s / 2, y - s / 2, s, s, { fill: g.rgba("exe", 0.15), r: s * 0.28, a });
+    const k = s * 0.34, q = k * 0.28;
+    g.poly([[x, y - k], [x + q, y - q], [x + k, y], [x + q, y + q], [x, y + k], [x - q, y + q], [x - k, y], [x - q, y - q]], { fill: "exe", color: "exe", lw: 0.6, close: true, a });
+  }
+  function badge(g, x, y, n, c, a) { g.circle(x, y, 8, { fill: c, a }); g.text(String(n), x, y + 3.6, { size: 10, weight: 600, color: "#FFFFFF", align: "center", a }); }
+  // chips laid out left to right, wrapping; returns { pos: [{x,y,w}], y: next }
+  function chipFlow(g, x, y, maxW, labels, color, o) {
+    o = o || {}; const size = o.size || 10.5, h = Math.round(size * 1.75), gap = 6, pos = []; let cx = x, cy = y;
+    labels.forEach((l) => {
+      const w = g.tw(l, size, "mono", 600) + 20;
+      if (cx > x && cx + w > x + maxW) { cx = x; cy += h + gap; }
+      g.chip(cx, cy + h / 2, l, color, { size, a: o.a });
+      pos.push({ x: cx, y: cy + h / 2, w }); cx += w + gap;
+    });
+    return { pos, y: cy + h };
+  }
+  function bubble(g, xr, y, maxW, text, o) { // right-aligned chat bubble from the person
+    o = o || {}; const size = o.size || 12, lh = size * 1.35, rs = rows(g, text, maxW - 24, size, "ui", 500);
+    const w = Math.min(maxW, Math.max(...rs.map((r) => g.tw(r, size, "ui", 500))) + 24), h = rs.length * lh + 14;
+    g.rect(xr - w, y, w, h, { fill: "exp", r: Math.min(14, h / 2), a: o.a });
+    rs.forEach((r, i) => g.text(r, xr - w + 12, y + 7 + size + i * lh - 2, { size, font: "ui", weight: 500, color: "#FFFFFF", a: o.a }));
+    return y + h;
+  }
+  // the console: returns {num: {y, x, xEnd}}
+  function consoleBox(g, R, nums, o) {
+    o = o || {}; const a = o.a === undefined ? 1 : o.a, pos = {};
+    if (a <= 0.01) return pos;
+    g.rect(R.x, R.y, R.w, R.h, { fill: "card", stroke: "hair", lw: 1.2, r: 8, a });
+    let hy = R.y + 20;
+    if (o.title !== false) {
+      g.text(o.title || "Contract tests", R.x + 12, hy, { size: 12.5, font: "ui", weight: 600, a });
+      g.text(o.sub || "console · 2,231 lines", R.x + 18 + g.tw(o.title || "Contract tests", 12.5, "ui", 600), hy, { size: 10.5, color: "ink-3", a });
+      g.line(R.x, R.y + 30, R.x + R.w, R.y + 30, { color: "grid", lw: 1, a });
+    } else hy = R.y;
+    const numW = g.tw("2208", o.size || 10.5) + 12, maxW = R.w - 24 - numW;
+    const texts = nums.map((n) => (LOG[n][0] ? "[" + LOG[n][0] + "] " : "") + LOG[n][1]);
+    const longest = Math.max(...texts.map((t) => t.length));
+    const fs = Math.max(o.min || 9, Math.min(o.size || 10.5, maxW / (longest * 0.6)));
+    const lh = o.lh || fs * 1.62;
+    let y = (o.title !== false ? R.y + 30 : R.y) + (o.top || 8) + fs;
+    nums.forEach((n, i) => {
+      const kind = LOG[n][0], hl = o.hl && o.hl[n];
+      const rs = rows(g, texts[i], maxW, fs);
+      if (hl) { g.rect(R.x + 1, y - fs - 2, R.w - 2, rs.length * lh + 1, { fill: g.rgba(hl, 0.1), a }); g.rect(R.x + 1, y - fs - 2, 3, rs.length * lh + 1, { fill: hl, a }); }
+      g.text(String(n), R.x + 12, y, { size: fs, color: "ink-3", a });
+      const c = kind === "ERROR" ? "bad" : kind === "" ? "ink-3" : "ink";
+      rs.forEach((t, k) => g.text(t, R.x + 12 + numW + (k ? fs * 1.2 : 0), y + k * lh, { size: fs, color: c, a }));
+      pos[n] = { y: y - fs * 0.35, x: R.x + 12 + numW, xEnd: R.x + 12 + numW + g.tw(rs[rs.length - 1], fs) + (rs.length > 1 ? fs * 1.2 : 0), yl: y + (rs.length - 1) * lh - fs * 0.35 };
+      y += rs.length * lh;
+    });
+    pos._end = y; pos._fs = fs;
+    return pos;
+  }
+  function panel(g, R, a, o) { o = o || {}; g.rect(R.x, R.y, R.w, R.h, { fill: o.fill || "card", stroke: o.stroke || "hair", lw: o.lw || 1.2, r: 10, a, dash: o.dash }); }
+
+  /* ================= hero ================= */
+  Field.scene("hero", (g, s) => {
+    const { W, H, narrow } = g;
+    const cyc = (s.t % 12) / 12;
+    const pad = narrow ? 18 : 24, top = Math.max(g.safeTop + 8, 40), r = narrow ? 10 : 11;
+    const x0 = pad + 18, x1 = W - pad - 18, xs = ST.map((_, i) => lerp(x0, x1, i / 8)), sp = xs[1] - xs[0];
+    const p1 = clamp(cyc / 0.3) * 5;
+    const failA = ramp(cyc, 0.3, 0.025), explA = ramp(cyc, 0.36, 0.05), fixA = ramp(cyc, 0.5, 0.05), h2A = ramp(cyc, 0.56, 0.04);
+    const p2 = clamp((cyc - 0.6) / 0.24) * 5, doneA = ramp(cyc, 0.85, 0.04);
+    // header
+    const yH = top + 14;
+    g.text("#418", pad, yH + 6, { size: 22, font: "display", weight: 800 });
+    const hx = pad + g.tw("#418", 22, "display", 800) + 10, chipW = g.tw("Failed", 11, "mono", 600) + 20;
+    ftext(g, "push a41c9e2 · 10:31 · 3 min 12 s · k8s-build-07", hx, yH + 4, W - pad - hx - chipW - 10, { size: 11.5, color: "ink-2" });
+    g.chip(W - pad, yH, "Failed", "bad", { size: 11, align: "right", a: failA });
+    // stage names above track 1
+    const yT1 = top + 82;
+    stageLabels(g, xs, yT1 - r - 10, sp, { size: narrow ? 11 : 11.5, up: true, color: (i) => (i === 4 && failA > 0.5 ? "bad" : "ink-2") });
+    // skipped band
+    if (failA > 0.01) g.hatch(xs[5] - sp * 0.34, yT1 - r - 5, xs[8] - xs[5] + sp * 0.68, 2 * r + 10, { color: "ink-3", a: failA * 0.55, r: 8 });
+    const k1 = ST.map((_, i) => i < 4 ? (p1 >= i + 1 ? "ok" : p1 > i ? "run" : "idle") : i === 4 ? (failA > 0.5 ? "bad" : p1 > 4 ? "run" : "idle") : (failA > 0.5 ? "skip" : "idle"));
+    track(g, xs, yT1, k1, { r, t: s.t });
+    // durations under track 1
+    const yD = yT1 + r + 15;
+    ST.forEach((st, i) => { if (i < 5 && p1 >= i + 1) g.text(st.d, xs[i], yD, { size: 10.5, color: i === 4 ? "bad" : "ink-3", align: "center" }); });
+    g.text("1 failed", xs[4], yD + 13, { size: 10.5, color: "bad", weight: 600, align: "center", a: failA });
+    g.text("skipped", (xs[5] + xs[8]) / 2, yD, { size: 10.5, color: "ink-3", align: "center", a: failA });
+    // fix drops from #418 to #419
+    const yT2 = yD + 92;
+    if (fixA > 0.01) {
+      g.arrow(xs[4], yD + 22, xs[4], yT2 - r - 6, { color: "ctl", lw: 1.6, head: 8, a: fixA, prog: fixA });
+      g.text("fix 5c0d7e1", xs[4] + 12, yD + 40, { size: 11, color: "ctl", weight: 600, a: fixA });
+      g.text("approved 10:48", xs[4] + 12, yD + 55, { size: 11, color: "ctl", a: fixA });
+    }
+    // #419 header in the gap
+    g.text("#419", pad, yD + 40, { size: 20, font: "display", weight: 800, a: h2A });
+    ftext(g, "10:50 · from contract tests", pad, yD + 56, xs[4] - 18 - pad, { size: 11, color: "ink-2", a: h2A });
+    ftext(g, "same agent and cache", pad, yD + 70, xs[4] - 18 - pad, { size: 11, color: "ink-2", a: h2A });
+    const k2 = ST.map((_, i) => i < 4 ? "kept" : (p2 >= i - 3 ? "ok" : (p2 > i - 4 && cyc > 0.6) ? "run" : "idle"));
+    track(g, xs, yT2, k2, { r, a: h2A, t: s.t });
+    const yU = yT2 + r + 17;
+    g.dim(xs[0], xs[3], yU, "not re-run", { size: 10.5, color: "ink-3", a: h2A });
+    g.text("all 9 passed 11:04 · Dev 11:09", W - pad, yU + 4, { size: 11, color: "ok", weight: 600, align: "right", a: doneA });
+    // console and Ratchet
+    const yB = yU + 22, bh = H - yB - 12;
+    const conA = failA;
+    if (W < 680) {
+      const R = { x: pad, y: yB, w: W - pad * 2, h: Math.min(96, bh - 44) };
+      const pos = consoleBox(g, R, [2206, 2207, 2208], { a: conA, hl: { 2208: "bad" }, size: 10, sub: "console" });
+      const ry = R.y + R.h + 18;
+      rmark(g, pad + 8, ry - 4, 15, explA);
+      g.text("Ratchet", pad + 22, ry, { size: 12, font: "ui", weight: 700, a: explA });
+      ftext(g, "commit a41c9e2 · v2 rejects unknown fields · high confidence", pad + 22 + g.tw("Ratchet ", 12, "ui", 700), ry, W - pad * 2 - 80, { size: 10.5, color: "exe", a: explA });
+      if (pos[2208]) { const tx = pos[2208].xEnd + 8; g.circle(tx, pos[2208].y, 3.2, { fill: "exe", a: explA }); g.poly([[tx, pos[2208].y], [tx + 14, pos[2208].y], [tx + 14, ry - 14], [pad + 8, ry - 14]], { color: "exe", lw: 1.2, a: explA * 0.85 }); }
+    } else {
+      const cw = (W - pad * 2) * 0.6;
+      const R = { x: pad, y: yB, w: cw, h: bh };
+      const nums = bh > 200 ? [2203, 2204, 2205, 2206, 2207, 2208, 2209, 2210] : [2205, 2206, 2207, 2208, 2209];
+      const pos = consoleBox(g, R, nums, { a: conA, hl: { 2208: "bad" }, size: 10, sub: "console" });
+      const Q = { x: pad + cw + 18, y: yB, w: W - pad - (pad + cw + 18), h: bh };
+      panel(g, Q, explA, { stroke: g.rgba("exe", 0.5) });
+      rmark(g, Q.x + 18, Q.y + 18, 16, explA);
+      g.text("Ratchet", Q.x + 32, Q.y + 23, { size: 13, font: "ui", weight: 700, a: explA });
+      g.text("pipeline agent", Q.x + 38 + g.tw("Ratchet", 13, "ui", 700), Q.y + 23, { size: 10.5, color: "ink-3", a: explA });
+      let y = para(g, ANSWER, Q.x + 12, Q.y + 46, Q.w - 24, { size: 11.5, font: "ui", lh: 15, color: "ink", a: explA });
+      const cf = chipFlow(g, Q.x + 12, y + 2, Q.w - 24, ["log 2208", "a41c9e2", "order-events.yaml:14"], "exe", { size: 10, a: explA });
+      ftext(g, "High confidence · 3 signals agree", Q.x + 12, cf.y + 18, Q.w - 24, { size: 10.5, color: "exe", weight: 600, a: explA });
+      if (pos[2208]) {
+        const tx = pos[2208].xEnd + 8, c0 = cf.pos[0];
+        g.circle(tx, pos[2208].y, 3.2, { fill: "exe", a: explA });
+        g.poly([[tx, pos[2208].y], [R.x + R.w + 9, pos[2208].y], [Q.x + 4, c0.y]], { color: "exe", lw: 1.2, a: explA * 0.85 });
+        g.text("Explained by agent", R.x + R.w - 10, R.y + 20, { size: 10, color: "exe", align: "right", a: explA });
+      }
+    }
+  }, { anim: true, restT: 11, zoom: 1.25, minW: 600, maxW: 900 });
+
+  /* ================= scrolly 1 · why #418 failed ================= */
+  const COMMITS = [["VT", "Add fraud review before payment", "a41c9e2 · 10:09 · +42 −3"], ["VT", "Wire FraudRiskClient", "9be21f0 · 10:03 · +88 −0"], ["AM", "Bump workload-identity-client", "77c0a1d · 07:40 · Arjun Mehta"]];
+  function avatar(g, x, y, ini, a, c) { g.circle(x, y, 10, { fill: c || "ink", a }); g.text(ini, x, y + 3.5, { size: 8.5, font: "ui", weight: 700, color: "#FFFFFF", align: "center", a }); }
+
+  function pStats(g, L, a, tall) {
+    if (a <= 0.01) return;
+    panel(g, L, a);
+    const x = L.x + 14, w = L.w - 28;
+    g.text("Changes", x, L.y + 22, { size: 13, font: "ui", weight: 600, a });
+    g.text("since #417, last green", x + g.tw("Changes ", 13, "ui", 600) + 4, L.y + 22, { size: 10.5, color: "ink-3", a });
+    const rh = tall ? 30 : 36;
+    COMMITS.forEach(([ini, t, sub], i) => {
+      const y = L.y + 40 + i * rh;
+      avatar(g, x + 10, y + 10, ini, a, ini === "AM" ? "#6E5BD8" : "ink");
+      ftext(g, t, x + 28, y + 8, w - 30, { size: 12, font: "ui", weight: 500, a });
+      ftext(g, sub, x + 28, y + 22, w - 30, { size: 10, color: "ink-3", a });
+    });
+    let y = L.y + 40 + 3 * rh + 8;
+    g.line(L.x, y, L.x + L.w, y, { color: "grid", lw: 1, a });
+    y += tall ? 30 : 36;
+    [["43", "tests run", "ink"], ["1", "failed", "bad"], ["0", "flaky", "ink"]].forEach(([v, l, c], i) => {
+      const cx = x + i * (w / 3);
+      g.text(v, cx, y, { size: tall ? 24 : 28, font: "display", weight: 800, color: c, a });
+      g.text(l, cx, y + 16, { size: 10.5, color: "ink-3", a });
+    });
+    y += 30;
+    if (tall) return; // phones: the stage times are on the track above
+    g.line(L.x, y, L.x + L.w, y, { color: "grid", lw: 1, a });
+    y += 20;
+    g.text("Time per stage vs #417", x, y, { size: 11, color: "ink-2", a });
+    // bar = the stage's time in #418 (72 s, 48 s, 22 s); figure = change against #417
+    const rows_ = [["Build", 72 / 72, "+4 s", "ink-3"], ["Unit tests", 48 / 72, "−2 s", "ink-3"], ["Contract", 22 / 72, "+1 s", "bad"]];
+    rows_.forEach(([n, f, d, c], i) => {
+      const yy = y + 20 + i * (tall ? 18 : 22), bx = x + 92, bw = w - 92 - 46;
+      g.text(n, x, yy, { size: 11, font: "ui", color: "ink", a });
+      g.rect(bx, yy - 6, bw, 4, { fill: "grid", r: 2, a });
+      g.rect(bx, yy - 6, bw * f, 4, { fill: c === "bad" ? "bad" : "ink-3", r: 2, a });
+      g.text(d, x + w, yy, { size: 11, color: c, align: "right", a });
+    });
+    if (!tall) g.text("bar: time in #418 · figure: change against #417", x, y + 20 + 3 * 22 + 4, { size: 9.5, color: "ink-3", a: a * 0.9 });
+  }
+
+  function pDiff(g, L, a, tall) {
+    if (a <= 0.01) return;
+    panel(g, L, a);
+    const x = L.x + 14, w = L.w - 28;
+    g.text("OrderService.java", x, L.y + 22, { size: 13, font: "ui", weight: 600, a });
+    g.text("feature/fraud-review", x + g.tw("OrderService.java ", 13, "ui", 600) + 4, L.y + 22, { size: 10.5, color: "ink-3", a });
+    const code = [["46", " ", "var payment = payments.authorize(request, customer);", "ink"], ["47", " ", "var event = OrderConfirmed.v2(request, payment);", "ink"], ["48", "−", "event.put(\"riskDecision\", decision.label());", "bad"], ["48", "+", "// riskDecision stays internal; v3 tracked in COM-2867", "ok"], ["49", " ", "events.publish(\"order.confirmed.v2\", event);", "ink"]];
+    const fs = Math.min(11, (w - 44) / (56 * 0.6)), lh = fs * 1.9;
+    let y = L.y + 46;
+    code.forEach(([n, m, t, c], i) => {
+      const yy = y + i * lh;
+      if (c !== "ink") g.rect(L.x + 1, yy - fs - 3, L.w - 2, lh - 1, { fill: g.rgba(c, 0.09), a });
+      g.text(n, x, yy, { size: fs, color: "ink-3", a });
+      g.text(m, x + 22, yy, { size: fs, color: c, weight: 600, a });
+      ftext(g, t, x + 36, yy, w - 36, { size: fs, color: c === "ink" ? "ink" : c, a });
+    });
+    y += code.length * lh + 8;
+    g.text("−", x + 22, y, { size: 11, color: "bad", weight: 600, a }); g.text("a41c9e2 added this line", x + 36, y, { size: 10.5, color: "bad", a });
+    g.text("+", x + 22, y + 16, { size: 11, color: "ok", weight: 600, a }); g.text("5c0d7e1 replaces it", x + 36, y + 16, { size: 10.5, color: "ok", a });
+    y += 36;
+    if (y + 60 < L.y + L.h) {
+      g.line(L.x, y, L.x + L.w, y, { color: "grid", lw: 1, a });
+      y += 24;
+      g.text("order.confirmed.v2 is unchanged", x, y, { size: 12.5, font: "ui", weight: 600, color: "ink", a });
+      y = para(g, "Bitbucket PR #214 · 10:48 · suggestion applied, riskDecision kept internal. The v3 topic waits in COM-2867.", x, y + 18, w, { size: 10.5, color: "ink-2", lh: 15, a, maxLines: 3 });
+    }
+    const bh = tall ? 46 : 58;
+    if (y + bh + 24 < L.y + L.h) {
+      const by = L.y + L.h - bh - 14;
+      g.rect(x, by, w, bh, { fill: g.rgba("ctl", 0.07), stroke: g.rgba("ctl", 0.5), lw: 1.1, r: 8, a });
+      g.text("Sentinel · Write actions need a person", x + 12, by + 19, { size: 11, font: "ui", weight: 700, color: "ctl", a });
+      ftext(g, "Agent tool calls and deploys, approved per action", x + 12, by + 36, w - 24, { size: 10.5, color: "ink-2", a });
+    }
+  }
+
+  function pResult(g, L, a, tall) {
+    if (a <= 0.01) return;
+    panel(g, L, a);
+    const x = L.x + 14, w = L.w - 28;
+    g.text("Running in Dev", x, L.y + 22, { size: 13, font: "ui", weight: 600, a });
+    ftext(g, "order-service 2.14.0-rc2 · nsx-dev-use1 / commerce", x, L.y + 42, w - 60, { size: 10.5, color: "ink-2", a });
+    [0, 1].forEach((k) => g.rect(L.x + L.w - 50 + k * 18, L.y + 30, 14, 14, { fill: "ok", r: 3, a }));
+    g.text("2/2", L.x + L.w - 14, L.y + 22, { size: 10.5, color: "ok", align: "right", weight: 600, a });
+    let y = L.y + 62;
+    g.line(L.x, y, L.x + L.w, y, { color: "grid", lw: 1, a });
+    y += 22;
+    g.text("Thread · COM-2841", x, y, { size: 12, font: "ui", weight: 600, a });
+    const ev = [["10:31", "Build #418 failed · contract tests · Ratchet found the cause", "Jenkins", "bad"], ["10:48", "Suggestion applied · riskDecision kept internal · 5c0d7e1", "Bitbucket PR #214", "ctl"], ["11:04", "Build #419 passed · evals 8 of 8 on cfg-7f3a9c", "Jenkins · Evals", "ok"], ["11:09", "Deployed to Dev · 2 of 2 pods healthy on nsx-dev-use1 / commerce", "Jenkins · EKS", "ok"]];
+    y += 10;
+    const avail = L.y + L.h - y - 10, step = Math.min(tall ? 44 : 52, avail / 4);
+    ev.forEach(([t, txt, src, c], i) => {
+      const yy = y + i * step;
+      g.circle(x + 4, yy + 8, 4, { fill: c, a });
+      if (i < 3) g.line(x + 4, yy + 14, x + 4, yy + step + 2, { color: "hair", lw: 1.2, a });
+      g.text(t, x + 16, yy + 12, { size: 10.5, color: "ink-3", a });
+      const ny = para(g, txt, x + 62, yy + 12, w - 62, { size: 11, font: "ui", lh: 14, color: "ink", a, maxLines: 2 });
+      g.text(src, x + 62, ny + 1, { size: 9.5, color: "ink-3", a });
+    });
+  }
+
+  Field.scene("s418", (g, s) => {
+    const { W, H } = g; const tall = H > W * 0.95;
+    const pad = 20, top = Math.max(g.safeTop + 10, 44);
+    // header
+    const yH = top + 16;
+    g.text("Build #418", pad, yH + 7, { size: 24, font: "display", weight: 800 });
+    const tx = pad + g.tw("Build #418", 24, "display", 800) + 10;
+    g.chip(tx, yH, "Failed", "bad", { size: 11 });
+    const fixedA = s.at(4);
+    if (fixedA > 0.01) {
+      const lbl = tall ? "Fixed in #419 at 11:04 · Dev 11:09" : "Fixed in #419 at 11:04 · deployed to Dev 11:09";
+      g.chip(W - pad, yH, lbl, "ok", { size: 10.5, align: "right", a: fixedA });
+    }
+    const ys = yH + 27, fs = tall ? 11 : 12;
+    const s1 = "Triggered by push ", sha = "a41c9e2";
+    g.text(s1, pad, ys, { size: fs, color: "ink-2" });
+    const shaX = pad + g.tw(s1, fs), shaW = g.tw(sha, fs, "mono", 600);
+    g.text(sha, shaX, ys, { size: fs, color: "kno", weight: 600 });
+    ftext(g, "· started 10:31 · 3 min 12 s · agent k8s-build-07", shaX + shaW + 22, ys, W - pad - shaX - shaW - 22, { size: fs, color: "ink-2" });
+    // tracks
+    const lw = 50, x0 = pad + lw + 14, x1 = W - pad - 20, xs = ST.map((_, i) => lerp(x0, x1, i / 8)), sp = xs[1] - xs[0], r = 11;
+    const yT1 = ys + 44;
+    g.text("#418", pad, yT1 + 6, { size: 18, font: "display", weight: 800, color: "ink-2" });
+    g.hatch(xs[5] - sp * 0.34, yT1 - r - 5, xs[8] - xs[5] + sp * 0.68, 2 * r + 10, { color: "ink-3", a: 0.5, r: 8 });
+    const pulse = 1 - s.at(1) * 0.6;
+    track(g, xs, yT1, ["ok", "ok", "ok", "ok", "bad", "skip", "skip", "skip", "skip"], { r });
+    if (pulse > 0.45) { const p = (s.t * 0.9) % 1; g.circle(xs[4], yT1, r + 4 + p * 9, { stroke: "bad", lw: 1.3, a: (1 - p) * 0.7 * pulse }); }
+    const nRows = stageLabels(g, xs, yT1 + r + 16, sp, { size: tall ? 11 : 11.5, color: (i) => (i === 4 ? "bad" : i > 4 ? "ink-3" : "ink-2") });
+    const yDur = yT1 + r + 16 + (nRows - 1) * 14 + 15;
+    ST.forEach((st, i) => { if (st.d) g.text(st.d, xs[i], yDur, { size: 10.5, color: i === 4 ? "bad" : "ink-3", align: "center" }); });
+    g.text("1 failed", xs[4], yDur + 13, { size: 10.5, color: "bad", weight: 600, align: "center" });
+    g.text("skipped", xs[5], yDur, { size: 10.5, color: "ink-3", align: "center" });
+    const yT2 = yDur + 58;
+    const a4 = s.at(4);
+    if (a4 > 0.01) {
+      const k = clamp((s.b - 3.3) / 0.6) * 5;
+      g.text("#419", pad, yT2 + 6, { size: 18, font: "display", weight: 800, color: "ok", a: a4 });
+      track(g, xs, yT2, ST.map((_, i) => (i < 4 ? "kept" : k >= i - 3.4 ? "ok" : "idle")), { r, a: a4 });
+      g.arrow(xs[4], yDur + 22, xs[4], yT2 - r - 5, { color: "ctl", lw: 1.5, head: 7, a: a4 });
+      g.text("approved 10:48 · re-run 10:50", xs[4] + 12, yDur + 33, { size: 10.5, color: "ctl", weight: 600, a: a4 });
+      g.text("same agent and cache", xs[4] + 12, yDur + 47, { size: 10.5, color: "ctl", a: a4 });
+      g.text("not re-run", (xs[0] + xs[3]) / 2, yT2 + r + 15, { size: 10, color: "ink-3", align: "center", a: a4 });
+    }
+    // lower panels
+    const yLow = yT2 + r + 26;
+    let L, Q;
+    if (!tall) { const lw2 = (W - pad * 2) * 0.56; L = { x: pad, y: yLow, w: lw2, h: H - 18 - yLow }; Q = { x: pad + lw2 + 16, y: yLow, w: W - pad - (pad + lw2 + 16), h: L.h }; }
+    else { const h1 = (H - 18 - yLow) * 0.47; L = { x: pad, y: yLow, w: W - pad * 2, h: h1 }; Q = { x: pad, y: yLow + h1 + 12, w: W - pad * 2, h: H - 18 - (yLow + h1 + 12) }; }
+    // left: stats → console → diff → result
+    pStats(g, L, 1 - s.at(1), tall);
+    const conA = s.between(1, 3);
+    let pos = {};
+    if (conA > 0.01) {
+      const legendH = s.b < 1.6 ? 58 : 0;
+      const lh = 16.5, room = Math.floor((L.h - 46 - (tall ? 52 : 58)) / lh);
+      const first = room >= 14 ? 2201 : room >= 9 ? 2202 : 2203, last = Math.min(2217, first + room - 1);
+      const nums = []; for (let n = first; n <= last; n++) nums.push(n);
+      const hl = { 2203: "kno", 2205: "exe", 2206: "kno", 2208: "bad" };
+      pos = consoleBox(g, { x: L.x, y: L.y, w: L.w, h: L.h }, nums, { a: conA, hl, size: tall ? 10.5 : 10.5, lh });
+      // legend under the console (beat 1)
+      const legA = conA * (1 - s.at(2));
+      const ly = Math.min(L.y + L.h - 46, (pos._end || L.y + L.h) + 18);
+      if (legA > 0.01) {
+        g.line(L.x, ly - 10, L.x + L.w, ly - 10, { color: "grid", lw: 1, a: legA });
+        [["kno", "2203, 2206 · the contract: OrderConfirmedV2, no extra properties"], ["exe", "2205 · the sample order scores 0.91 → manual_review"], ["bad", "2208 · the payload carries a field v2 does not list"]].forEach(([c, t], i) => {
+          g.rect(L.x + 14, ly + i * 15 - 7, 8, 8, { fill: c, r: 2, a: legA });
+          ftext(g, t, L.x + 28, ly + i * 15, L.w - 42, { size: 10, color: "ink-2", a: legA });
+        });
+      }
+    }
+    pDiff(g, L, s.between(3, 4), tall);
+    pResult(g, L, s.at(4), tall);
+
+    // right: Ratchet
+    panel(g, Q, 1, { stroke: g.rgba("exe", 0.45) });
+    rmark(g, Q.x + 18, Q.y + 19, 18);
+    g.text("Ratchet", Q.x + 34, Q.y + 18, { size: 13.5, font: "ui", weight: 700 });
+    ftext(g, "Pipeline agent · reads logs, commits, tests", Q.x + 34, Q.y + 32, Q.w - 46, { size: 10, color: "ink-3" });
+    g.line(Q.x, Q.y + 42, Q.x + Q.w, Q.y + 42, { color: "grid", lw: 1 });
+    const cx = Q.x + 14, cw = Q.w - 28, cy = Q.y + 58;
+    // r0 · intro
+    const r0 = 1 - s.at(1);
+    if (r0 > 0.01) {
+      let y = para(g, "Ratchet · pipeline agent v5 · Running · owned by Wheeljack (Agent studio).", cx, cy + 4, cw, { size: 12, font: "ui", lh: 16, color: "ink-2", a: r0 });
+      y = para(g, "Prompts: pipeline-failure-explain v5 and incident-summary v3.", cx, y + 4, cw, { size: 11, lh: 15, color: "ink-3", a: r0 });
+      g.text("What it reads in this build", cx, y + 22, { size: 11, color: "ink-2", weight: 600, a: r0 });
+      [["logs", "contract tests console · 2,231 lines"], ["commits", "3 since #417, last green"], ["tests", "43 run · 1 failed · 0 flaky"]].forEach(([n, d], i) => {
+        const yy = y + 46 + i * 22;
+        if (yy > Q.y + Q.h - (tall ? 10 : 56)) return;
+        g.circle(cx + 4, yy - 4, 3, { fill: "exe", a: r0 });
+        g.text(n, cx + 14, yy, { size: 11, weight: 600, a: r0 });
+        ftext(g, d, cx + 84, yy, cw - 84, { size: 11, color: "ink-3", a: r0 });
+      });
+      if (!tall) {
+        const by = Q.y + Q.h - 44;
+        g.rect(cx, by, cw, 30, { fill: "card", stroke: "hair", lw: 1.2, r: 15, a: r0 });
+        g.text("Ask this pipeline…", cx + 14, by + 19, { size: 11.5, font: "ui", color: "ink-3", a: r0 });
+        g.circle(cx + cw - 15, by + 15, 10, { fill: "exp", a: r0 });
+        g.text("↑", cx + cw - 15, by + 19.5, { size: 12, font: "ui", weight: 700, color: "#FFFFFF", align: "center", a: r0 });
+      }
+    }
+    // r1 · the question
+    const r1 = s.between(1, 3);
+    let qEnd = cy;
+    if (r1 > 0.01) {
+      const small = s.at(2);
+      qEnd = bubble(g, Q.x + Q.w - 14, cy, cw * 0.86, "Why did #418 fail? Is it my change?", { size: small > 0.5 ? 11 : 12, a: r1 });
+      const thinkA = r1 * (1 - s.at(2));
+      if (thinkA > 0.01) {
+        const k = Math.floor(s.t * 3) % 4;
+        g.text("reading the log, the commits and the schema" + ".".repeat(k), cx, qEnd + 26, { size: 11, color: "exe", a: thinkA });
+        [["log", "console 2,231 lines"], ["commits", "since #417"], ["schema", "order-events.yaml"]].forEach(([n, d], i) => {
+          const yy = qEnd + 52 + i * 22;
+          g.circle(cx + 5, yy - 4, 3, { fill: "exe", a: thinkA });
+          g.text(n, cx + 16, yy, { size: 11, color: "ink", weight: 600, a: thinkA });
+          g.text(d, cx + 80, yy, { size: 11, color: "ink-3", a: thinkA });
+        });
+      }
+    }
+    // r2 · the answer with numbered signals
+    const r2 = s.between(2, 3);
+    if (r2 > 0.01) {
+      let y = para(g, ANSWER, cx, qEnd + 22, cw, { size: tall ? 11.5 : 13, font: "ui", lh: tall ? 15 : 18, color: "ink", a: r2 });
+      y = para(g, NOTINFRA, cx, y + 4, cw, { size: tall ? 10.5 : 12, font: "ui", lh: tall ? 14.5 : 16, color: "ink-2", a: r2 });
+      const labels = ["1 log 2208", "2 a41c9e2", "3 order-events.yaml:14", "#417 diff"];
+      const cf = chipFlow(g, cx, y + 8, cw, labels, "exe", { size: tall ? 10 : 10.5, a: r2 });
+      g.circle(cx + 4, cf.y + 16, 3.5, { fill: "exe", a: r2 });
+      g.text("High confidence · 3 signals agree", cx + 14, cf.y + 20, { size: tall ? 11 : 12, color: "exe", weight: 600, a: r2 });
+      if (!tall && cf.y + 70 < Q.y + Q.h) para(g, "Numbers 1 to 3 mark where each signal sits: the console line, the pushed commit, and the schema the test loaded.", cx, cf.y + 48, cw, { size: 10.5, color: "ink-3", lh: 14.5, a: r2, maxLines: 3 });
+      // numbered badges on the evidence
+      if (pos[2208]) badge(g, Math.min(pos[2208].xEnd + 14, L.x + L.w - 12), pos[2208].y, 1, "exe", r2);
+      badge(g, shaX + shaW + 10, ys - 4, 2, "exe", r2);
+      if (pos[2203]) badge(g, Math.min(pos[2203].xEnd + 14, L.x + L.w - 12), pos[2203].y, 3, "exe", r2);
+      if (pos[2208]) g.text("Explained by agent", L.x + L.w - 12, L.y + 20, { size: 10, color: "exe", align: "right", a: r2 });
+    }
+    // r3 · proposed fix
+    const r3 = s.between(3, 4);
+    if (r3 > 0.01) {
+      const F = { x: cx, y: cy, w: cw, h: tall ? 96 : 118 };
+      panel(g, F, r3);
+      g.text("Proposed fix", F.x + 12, F.y + 20, { size: 12.5, font: "ui", weight: 600, a: r3 });
+      g.chip(F.x + F.w - 10, F.y + 16, "Committed · 5c0d7e1", "ok", { size: 10, align: "right", a: r3 });
+      const fs2 = fitSize(g, "+ // riskDecision stays internal; v3 tracked in COM-2867", F.w - 24, 10.5, "mono", 500, 8);
+      g.rect(F.x + 1, F.y + 30, F.w - 2, 20, { fill: g.rgba("bad", 0.08), a: r3 });
+      g.text("− event.put(\"riskDecision\", decision.label());", F.x + 12, F.y + 44, { size: fs2, color: "bad", a: r3 });
+      g.rect(F.x + 1, F.y + 50, F.w - 2, 20, { fill: g.rgba("ok", 0.08), a: r3 });
+      g.text("+ // riskDecision stays internal; v3 tracked in COM-2867", F.x + 12, F.y + 64, { size: fs2, color: "ok", a: r3 });
+      if (!tall) {
+        g.rect(F.x + 12, F.y + 80, 150, 26, { fill: g.rgba("exp", 0.5), r: 7, a: r3 });
+        g.text("Commit to fraud-review", F.x + 87, F.y + 97, { size: 11, font: "ui", weight: 600, color: "#FFFFFF", align: "center", a: r3 });
+        g.rect(F.x + 170, F.y + 80, 100, 26, { fill: "card", stroke: "hair", lw: 1, r: 7, a: r3 });
+        g.text("Open in CodeX", F.x + 220, F.y + 97, { size: 11, font: "ui", weight: 500, color: "ink", align: "center", a: r3 });
+      }
+      const by = bubble(g, Q.x + Q.w - 14, F.y + F.h + 14, cw * 0.86, "After that, re-run from contract tests.", { size: 12, a: r3 });
+      para(g, "Ratchet drafts; nothing is written until a person approves.", cx, by + 24, cw, { size: 11, color: "ctl", lh: 15, a: r3 });
+    }
+    // r4 · approved and re-run
+    const r4 = s.at(4);
+    if (r4 > 0.01) {
+      const A = { x: cx, y: cy, w: cw, h: 62 };
+      g.rect(A.x, A.y, A.w, A.h, { fill: g.rgba("ctl", 0.07), stroke: g.rgba("ctl", 0.55), lw: 1.2, r: 10, a: r4 });
+      g.circle(A.x + 14, A.y + 19, 4, { fill: "ctl", a: r4 });
+      g.text("Approved 10:48", A.x + 24, A.y + 23, { size: 12.5, font: "ui", weight: 700, a: r4 });
+      ftext(g, "#419 started 10:50 from Contract tests, same agent and cache.", A.x + 14, A.y + 45, A.w - 28, { size: 11, font: "ui", color: "ink-2", a: r4 });
+      const cf = chipFlow(g, cx, A.y + A.h + 14, cw, ["Compare with last green", "Slow stages", "Flaky tests"], "ink-3", { size: 10, a: r4 });
+      let ny = cf.y + 24;
+      if (ny + 16 < Q.y + Q.h) ny = para(g, "Next: Promote to QA via GroundBridge, needs Owner + Security.", cx, ny, cw, { size: 11, color: "ink-2", lh: 15, a: r4, maxLines: 2 });
+      if (!tall && ny + 40 < Q.y + Q.h) { g.text("Linked", cx, ny + 18, { size: 10.5, color: "ink-3", a: r4 }); chipFlow(g, cx, ny + 28, cw, ["COM-2841", "PR #214", "ws-vt-01"], "ink-3", { size: 10, a: r4 }); }
+    }
+  }, { anim: true, restT: 1, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ================= scrolly 2 · the pod ================= */
+  const DEP = [
+    ["order-service", "Commerce Platform", "2.14.0-rc2", 2, 2, "0", "11:09 · build #419"],
+    ["fraud-risk-api", "Risk Engineering", "2.4.0", 2, 2, "0", "Oct 9"],
+    ["customer-profile-api", "Customer Platform", "5.2.0", 2, 2, "0", "Oct 12"],
+    ["payments-gateway", "Payments", "8.0.2", 2, 2, "0", "Oct 8"],
+    ["loyalty-consumer", "Customer Platform", "1.8.2", 2, 0, "214 · 209", "Oct 2 · values-dev.yaml"],
+    ["inventory-service", "Fulfilment", "3.3.1", 3, 3, "0", "Oct 7"],
+    ["notification-service", "Customer Platform", "4.0.7", 2, 2, "0", "Oct 5"],
+    ["search-indexer", "Data & Intelligence", "0.12.0", 0, 0, "0", "nightly job · 02:00"],
+  ];
+  function depList(g, R, s, tall) {
+    panel(g, R, 1);
+    const x = R.x + 12, w = R.w - 24;
+    g.text("Deployments", x, R.y + 20, { size: 12.5, font: "ui", weight: 600 });
+    ftext(g, "each square is a pod", x + g.tw("Deployments ", 12.5, "ui", 600) + 4, R.y + 20, w - 100, { size: 10, color: "ink-3" });
+    const cV = x + w * 0.41, cP = x + w * 0.62, cRd = cP + 48, cR = x + w;
+    [["deployment", x], ["version", cV], ["pods", cP], ["ready", cRd]].forEach(([t, cx]) => g.text(t, cx, R.y + 44, { size: 9.5, color: "ink-3" }));
+    g.text("restarts", cR, R.y + 44, { size: 9.5, color: "ink-3", align: "right" });
+    const hy = R.y + 52, rh = (R.h - 58 - (tall ? 0 : 34)) / DEP.length;
+    const focus = s.at(1), drift = s.between(2, 5), pend = s.at(4);
+    DEP.forEach(([n, own, v, pods, ready, rst], i) => {
+      const y = hy + i * rh, bad = n === "loyalty-consumer";
+      if (bad && focus > 0.01) { g.rect(R.x + 1, y + 1, R.w - 2, rh - 2, { fill: g.rgba("bad", 0.07), a: focus }); g.rect(R.x + 1, y + 1, 3, rh - 2, { fill: "bad", a: focus }); }
+      g.line(R.x + 8, y, R.x + R.w - 8, y, { color: "grid", lw: 1 });
+      const my = y + rh / 2;
+      ftext(g, n, x, tall ? my + 4 : my - 1, cV - x - 8, { size: tall ? 11.5 : 12.5, font: "ui", weight: 600, color: bad ? "bad" : "ink" });
+      if (!tall) ftext(g, own, x, my + 13, cV - x - 8, { size: 10, font: "ui", color: "ink-3" });
+      ftext(g, v, cV, tall || !bad ? my + 4 : my - 1, cP - cV - 6, { size: 11, color: bad ? "bad" : "ink-2" });
+      if (bad && pend > 0.01 && !tall) g.text("1.9.0 pending", cV, my + 13, { size: 9.5, color: "ctl", weight: 600, a: pend });
+      const k = Math.max(1, pods);
+      for (let q = 0; q < k; q++) {
+        const c = pods === 0 ? "ink-3" : q < ready ? "ok" : "bad";
+        g.rect(cP + q * 15, my - 6, 12, 12, { fill: pods === 0 ? "grid" : c, r: 3 });
+      }
+      const rt = pods === 0 ? "scaled to 0" : `${ready}/${pods}`;
+      ftext(g, rt, cRd, my + 4, cR - cRd - 34, { size: 10.5, color: bad ? "bad" : pods === 0 ? "ink-3" : "ink-2" });
+      g.text(rst, cR, my + 4, { size: 10.5, color: bad ? "bad" : "ink-3", align: "right", weight: bad ? 600 : 500 });
+    });
+    if (!tall && drift > 0.01) {
+      const y = R.y + R.h - 20;
+      g.circle(x + 4, y - 4, 4, { fill: "kno", a: drift });
+      ftext(g, "Version drift: Dev runs loyalty-consumer 1.8.2; main declares 1.9.0.", x + 14, y, w - 14, { size: 10.5, color: "ink", a: drift });
+    }
+    return { rowY: (i) => hy + i * rh + rh / 2 };
+  }
+
+  Field.scene("pod", (g, s) => {
+    const { W, H } = g; const tall = H > W * 0.95;
+    const pad = 20, top = Math.max(g.safeTop + 10, 44);
+    const yH = top + 16;
+    g.text("Clusters", pad, yH + 7, { size: 24, font: "display", weight: 800 });
+    ftext(g, "nsx-dev-use1 · namespace commerce · 13 of 15 pods ready", pad, yH + 28, W - pad * 2, { size: tall ? 11 : 12, color: "ink-2" });
+    const yLow = yH + 44;
+    let L, D;
+    if (!tall) { const lw = (W - pad * 2) * 0.46; L = { x: pad, y: yLow, w: lw, h: H - 18 - yLow }; D = { x: pad + lw + 16, y: yLow, w: W - pad - (pad + lw + 16), h: L.h }; }
+    else { const h1 = Math.min(250, (H - 18 - yLow) * 0.42); L = { x: pad, y: yLow, w: W - pad * 2, h: h1 }; D = { x: pad, y: yLow + h1 + 12, w: W - pad * 2, h: H - 18 - (yLow + h1 + 12) }; }
+    const list = depList(g, L, s, tall);
+    // leader from the failing row into the detail panel
+    const lA = s.at(1);
+    if (lA > 0.01) {
+      const y = list.rowY(4);
+      if (!tall) { g.circle(L.x + L.w - 4, y, 3, { fill: "bad", a: lA }); g.line(L.x + L.w - 4, y, D.x, y, { color: "bad", lw: 1.2, dash: [3, 3], a: lA * 0.8 }); }
+    }
+    const x = D.x + 14, w = D.w - 28;
+    // d0 · tiles
+    const d0 = 1 - s.at(1);
+    if (d0 > 0.01) {
+      const tiles = [["Nodes", "6", "all Ready · core-m6i 4 · spot-c6i 2"], ["CPU", "38%", "requested"], ["Memory", "52%", "requested"], ["Kubernetes", "1.31", "EKS · upgrade available 1.32"]];
+      const tw = (D.w - 10) / 2, th = tall ? 64 : 82;
+      tiles.forEach(([n, v, sub], i) => {
+        const tx = D.x + (i % 2) * (tw + 10), ty = D.y + Math.floor(i / 2) * (th + 10);
+        panel(g, { x: tx, y: ty, w: tw, h: th }, d0);
+        g.text(n, tx + 12, ty + 18, { size: 11, font: "ui", color: "ink-2", a: d0 });
+        g.text(v, tx + 12, ty + (tall ? 44 : 50), { size: tall ? 22 : 26, font: "display", weight: 800, a: d0 });
+        ftext(g, sub, tx + 16 + g.tw(v, tall ? 22 : 26, "display", 800), ty + (tall ? 44 : 50), tw - 28 - g.tw(v, tall ? 22 : 26, "display", 800), { size: 10, color: "ink-3", a: d0 });
+        if (n === "CPU" || n === "Memory") { const f = n === "CPU" ? 0.38 : 0.52; g.rect(tx + 12, ty + th - 14, tw - 24, 4, { fill: "grid", r: 2, a: d0 }); g.rect(tx + 12, ty + th - 14, (tw - 24) * f, 4, { fill: "exp", r: 2, a: d0 }); }
+      });
+      let y = D.y + 2 * (th + 10) + 18;
+      [["ok", "Ready"], ["bad", "Failing"], ["grid", "Scaled to 0"]].forEach(([c, l], i) => { const lx = D.x + i * 100; g.rect(lx, y - 9, 10, 10, { fill: c, r: 2.5, a: d0 }); g.text(l, lx + 16, y, { size: 10.5, color: "ink-2", a: d0 }); });
+      y += 26;
+      g.rect(D.x, y, D.w, 40, { fill: g.rgba("bad", 0.06), stroke: g.rgba("bad", 0.4), lw: 1, r: 8, a: d0 });
+      ftext(g, "1 deployment failing · loyalty-consumer · 0/2 ready", D.x + 12, y + 25, D.w - 24, { size: 11.5, color: "bad", weight: 600, a: d0 });
+      y += 58;
+      if (y + 40 < D.y + D.h) para(g, "order-service 2.14.0-rc2 has run here since 11:09, deployed by build #419 from the first story.", D.x, y, D.w, { size: 11, color: "ink-2", lh: 15, a: d0, maxLines: 3 });
+    }
+    // d1 · the crash loop
+    const d1 = s.between(1, 2);
+    if (d1 > 0.01) {
+      panel(g, D, d1);
+      g.text("Pod · loyalty-consumer", x, D.y + 22, { size: 11, color: "ink-3", a: d1 });
+      g.chip(D.x + D.w - 12, D.y + 18, "CrashLoopBackOff", "bad", { size: 10, align: "right", a: d1 });
+      ftext(g, "loyalty-consumer-7d9f6-kx2lq", x, D.y + 44, w, { size: 13.5, weight: 600, a: d1 });
+      ftext(g, "214 restarts · node ip-10-42-3-17 · up 2 d 4 h", x, D.y + 62, w, { size: 10.5, color: "ink-2", a: d1 });
+      // the loop: four boxes in a ring
+      const steps = [["event 15:15", "Started container consumer", "ink-3"], ["log · WARN", "Topic order.confirmed.v1 not present in metadata after 60000 ms", "tel"], ["log · ERROR", "Consumer exited with code 1", "bad"], ["event 15:17", "Back-off restarting failed container", "bad"]];
+      const ly = D.y + 82, lh = tall ? Math.min(160, D.h - 200) : Math.min(240, D.h - 320);
+      const bw = (w - 18) / 2, bh = (lh - 18) / 2;
+      const B = [[x, ly], [x + bw + 18, ly], [x + bw + 18, ly + bh + 18], [x, ly + bh + 18]];
+      steps.forEach(([k, t, c], i) => {
+        const [bx, by] = B[i];
+        g.rect(bx, by, bw, bh, { fill: c === "bad" ? g.rgba("bad", 0.05) : "card", stroke: c === "ink-3" ? "hair" : g.rgba(c, 0.6), lw: 1.2, r: 8, a: d1 });
+        g.text(k, bx + 10, by + 16, { size: 9.5, color: c === "ink-3" ? "ink-3" : c, weight: 600, a: d1 });
+        para(g, t, bx + 10, by + 32, bw - 20, { size: tall ? 10.5 : 11, font: i === 1 || i === 2 ? "mono" : "ui", lh: 14, color: "ink", a: d1, maxLines: Math.max(1, Math.floor((bh - 26) / 14)) });
+      });
+      // arrows around the ring and a travelling dot
+      const cxL = x + bw, cxR = x + bw + 18, mid1 = ly + bh / 2, mid2 = ly + bh + 18 + bh / 2;
+      g.arrow(cxL + 2, mid1, cxR - 2, mid1, { color: "ink-3", lw: 1.2, head: 6, a: d1 });
+      g.arrow(x + bw + 18 + bw / 2, ly + bh + 2, x + bw + 18 + bw / 2, ly + bh + 16, { color: "ink-3", lw: 1.2, head: 6, a: d1 });
+      g.arrow(cxR - 2, mid2, cxL + 2, mid2, { color: "ink-3", lw: 1.2, head: 6, a: d1 });
+      g.arrow(x + bw / 2, ly + bh + 16, x + bw / 2, ly + bh + 2, { color: "bad", lw: 1.4, head: 6, a: d1 });
+      g.text("restart", x + bw / 2 + 8, ly + bh + 13, { size: 9.5, color: "bad", a: d1 });
+      const ph = (s.t * 0.35) % 1, seg = Math.floor(ph * 4), u = ph * 4 - seg;
+      const cen = B.map(([bx, by]) => [bx + bw / 2, by + bh / 2]), p0 = cen[seg], p1 = cen[(seg + 1) % 4];
+      g.circle(lerp(p0[0], p1[0], u), lerp(p0[1], p1[1], u), 4, { fill: "bad", a: d1 * 0.85 });
+      // CPU and memory
+      const cy = ly + lh + 22;
+      if (cy + 54 < D.y + D.h) {
+        const hw = (w - 16) / 2;
+        g.text("CPU", x, cy, { size: 10.5, color: "ink-2", a: d1 });
+        const pts = []; for (let k = 0; k <= 60; k++) { const ph2 = (k / 60) * 6 - (s.t * 0.4) % 1; const f = ph2 - Math.floor(ph2); pts.push([x + (k / 60) * hw, cy + 30 - (f < 0.12 ? (1 - f / 0.12) * 20 : 2)]); }
+        g.poly(pts, { color: "exp", lw: 1.4, a: d1 });
+        g.text("spikes on each restart", x, cy + 46, { size: 10, color: "ink-3", a: d1 });
+        const mx = x + hw + 16;
+        g.text("Memory", mx, cy, { size: 10.5, color: "ink-2", a: d1 });
+        g.rect(mx, cy + 22, hw, 5, { fill: "grid", r: 2.5, a: d1 }); g.rect(mx, cy + 22, hw * 180 / 512, 5, { fill: "exp", r: 2.5, a: d1 });
+        g.text("180 MB of 512 MB", mx, cy + 46, { size: 10, color: "ink-3", a: d1 });
+        if (cy + 120 < D.y + D.h) {
+          g.line(D.x, cy + 66, D.x + D.w, cy + 66, { color: "grid", lw: 1, a: d1 });
+          para(g, "General Kubernetes, per Google's GKE guide: CrashLoopBackOff means a container keeps starting and exiting, and the delay before each restart grows exponentially (10 s, 20 s, 40 s) up to five minutes.", x, cy + 88, w, { size: 10.5, color: "ink-3", lh: 14.5, a: d1, maxLines: 4 });
+        }
+      }
+    }
+    // d2 · version drift and the retired topic
+    const d2 = s.between(2, 3);
+    if (d2 > 0.01) {
+      panel(g, D, d2);
+      g.text("Configuration · main vs running in Dev", x, D.y + 22, { size: 12, font: "ui", weight: 600, a: d2 });
+      const c1 = x + w * 0.36, c2 = x + w * 0.66;
+      let y = D.y + 46;
+      g.text("key", x, y, { size: 9.5, color: "ink-3", a: d2 }); g.text("in main", c1, y, { size: 9.5, color: "ink-3", a: d2 }); g.text("running in Dev", c2, y, { size: 9.5, color: "ink-3", a: d2 });
+      const rowsD = [["version", "1.9.0", "1.8.2", "values-dev.yaml"], ["LOYALTY_TOPIC", "order.confirmed.v2", "order.confirmed.v1", "configmap loyalty-cfg"]];
+      rowsD.forEach(([k, m, d, src], i) => {
+        const yy = y + 26 + i * 40;
+        g.line(D.x + 8, yy - 16, D.x + D.w - 8, yy - 16, { color: "grid", lw: 1, a: d2 });
+        ftext(g, k, x, yy, c1 - x - 6, { size: 10.5, weight: 600, a: d2 });
+        ftext(g, m, c1, yy, c2 - c1 - 8, { size: 10.5, color: "ink-2", a: d2 });
+        ftext(g, d, c2, yy, x + w - c2, { size: 10.5, color: "kno", weight: 600, a: d2 });
+        ftext(g, src, c2, yy + 14, x + w - c2, { size: 9.5, color: "ink-3", a: d2 });
+      });
+      // Kafka box
+      y += 26 + 2 * 40 + 6;
+      const K = { x: x, y, w, h: Math.min(tall ? 124 : 180, D.y + D.h - y - 14) };
+      if (!tall && K.y + K.h + 90 < D.y + D.h) {
+        const ny = K.y + K.h + 30;
+        g.text("Compute flags the same row", x, ny, { size: 11, weight: 600, color: "ink-2", a: d2 });
+        para(g, "Its configuration panel, main vs running in Dev, reads: \"LOYALTY_TOPIC in Dev still points at the retired v1 topic\". It links to R-2207.", x, ny + 18, w, { size: 10.5, color: "ink-3", lh: 14.5, a: d2, maxLines: 3 });
+      }
+      g.rect(K.x, K.y, K.w, K.h, { fill: g.rgba("kno", 0.05), stroke: g.rgba("kno", 0.5), lw: 1.2, r: 10, a: d2 });
+      g.text("Kafka msk-dev-use1", K.x + 12, K.y + 20, { size: 11.5, font: "ui", weight: 600, a: d2 });
+      const tw = (K.w - 36) / 2, ty = K.y + 34, th = Math.min(46, K.h - 74);
+      g.rect(K.x + 12, ty, tw, th, { fill: "card", stroke: "kno", lw: 1.2, r: 8, a: d2 });
+      ftext(g, "order.confirmed.v2", K.x + 22, ty + 19, tw - 20, { size: 10.5, weight: 600, color: "kno", a: d2 });
+      ftext(g, "live · 8 consumers read v2", K.x + 22, ty + 34, tw - 20, { size: 9.5, color: "ink-2", a: d2 });
+      const t1x = K.x + 24 + tw;
+      g.rect(t1x, ty, tw, th, { fill: "card", a: d2 });
+      g.hatch(t1x, ty, tw, th, { color: "ink-3", a: d2 * 0.7, r: 8 });
+      ftext(g, "order.confirmed.v1", t1x + 10, ty + 19, tw - 20, { size: 10.5, weight: 600, color: "ink-2", a: d2 });
+      ftext(g, "retired on Friday", t1x + 10, ty + 34, tw - 20, { size: 9.5, color: "ink-2", a: d2 });
+      const cyc = K.y + K.h - 18;
+      g.text("1.8.2 subscribes here", t1x + tw / 2, cyc, { size: 10, color: "bad", align: "center", weight: 600, a: d2 });
+      g.arrow(t1x + tw / 2, cyc - 12, t1x + tw / 2, ty + th + 4, { color: "bad", lw: 1.3, head: 6, a: d2 });
+      g.text("1.9.0 (main) reads here", K.x + 12 + tw / 2, cyc, { size: 10, color: "ink-2", align: "center", a: d2 });
+      g.arrow(K.x + 12 + tw / 2, cyc - 12, K.x + 12 + tw / 2, ty + th + 4, { color: "ink-3", lw: 1.2, head: 6, dash: [3, 3], a: d2 });
+    }
+    // d3 · Ratchet diagnosis and the Matrix conflict
+    const d3 = s.between(3, 4);
+    if (d3 > 0.01) {
+      panel(g, D, d3, { stroke: g.rgba("exe", 0.5) });
+      rmark(g, x + 8, D.y + 19, 16, d3);
+      g.text("Ratchet diagnosis", x + 22, D.y + 24, { size: 12.5, font: "ui", weight: 700, a: d3 });
+      g.chip(D.x + D.w - 12, D.y + 19, "High confidence", "exe", { size: 10, align: "right", a: d3 });
+      const tsz = tall ? 11 : 12.5, tlh = tall ? 14.5 : 17;
+      let y = para(g, "values-dev.yaml pins 1.8.2, whose config map subscribes to order.confirmed.v1. That topic was retired in msk-dev-use1 on Friday, so the consumer times out and exits.", x, D.y + 48, w, { size: tsz, font: "ui", lh: tlh, color: "ink", a: d3 });
+      y = para(g, "This also explains the Matrix conflict on COM-2856: Kafka hasn't seen the consumer for 48 h.", x, y + 4, w, { size: tsz, font: "ui", lh: tlh, color: "ink", a: d3 });
+      const cf = chipFlow(g, x, y + 4, w, ["pod logs", "configmap loyalty-cfg", "Matrix edge", "COM-2856"], "exe", { size: 10, a: d3 });
+      y = cf.y + 18;
+      if (y + 100 < D.y + D.h) {
+        g.line(D.x, y - 6, D.x + D.w, y - 6, { color: "grid", lw: 1, a: d3 });
+        g.text("Matrix · conflicting assertion", x, y + 12, { size: 10.5, color: "kno", weight: 600, a: d3 });
+        ftext(g, "loyalty-consumer consumes order.confirmed.v2", x, y + 30, w, { size: 11, weight: 600, a: d3 });
+        const hw = (w - 12) / 2, by = y + 42, bh = tall ? 44 : 54;
+        [["Git says yes · 0.95", "declared in loyalty/consumer.yaml on main", "ok"], ["Kafka says no · 0.90", "no consumer-group offsets for 48 hours", "bad"]].forEach(([t, d, c], i) => {
+          const bx = x + i * (hw + 12);
+          g.rect(bx, by, hw, bh, { fill: g.rgba(c, 0.06), stroke: g.rgba(c, 0.5), lw: 1.1, r: 8, a: d3 });
+          ftext(g, t, bx + 10, by + 18, hw - 20, { size: 10.5, weight: 600, color: c, a: d3 });
+          para(g, d, bx + 10, by + 33, hw - 20, { size: 9.5, lh: 12.5, color: "ink-2", a: d3, maxLines: tall ? 1 : 2 });
+        });
+        y = by + bh + 18;
+        if (y + 14 < D.y + D.h) ftext(g, "A person decides; no model settles a conflict. (Matrix)", x, y, w, { size: 10.5, color: "ink-2", a: d3 });
+        if (!tall && y + 36 < D.y + D.h) { g.bee(x + 8, y + 22, 15, { a: d3 }); ftext(g, "@B in Teams, 14:31: same answer for Arjun Mehta, as his permissions", x + 22, y + 26, w - 22, { size: 10.5, color: "ink-2", a: d3 }); }
+      }
+    }
+    // d4 · R-2207 waits for Sam Patel
+    const d4 = s.at(4);
+    if (d4 > 0.01) {
+      panel(g, D, d4, { stroke: g.rgba("ctl", 0.5) });
+      g.text("Run R-2207 · Redeploy in Dev", x, D.y + 24, { size: 12.5, font: "ui", weight: 700, a: d4 });
+      g.chip(D.x + D.w - 12, D.y + 19, "Waiting for approval", "ctl", { size: 10, align: "right", a: d4 });
+      ftext(g, "Requested via @B by Venkatesh · 14:33 · fixes COM-2856", x, D.y + 44, w, { size: 10.5, color: "ink-2", a: d4 });
+      const stepsR = [["ok", "Bundle loyalty-consumer 1.9.0", "sha256:61d3…ad82 verified"], ["wait", "Approval by the Customer Platform owner", "Sam Patel · requested 14:33"], ["open", "Roll out on nsx-dev-use1", "not started"], ["open", "Kafka consumer group active on v2", "not started"]];
+      const sy = D.y + 70, sh = tall ? 40 : 52;
+      stepsR.forEach(([k, t, d], i) => {
+        const y = sy + i * sh;
+        stageNode(g, x + 11, y + 12, 10, k, d4, s.t);
+        if (i < 3) g.line(x + 11, y + 25, x + 11, y + sh - 1, { color: i === 0 ? "ok" : "hair", lw: 1.4, dash: i ? [3, 3] : null, a: d4 });
+        ftext(g, t, x + 30, y + 10, w - 30, { size: 11.5, font: "ui", weight: 600, color: k === "open" ? "ink-2" : "ink", a: d4 });
+        ftext(g, d, x + 30, y + 25, w - 30, { size: 10, color: k === "wait" ? "ctl" : k === "ok" ? "ok" : "ink-3", a: d4 });
+      });
+      let y = sy + 4 * sh + 8;
+      const rh = tall ? 44 : 52;
+      if (y + rh < D.y + D.h) {
+        g.rect(x, y, w, rh, { fill: g.rgba("ctl", 0.07), stroke: g.rgba("ctl", 0.5), lw: 1.1, r: 8, a: d4 });
+        para(g, "Agents (@B, Ratchet) deploy to Dev only after a person approves each action.", x + 12, y + 19, w - 24, { size: 11, font: "ui", weight: 600, lh: 14.5, color: "ctl", a: d4, maxLines: 2 });
+        g.text("Sentinel", x + w - 10, y - 6, { size: 9.5, color: "ctl", align: "right", a: d4 });
+        y += rh + 18;
+      }
+      if (!tall && y + 30 < D.y + D.h) para(g, "Home shows the same pause: loyalty-consumer · main #77, \"Deploy waiting for approval · R-2207\".", x, y, w, { size: 10.5, color: "ink-2", lh: 14.5, a: d4, maxLines: 2 });
+    }
+  }, { anim: true, restT: 1, zoom: 1.3, minW: 620, maxW: 1000 });
+
+  /* ================= lab · contract test ================= */
+  const CASES = {
+    v2: {
+      line48: ["−", "event.put(\"riskDecision\", decision.label());", "bad"], extra: ["riskDecision"],
+      title: "Contract tests fail", col: "bad",
+      con: [2206, 2207, 2208, 2209, 2210],
+      say: ANSWER, sayWho: "Ratchet",
+      read: { stages: "4 of 9", contract: "Failed", cons: "8", payload: "+1 field" },
+      why: "OrderConfirmedV2 lists no riskDecision, and additionalProperties is false, so the stage fails and the last four never run. Eight services read v2.",
+    },
+    internal: {
+      line48: ["+", "// riskDecision stays internal; v3 tracked in COM-2867", "ok"], extra: [],
+      title: "All nine stages pass", col: "ok",
+      con: [2206], extraLines: [["mvn -q verify (CodeX)", "Tests run: 43, Failures: 0 · BUILD SUCCESS"], ["", "Same result as Jenkins #419"]],
+      say: "Contract test passes · build #419 · deployed to Dev 11:09. order.confirmed.v2 is unchanged.", sayWho: "CodeX",
+      read: { stages: "9 of 9", contract: "Passed", cons: "0", payload: "unchanged" },
+      why: "The payload has only the properties OrderConfirmedV2 lists. This is fix 5c0d7e1, the path the design took: #419 passed all nine stages.",
+    },
+    v3: {
+      line48: ["·", "riskDecision → a v3 topic (draft, COM-2867)", "ctl"], extra: [], sketch: true,
+      title: "v2 passes · v3 is a draft", col: "ctl",
+      con: [2206], extraLines: [["v2", "no unlisted properties · v2 contract passes"], ["v3", "no published contract to test against"]],
+      say: "ADR-031 puts new event fields on a v3 topic. The v3 event schema is a Draft in Vault, and its pull request to commerce/order-events waits in Approvals (COM-2867).", sayWho: "In the design",
+      read: { stages: "4 + v2 check", contract: "v2 ✓ · v3 open", cons: "0", payload: "unchanged" },
+      why: "v2 is untouched, so its contract holds. The v3 side cannot be tested until COM-2867 publishes a schema; the design says nothing more, so the lab stops here.",
+    },
+  };
+  function labResult(route) {
+    const C = CASES[route];
+    const unlisted = C.extra.slice(); // properties the payload has that OrderConfirmedV2 does not list
+    const strictFail = unlisted.length > 0; // additionalProperties: false
+    let kinds;
+    if (strictFail) kinds = ["ok", "ok", "ok", "ok", "bad", "skip", "skip", "skip", "skip"];
+    else if (route === "v3") kinds = ["ok", "ok", "ok", "ok", "wait", "open", "open", "open", "open"];
+    else kinds = ST.map(() => "ok");
+    return { C, unlisted, kinds };
+  }
+  Field.scene("ctlab", (g, s) => {
+    const st = s.state; if (!st.route) return;
+    const { W, H } = g; const tall = H > W * 0.95;
+    const R = labResult(st.route), C = R.C;
+    const el = RMQ.matches ? 99 : (performance.now() - (st._since || 0)) / 1000;
+    const pad = 20, top = Math.max(g.safeTop + 8, 40);
+    // code card: the lines that build and publish the event
+    const codeH = 138;
+    const Cc = tall ? { x: pad, y: top, w: W - pad * 2, h: codeH } : { x: pad, y: top, w: (W - pad * 2) * 0.56, h: codeH };
+    panel(g, Cc, 1);
+    ftext(g, "OrderService.java · what order-service publishes", Cc.x + 12, Cc.y + 21, Cc.w - 24 - (C.sketch ? 74 : 0), { size: 12.5, font: "ui", weight: 600 });
+    if (C.sketch) g.text("lab sketch", Cc.x + Cc.w - 12, Cc.y + 21, { size: 10, color: "ctl", align: "right" });
+    const code = [["47", " ", "var event = OrderConfirmed.v2(request, payment);", "ink"], ["48"].concat(C.line48), ["49", " ", "events.publish(\"order.confirmed.v2\", event);", "ink"]];
+    const fs = fitSize(g, "// riskDecision stays internal; v3 tracked in COM-2867", Cc.w - 62, 12, "mono", 500, 8.5);
+    code.forEach(([n, m, t, c], i) => {
+      const y = Cc.y + 52 + i * 24;
+      if (c !== "ink") g.rect(Cc.x + 1, y - fs - 5, Cc.w - 2, 23, { fill: g.rgba(c, 0.09) });
+      if (C.sketch && i === 1) g.rect(Cc.x + 40, y - fs - 4, Cc.w - 52, 21, { stroke: "ctl", lw: 1, dash: [3, 3], r: 4 });
+      g.text(n, Cc.x + 12, y, { size: fs, color: "ink-3" });
+      g.text(m, Cc.x + 32, y, { size: fs, color: c, weight: 600 });
+      ftext(g, t, Cc.x + 46, y, Cc.w - 58, { size: fs, color: c === "ink" ? "ink" : c });
+    });
+    const keys = "payload properties OrderConfirmedV2 does not list: " + (R.unlisted.length ? R.unlisted.join(", ") : "none");
+    ftext(g, keys, Cc.x + 12, Cc.y + Cc.h - 13, Cc.w - 24, { size: 11, color: R.unlisted.length ? "bad" : "ink-3", weight: 600 });
+    // the two topics
+    const Tx = tall ? pad : Cc.x + Cc.w + 36, Tw = tall ? W - pad * 2 : W - pad - Tx, tgap = 10;
+    const th = tall ? 66 : (codeH - tgap) / 2;
+    const T2 = tall ? { x: Tx, y: Cc.y + Cc.h + 32, w: (Tw - tgap) / 2, h: th } : { x: Tx, y: top, w: Tw, h: th };
+    const T3 = tall ? { x: Tx + T2.w + tgap, y: T2.y, w: T2.w, h: th } : { x: Tx, y: top + th + tgap, w: Tw, h: th };
+    const v3on = st.route === "v3";
+    g.rect(T2.x, T2.y, T2.w, T2.h, { fill: g.rgba("kno", 0.06), stroke: "kno", lw: 1.3, r: 9 });
+    ftext(g, "order.confirmed.v2", T2.x + 10, T2.y + 20, T2.w - 20, { size: 12.5, weight: 600, color: "kno" });
+    ftext(g, "schema v2 · additionalProperties: false", T2.x + 10, T2.y + 37, T2.w - 20, { size: 10.5, color: "ink-2" });
+    ftext(g, "8 consumers read v2", T2.x + 10, T2.y + 52, T2.w - 20, { size: 10.5, color: "ink-3" });
+    g.rect(T3.x, T3.y, T3.w, T3.h, { fill: v3on ? g.rgba("ctl", 0.05) : "card", stroke: v3on ? "ctl" : "ink-3", lw: 1.2, r: 9, dash: [4, 4], a: v3on ? 1 : 0.55 });
+    ftext(g, "v3 topic · draft", T3.x + 10, T3.y + 20, T3.w - 20, { size: 12.5, weight: 600, color: v3on ? "ctl" : "ink-3" });
+    ftext(g, "schema v3: Draft in Vault · COM-2867", T3.x + 10, T3.y + 37, T3.w - 20, { size: 10.5, color: "ink-2", a: v3on ? 1 : 0.6 });
+    ftext(g, "ADR-031: new fields go to a v3 topic", T3.x + 10, T3.y + 52, T3.w - 20, { size: 10.5, color: "ink-3", a: v3on ? 1 : 0.6 });
+    const pc = R.unlisted.length ? "bad" : "kno";
+    if (!tall) {
+      g.arrow(Cc.x + Cc.w + 4, T2.y + T2.h / 2, T2.x - 4, T2.y + T2.h / 2, { color: pc, lw: 1.6, head: 8 });
+      if (v3on) g.curve([Cc.x + Cc.w + 4, Cc.y + 76], [Cc.x + Cc.w + 20, T3.y + T3.h / 2], [T3.x - 4, T3.y + T3.h / 2], { color: "ctl", lw: 1.4, head: 8, dash: [4, 4] });
+    } else {
+      g.arrow(T2.x + T2.w / 2, Cc.y + Cc.h + 4, T2.x + T2.w / 2, T2.y - 4, { color: pc, lw: 1.6, head: 8 });
+      if (v3on) g.arrow(T3.x + T3.w / 2, Cc.y + Cc.h + 4, T3.x + T3.w / 2, T3.y - 4, { color: "ctl", lw: 1.4, head: 8, dash: [4, 4] });
+    }
+    // the stage track, animated
+    const yTr = (tall ? T2.y + T2.h : Math.max(Cc.y + Cc.h, T3.y + T3.h)) + 58;
+    const x0 = pad + 22, x1 = W - pad - 22, xs = ST.map((_, i) => lerp(x0, x1, i / 8)), sp = xs[1] - xs[0], r = 11;
+    // when each stage shows its result: four quick stages, a longer contract stage, then the rest
+    const reveal = (i) => (i < 4 ? 0.35 + i * 0.3 : i === 4 ? 1.8 : R.kinds[i] === "ok" ? 1.8 + (i - 4) * 0.3 : 1.95 + (i - 5) * 0.07);
+    const kindsNow = R.kinds.map((k, i) => (el >= reveal(i) ? k : (k === "ok" || k === "bad" || k === "wait") && el >= (i === 0 ? 0.05 : reveal(i - 1)) ? "run" : "idle"));
+    stageLabels(g, xs, yTr - r - 11, sp, { size: 12, up: true, color: (i) => (kindsNow[i] === "bad" ? "bad" : kindsNow[i] === "wait" ? "ctl" : "ink-2") });
+    const skipA = R.kinds[5] === "skip" ? ramp(el, reveal(5) - 0.05, 0.2) : 0;
+    if (skipA > 0.01) g.hatch(xs[5] - sp * 0.34, yTr - r - 5, xs[8] - xs[5] + sp * 0.68, 2 * r + 10, { color: "ink-3", a: skipA * 0.55, r: 8 });
+    track(g, xs, yTr, kindsNow, { r, t: s.t });
+    const doneT = (R.kinds[8] === "ok" || R.kinds[5] === "skip" ? reveal(8) : reveal(4)) + 0.15;
+    const passed = kindsNow.filter((k) => k === "ok").length;
+    g.text(`${passed} of 9 passed`, xs[0] - 12, yTr + r + 21, { size: 12, color: passed === 9 ? "ok" : "ink-2", weight: 600 });
+    if (R.kinds[5] === "open") g.text("not run in the lab", (xs[5] + xs[8]) / 2, yTr + r + 21, { size: 11, color: "ink-3", align: "center", a: ramp(el, doneT, 0.2) });
+    if (R.kinds[5] === "skip") g.text("skipped", (xs[5] + xs[8]) / 2, yTr + r + 21, { size: 11, color: "ink-3", align: "center", a: skipA });
+    // verdict
+    const va = ramp(el, doneT, 0.25), vc = C.col;
+    const V = { x: pad, y: yTr + r + 38, w: W - pad * 2, h: H - (yTr + r + 38) - 14 };
+    g.rect(V.x, V.y, V.w, V.h, { fill: g.rgba(vc, 0.05), stroke: vc, lw: 1.5, r: 10, a: va, dash: vc === "ctl" ? [5, 4] : null });
+    g.text(C.title, V.x + 14, V.y + 32, { size: 26, font: "display", weight: 800, color: vc, a: va, maxW: V.w - 28 });
+    const cw = V.w - 28, cy0 = V.y + 46;
+    const nLines = C.con.length + (C.extraLines ? C.extraLines.length : 0);
+    const clh = 11 * 1.62, ch = 16 + nLines * clh;
+    const pos = consoleBox(g, { x: V.x + 14, y: cy0, w: cw, h: ch }, C.con, { a: va, title: false, size: 11, hl: st.route === "v2" ? { 2208: "bad" } : {}, top: 7 });
+    if (C.extraLines && pos._fs) {
+      const fs2 = pos._fs, lh2 = fs2 * 1.62, lx = V.x + 14 + 12;
+      C.extraLines.forEach(([k, t], i) => {
+        const yy = cy0 + 7 + fs2 + (C.con.length + i) * lh2;
+        const kw = k ? Math.max(g.tw("2206", fs2) + 12, g.tw(k + " ", fs2)) : g.tw("2206", fs2) + 12;
+        if (k) g.text(k, lx, yy, { size: fs2, color: "ink-3", a: va });
+        ftext(g, t, lx + kw, yy, cw - 24 - kw, { size: fs2, color: i === 1 && st.route === "v3" ? "ctl" : st.route === "internal" ? "ok" : "ink", a: va });
+      });
+    }
+    // who explains it
+    let y = cy0 + ch + 26;
+    if (C.sayWho === "Ratchet") { rmark(g, V.x + 22, y - 5, 16, va); g.text("Ratchet", V.x + 36, y, { size: 13, font: "ui", weight: 700, a: va }); }
+    else g.text(C.sayWho, V.x + 14, y, { size: 11, color: "ink-3", a: va });
+    y = para(g, C.say, V.x + 14, y + 21, V.w - 28, { size: 13, font: "ui", lh: 18, color: "ink", a: va, maxLines: 4 });
+    if (C.sayWho === "Ratchet") { ftext(g, "High confidence · 3 signals agree", V.x + 14, y + 4, V.w - 28, { size: 11, color: "exe", weight: 600, a: va }); y += 18; }
+    // the check, step by step (computed)
+    const rowsC = [
+      ["schema", "order-events.yaml#/OrderConfirmedV2 · additionalProperties: false"],
+      ["sample", "OrderConfirmed for ORD-10482 · score 0.91 · manual_review"],
+      ["unlisted", R.unlisted.length ? R.unlisted.join(", ") : "none"],
+      ["result", R.unlisted.length ? "invalid · the stage fails, later stages are skipped" : st.route === "v3" ? "v2 valid · v3 has no published schema yet" : "valid · the stage passes"],
+    ];
+    const tY = y + 18, rh = 18;
+    if (tY + 8 + rowsC.length * rh < V.y + V.h) {
+      g.line(V.x + 14, tY - 14, V.x + V.w - 14, tY - 14, { color: g.rgba(vc, 0.35), lw: 1, a: va });
+      g.text("The check, step by step", V.x + 14, tY + 2, { size: 11, color: "ink-2", weight: 600, a: va });
+      rowsC.forEach(([k, v], i) => {
+        const yy = tY + 22 + i * rh;
+        g.text(k, V.x + 14, yy, { size: 11, color: "ink-3", a: va });
+        const c = k === "unlisted" && R.unlisted.length ? "bad" : k === "result" ? vc : "ink";
+        ftext(g, v, V.x + 96, yy, V.w - 110, { size: 11, color: c, weight: k === "result" || k === "unlisted" ? 600 : 500, a: va });
+      });
+    }
+  }, {
+    controls: "ct-ctl", anim: true, restT: 6, zoom: 1.0, minW: 620, maxW: 1000,
+    onAction: (name, st) => { if (name === "run") st._run = (st._run || 0) + 1; },
+    onState: (st) => {
+      const key = st.route + "|" + (st._run || 0);
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      const C = CASES[st.route];
+      document.getElementById("o-stages").textContent = C.read.stages;
+      document.getElementById("o-contract").textContent = C.read.contract;
+      document.getElementById("o-cons").textContent = C.read.cons;
+      document.getElementById("o-payload").textContent = C.read.payload;
+      document.getElementById("o-why").textContent = C.title + ". " + C.why;
+    },
+  });
+
+  /* ================= comparisons ================= */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3 · Ratchet", who: ["this design"], what: "Ratchet, the pipeline agent, sits beside the Jenkins stage track and console. It answers in one sentence, cites its signals (log line, commit, schema line, last green build), states its confidence, proposes the fix as a diff and re-runs from the failed stage once a person approves. The same agent diagnoses pods on the Dev cluster.", vs: "<b>The baseline for this chapter.</b> Jenkins, EKS and Kafka stay the sources of truth; Vector reads them and links each answer to its evidence. Every write, including a re-run or a redeploy, waits for a person." },
+      { name: "Jenkins Pipeline", who: ["Jenkins", "Pipeline Graph View"], what: "Pipeline Graph View shows a run as an interactive graph or a collapsible stage list, with step details and live logs. Any completed Declarative Pipeline can restart from a top-level stage that ran: earlier stages are skipped, inputs stay the same and the restart gets a new build number. Stashes carry over only with <code>preserveStashes()</code>.", vs: "Vector's design keeps Jenkins underneath. Its \"Re-run from contract tests\" is the same idea as Restart from Stage, and #419 is the new build number. The design adds the explanation before the restart and a person's approval in front of it.", src: [["Pipeline Graph View", "https://plugins.jenkins.io/pipeline-graph-view"], ["Restart from a Stage", "https://www.jenkins.io/doc/book/pipeline/running-pipelines/"]] },
+      { name: "GitHub Copilot", who: ["GitHub Actions"], what: "On a failed check in a pull request's merge box, or at the top of the workflow run summary, <b>Explain error</b> opens Copilot Chat, which gives instructions to resolve the issue. Copilot CLI can fetch workflow runs, job logs and check statuses through the GitHub MCP server, suggest code changes and apply them to local files; GitHub's tutorial says to review them, run the tests locally and push so CI runs again.", vs: "The closest match to Ratchet's job. GitHub notes that Copilot's responses are non-deterministic. Ratchet's design shows a stated confidence and the specific signals behind it, and keeps the fix as a commit a person approves before the re-run.", src: [["Using Copilot to troubleshoot workflows", "https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/using-copilot-to-troubleshoot-workflows"], ["Diagnose CI test failures", "https://docs.github.com/en/copilot/tutorials/copilot-cookbook/debug-errors/diagnose-ci-test-failures"]] },
+      { name: "GitLab Duo root cause analysis", who: ["GitLab"], what: "<b>Troubleshoot</b>, in a merge request's failed-jobs widget or below a job log (or <code>/troubleshoot</code> in Duo Chat), analyses the last 100,000 characters of the job log, identifies the cause and gives an example fix. It does not support trigger jobs or downstream pipelines, and it needs permission to view the job and the Duo Enterprise or Duo with Amazon Q add-on. A separate Fix CI/CD Pipeline flow fixes pipelines automatically.", vs: "GitLab works from the job log. Ratchet's design also reads the commits since the last green build and the schema, and compares with #417 to rule out infrastructure. GitLab offers an automatic fix flow; Vector's design keeps every write behind a person's approval.", src: [["Troubleshoot failed CI/CD jobs", "https://docs.gitlab.com/user/gitlab_duo_chat/examples/#troubleshoot-failed-cicd-jobs-with-root-cause-analysis"]] },
+      { name: "Pact and JSON Schema", who: ["consumer-driven contracts", "AsyncAPI"], what: "Pact is a consumer-driven contract tool. For messages, each consumer's test declares the message it expects and writes a pact file; the provider then generates each message and Pact checks it against every consumer's pact, standing in for the broker. A schema check works the other way: in JSON Schema, <code>additionalProperties: false</code> makes any unlisted property invalid. AsyncAPI documents describe channels and their messages, with payload schemas in components.", vs: "The v3 contract test validates the producer's sample event against the published v2 schema. One strict schema protects all eight consumers at once, and it also rejects additive fields a consumer might tolerate, which is why ADR-031 sends new fields to a v3 topic. Consumer pacts would test only what each consumer reads. (In Atlas, <code>order-events.yaml</code> is an AsyncAPI fixture.)", src: [["Pact · event-driven systems", "https://docs.pact.io/implementation_guides/javascript/docs/messages"], ["JSON Schema · additionalProperties", "https://json-schema.org/understanding-json-schema/reference/object#additionalproperties"], ["AsyncAPI document structure", "https://www.asyncapi.com/docs/concepts/asyncapi-document/structure"]] },
+      { name: "Kubernetes on GKE", who: ["Google Cloud", "CrashLoopBackOff"], what: "Google's troubleshooting guide says CrashLoopBackOff means containers are repeatedly starting and exiting, with a restart delay that grows exponentially (10 s, 20 s, 40 s) up to five minutes. It recommends <code>kubectl describe</code> for the pod's events, <code>kubectl logs --previous</code> for the crashed container's output, and the exit code in Last State.", vs: "The v3 Clusters screen shows those same raw signals: restarts, events and the last log lines. Ratchet's diagnosis adds what the cluster alone cannot show: the pin in <code>values-dev.yaml</code>, the topic retired in Kafka and the matching Matrix conflict. The fix is a redeploy that waits for its owner.", src: [["Troubleshoot CrashLoopBackOff events", "https://docs.cloud.google.com/kubernetes-engine/docs/troubleshooting/crashloopbackoff-events"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · Pipelines, Clusters, Home, Threads, Reviews, CodeX, Compute, Matrix, Approvals, Sentinel, Tools, Agents, Prompts and @B boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · 1.4 naming crosswalk (Ratchet) · 4.6 Run checks · 6 and reference catalog (Incident triage assistant) · 7.1 case T07 · 14.7 Model and tool execution · 15.3 @B examples", ""],
+      ["Vector, annotated (v3 explainer film) · chapter 04", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

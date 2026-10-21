@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The scattered answer · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  @media (max-width: 600px) { .hero .stage-card { aspect-ratio: 3 / 4; } }
+  .readout.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .readout.three b { font-size: 1.75rem; }
+  .proto-tbl td:first-child { white-space: nowrap; }
+  .proto-tbl tfoot td { font-weight: 600; border-top: 1px solid var(--hair); background: var(--sheet); }
+  .proto-side { display: grid; gap: 18px; min-width: 0; }
+  #hop-ctl select.sel { width: 100%; min-width: 0; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer" aria-current="page">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">01</span> Foundations · the problem</span>
+        <h1>The <em>scattered</em> answer</h1>
+        <p class="dek">Every change starts as an investigation across separate tools. Vector brings that context into one answer, with its evidence attached and its conflicts called out, while each tool keeps its own records.</p>
+        <div class="files">
+          <span class="tag t-exp"><i></i>v3 · Home</span>
+          <span class="tag t-exp"><i></i>v3 · Threads</span>
+          <span class="tag"><i></i>v3 · Bridge</span>
+          <span class="tag t-kno"><i></i>v3 · Matrix</span>
+          <span class="tag">handbook 1.1 · 5.2 · 8.1</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="The question 'What breaks if order.confirmed.v2 changes?' typed into Vector. Six tool windows, Jira, Confluence, Bitbucket, Jenkins, Amazon EKS and Teams, each fill with one fragment in turn. Bridge connects them, and one answer card appears below with four cited sources and one conflict called out. The answer text is @B's review from the v3 Reviews board.">
+        <span class="ruler">one question · six tools · one answer</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="investigation">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The problem</span>
+        <h2>Every change starts as an investigation</h2>
+        <p class="lede">Before Venkatesh writes a line for COM-2841, he needs to know what the change will touch. Today that answer is spread across six tools, and each one has its own name for the same service.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">COM-2841 · the question</span><h4>Before any code, a question</h4><p>Risk Engineering wants high-risk orders held for review before payment, "without changing the order event that 8 services consume." So the first job on the ticket is to find out what reads <code>order.confirmed.v2</code> and what breaks if it changes.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">The hops</span><h4>Six tools, six sign-ins</h4><p>The pieces sit in Jira, Confluence, Bitbucket, Jenkins, Amazon EKS and Teams. Each tool has its own login, its own vocabulary and its own name for order-service, and each holds one fragment. The person collecting them is the only thing that ties them together.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">v3 Matrix · one service, five names</span><h4>Same service, five spellings</h4><p>Git calls it <code>commerce/order-service</code>, the CMDB <code>ORD-SVC-01</code>, Kubernetes <code>app=order-service</code>, Optimus Logger <code>svc:orders</code> and Jira "component Orders". Matrix, the enterprise graph, resolves them to one identity and gives each fact one authority.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Scale · synthetic estate</span><h4>Then multiply by the estate</h4><p>The prototype's synthetic estate has 245 applications, 960 repositories and 2,875 services in 8 domains, and the v3 Repositories screen shows the same totals. A change to any of them can start the same investigation.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">With Vector · v3 Reviews</span><h4>One answer, evidence attached</h4><p>In the design, @B's review on PR #214 answers in three sentences and says where they came from: Matrix, the contracts and build #418. The one disagreement, about loyalty-consumer, sits beside the answer with both sides shown. The tools stay as they are; Bridge reads them.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="invest" data-label="Five scenes. The COM-2841 ticket and its question; six tool windows visited in order, each with its own name for order-service and one fragment; five names for order-service converging on one Matrix identity; 960 repository dots in 8 domains; and the @B review answer with its sources drawn down to the tools that hold them."><span class="ruler">COM-2841 · finding what changes</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="records">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The approach</span>
+        <h2>Each system keeps its own records</h2>
+        <p class="lede">Vector connects to the tools through Bridge and reads them where they are. Each connection says what Vector may do, each fact has one authority, and when two sources disagree, both stay on screen.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">Bridge · v3</span><h4>66 integrations, 39 connected</h4><p>Bridge is where Vector meets the tools a team already runs: 66 integrations in 8 categories, 39 of them connected in the design. The Commerce team's own stack is 18 of them, from Jira and Bitbucket Data Center to Kafka and LaunchDarkly.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">What Vector may do</span><h4>Rights, per integration</h4><p>Every connection lists what Vector may do. For Jenkins in Dev it may read jobs, builds and logs and receive build events. Re-running a stage needs an approval, and changing job configuration is not allowed. The binding names folder <code>commerce/dev</code> and agent pool <code>k8s-build</code>.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">v3 Matrix · authority</span><h4>Each fact has one owner</h4><p>The CMDB owns who owns order-service, Kubernetes labels own its runtime identity and Git owns its code. Vector reads each attribute from the system that owns it and leaves the record there. Optimus Logger and Jira names stay as aliases.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">When sources disagree</span><h4>Both sides stay on screen</h4><p>Git says loyalty-consumer reads <code>order.confirmed.v2</code>, at confidence 0.95. Kafka in <code>msk-dev-use1</code> has seen no consumer-group offsets for 48 hours. Matrix keeps both, each with when it was true and when Matrix learned it, and a person decides. "No model settles a conflict."</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="records" data-label="Four scenes. 66 integrations as dots in 8 categories, a bar with 39 of 66 connected and the team's 18-tool stack; Vector and Jenkins with four lanes of rights: two allowed, one through an approval gate, one blocked; order-service's attributes each drawn from its authority, CMDB, Kubernetes and Git; and the loyalty-consumer conflict with Git's and Kafka's assertions side by side."><span class="ruler">Bridge · rights and authority</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where you see it on screen</h2>
+        <p class="lede">Three v3 boards carry the idea. Home fuses the morning across six tools, Threads follows one ticket through eleven, and Bridge shows what is connected and what Vector may do with it. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Main.webp" data-w="1600" data-h="1000" data-crop="227,90,1373,880" data-title="Home — since this morning, fused across six tools (v3)">
+          <span class="pin c-exp" data-x="442" data-y="193">1</span>
+          <span class="pin c-exe" data-x="803" data-y="193">2</span>
+          <span class="pin c-bad" data-x="1168" data-y="193">3</span>
+          <span class="pin c-ctl" data-x="1538" data-y="193">4</span>
+          <span class="pin" data-x="334" data-y="336">5</span>
+          <span class="pin c-exp" data-x="562" data-y="754">6</span>
+          <span class="ring" data-box="255,182,1316,110"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 01.1 · Home</span>
+          <h3>Six tools, read once</h3>
+          <ol class="pins">
+            <li><span><b>Since this morning.</b> "@B read Jira, Bitbucket, Jenkins, EKS, Confluence and Teams." Home opens on what changed across all six.</span></li>
+            <li><span><b>One card, three tools.</b> Build #419 from Jenkins is running on EKS, and its evals pass 8 of 8. The card links to the pipeline.</span></li>
+            <li><span><b>The incident, already explained.</b> loyalty-consumer 1.8.2 still reads the retired v1 topic; R-2207 redeploys 1.9.0 once Sam Patel approves.</span></li>
+            <li><span><b>Where the promotion stands.</b> Maya Chen approved; Lena Fischer (Security) has not signed yet.</span></li>
+            <li><span><b>Panels keep their source's name.</b> Jira, Teams calendar, Workspaces from CodeX, Pull requests from Bitbucket. The records stay in those tools.</span></li>
+            <li><span><b>Scoped to the window.</b> Pipelines come from Jenkins <code>commerce/dev</code>, because this window is in Dev.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Thread.webp" data-w="1600" data-h="1000" data-crop="227,90,1373,880" data-title="Threads — COM-2841, every tool this ticket touched (v3)">
+          <span class="pin" data-x="764" data-y="161">1</span>
+          <span class="pin" data-x="440" data-y="207">2</span>
+          <span class="pin" data-x="1126" data-y="322">3</span>
+          <span class="pin c-bad" data-x="943" data-y="566">4</span>
+          <span class="pin c-kno" data-x="612" data-y="514">5</span>
+          <span class="pin c-ctl" data-x="943" data-y="867">6</span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 01.2 · Threads</span>
+          <h3>One ticket, every tool</h3>
+          <ol class="pins">
+            <li><span><b>The promise.</b> "Every tool this ticket touched, in one thread."</span></li>
+            <li><span><b>Eight stages, each with its tool.</b> Plan in Jira, Understand in Matrix, Code in CodeX, Review in Bitbucket, Build in Jenkins, Evaluate in Evals, Deploy to Dev, and Promote, waiting on QA approval 1 of 2.</span></li>
+            <li><span><b>11 events · 11 tools.</b> Each event names where it came from, from Jira and Confluence on Oct 6 to GroundBridge at 15:12.</span></li>
+            <li><span><b>Build #418 failed.</b> The event already carries Ratchet's finding: "Ratchet found the cause."</span></li>
+            <li><span><b>Criteria checked from evidence.</b> Each acceptance criterion cites what proves it: code and trace, eval cases T02, T03, T06 and T07, and build #419.</span></li>
+            <li><span><b>The open step.</b> Promotion to QA requested; Maya approved, Lena pending.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Bridge.webp" data-w="1600" data-h="1000" data-crop="227,90,1373,880" data-title="Bridge — integrations and what Vector may do (v3)">
+          <span class="pin" data-x="962" data-y="140">1</span>
+          <span class="pin" data-x="1372" data-y="195">2</span>
+          <span class="pin c-exe" data-x="538" data-y="345">3</span>
+          <span class="pin c-exp" data-x="1525" data-y="475">4</span>
+          <span class="pin c-ok" data-x="1200" data-y="539">5</span>
+          <span class="pin c-ctl" data-x="1456" data-y="594">6</span>
+          <span class="pin c-bad" data-x="1200" data-y="620">7</span>
+          <span class="pin" data-x="1267" data-y="915">8</span>
+          <span class="ring" data-box="1205,500,352,135"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 01.3 · Bridge</span>
+          <h3>Connected, with rights</h3>
+          <ol class="pins">
+            <li><span><b>The rule in one line.</b> "66 integrations in 8 categories · 39 connected. Each system stays the source of truth for its own records."</span></li>
+            <li><span><b>Categories.</b> Models 10, Developer tools 9, Delivery 11, Telemetry 8, Knowledge 8, Business 7, Identity &amp; infra 7, Agent frameworks 6. Your stack holds the team's 18.</span></li>
+            <li><span><b>Jenkins, selected.</b> "Pipelines, stages, logs" · connected, live.</span></li>
+            <li><span><b>Bound in Dev.</b> Folder <code>commerce/dev</code>, agent pool <code>k8s-build</code>.</span></li>
+            <li><span><b>Allowed.</b> Read jobs, builds and logs; receive build events.</span></li>
+            <li><span><b>Needs approval.</b> Re-run a stage.</span></li>
+            <li><span><b>Not allowed.</b> Change job configuration stays unchecked.</span></li>
+            <li><span><b>Test connection.</b> In the Atlas prototype this button checks only a <code>vault://</code> prefix and the reference's length.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prototype">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>A catalog of 66 cards</h2>
+        <p class="lede">The Atlas prototype already has the catalog, in the same eight categories. Every card is a local descriptor, and no enterprise system is contacted.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p>Each descriptor has an ID, name, category, description, monogram, colour, a default configured flag, an auth description and a scope string. The auth and scope strings come from a rule per category, so they are display metadata, not provider permissions.</p>
+          <p>39 cards start configured. A saved override flips a card either way, and Reset returns to 39. <b>Test connection</b> checks the shape of the credential reference, waits 700 ms and marks the form tested. It never reaches the vendor, looks up the credential or checks a scope.</p>
+          <p>The rest of the estate is prepared too. Overview's 245 applications, 960 repositories and 2,875 services are fixed labels that match the generator at this snapshot, and its eight-node map is a drawing separate from the 13-node graph. Knowledge sources shows five aliases for Customer Profile as a prepared mapping, not a matching algorithm.</p>
+          <p class="note">The two layers disagree on which 39. In the prototype, Jenkins, Bitbucket and Bitbucket Data Center start unconfigured and Delivery &amp; discovery has none configured. In the v3 design, Jenkins and Bitbucket Data Center are connected. Only the totals match.</p>
+        </div>
+        <div class="proto-side">
+          <div class="code">
+            <div class="hd"><span>Integrations · as handbook 8.1 and 8.2 describe it</span><span>prototype</span></div>
+<pre><span class="c">// Test connection</span>
+reference = saved ?? <span class="s">"vault://integrations/"</span> + id
+tested    = reference.startsWith(<span class="s">"vault://"</span>)
+         &amp;&amp; reference.length &gt;= <span class="n">12</span>
+wait(<span class="n">700</span> ms)     <span class="c">// no vendor call, no credential lookup,</span>
+                  <span class="c">// no scope or region check</span>
+
+<span class="c">// Configured state</span>
+configured(id) = state.connections[id] ?? defaultConfigured(id)
+<span class="c">// 39 of 66 by default; Reset returns to 39</span></pre>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl proto-tbl">
+              <thead><tr><th>Category</th><th class="num">Cards</th><th class="num">Configured</th><th>Scope string</th></tr></thead>
+              <tbody>
+                <tr><td>Models</td><td class="num">10</td><td class="num">7</td><td><code>models:read · inference:invoke</code></td></tr>
+                <tr><td>Developer tools</td><td class="num">9</td><td class="num">6</td><td><code>metadata:read · events:subscribe</code></td></tr>
+                <tr><td>Agent frameworks</td><td class="num">6</td><td class="num">3</td><td><code>metadata:read · events:subscribe</code></td></tr>
+                <tr><td>Evaluation &amp; telemetry</td><td class="num">8</td><td class="num">5</td><td><code>metadata:read · events:subscribe</code></td></tr>
+                <tr><td>Data &amp; knowledge</td><td class="num">8</td><td class="num">6</td><td><code>metadata:read · events:subscribe</code></td></tr>
+                <tr><td>Business systems</td><td class="num">7</td><td class="num">5</td><td><code>records:read · approvals:request</code></td></tr>
+                <tr><td>Identity &amp; infrastructure</td><td class="num">7</td><td class="num">7</td><td><code>metadata:read · events:subscribe</code></td></tr>
+                <tr><td>Delivery &amp; discovery</td><td class="num">11</td><td class="num">0</td><td><code>metadata:read · events:subscribe</code></td></tr>
+              </tbody>
+              <tfoot><tr><td>Total</td><td class="num">66</td><td class="num">39</td><td>counted from the fixture reference</td></tr></tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Count the hops</h2>
+        <p class="lede">Pick a question the design answers and compare two paths: the tools a person opens today to collect the pieces, and the one answer Vector's design gives with its sources cited.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="hop-ctl">
+          <div class="ctl"><label for="q">Question</label>
+            <select class="sel" id="q">
+              <option value="f418">Why did #418 fail?</option>
+              <option value="loyalty">Why is loyalty-consumer failing in Dev?</option>
+              <option value="event" selected>What breaks if order.confirmed.v2 changes?</option>
+              <option value="ready">Is 2.14.0-rc2 ready for QA?</option>
+            </select>
+          </div>
+          <div class="ctl"><span class="lbl">Path</span>
+            <div class="seg" id="mode" role="group" aria-label="Path">
+              <button type="button" value="today" aria-pressed="true">Today</button><button type="button" value="vector" aria-pressed="false">With Vector</button>
+            </div>
+          </div>
+          <div class="readout three">
+            <div><b id="o-tools">–</b><span>tools opened</span></div>
+            <div><b id="o-src">–</b><span id="o-src-l">places looked</span></div>
+            <div><b id="o-conf">–</b><span>conflicts called out</span></div>
+          </div>
+          <p class="logline" id="o-log" aria-live="polite"></p>
+          <p class="note">The four questions and every With Vector answer are the v3 design's own, from Pipelines, @B in Teams, Reviews, Home and GroundBridge. Today paths take each source those answers cite and open it in the tool that holds it, in the order of the design's timeline where it gives one. Nothing is timed, because the design states no durations.</p>
+        </div>
+        <div class="board" data-stage="hops" data-label="Today: a numbered list of the places a person opens, one tool card per hop, with any disagreement between two hops bracketed in red because no tool flags it. With Vector: one Vector window holding the design's answer, its cited sources as chips and any conflict called out, with the same tools drawn as sources read through Bridge."><span class="ruler">one question · two paths</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>6</b><span>tools @B read since this morning, named on Home</span></div>
+        <div><b>5</b><span>names for order-service, one identity in Matrix</span></div>
+        <div><b>11 / 11</b><span>events / tools in the COM-2841 thread</span></div>
+        <div><b>66 / 8</b><span>integrations / categories in Bridge</span></div>
+        <div><b>39</b><span>connected in the design; configured cards in the prototype</span></div>
+        <div><b>960</b><span>repositories in the synthetic estate, with 245 applications and 2,875 services</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>Overview shows fixed labels (245 applications, 960 repositories, 2,875 services) and a prepared eight-node map. Integrations lists 66 simulated descriptors, 39 configured by default; Test connection checks a <code>vault://</code> prefix and a 12-character minimum. No enterprise system is contacted.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>Home fuses what @B read in Jira, Bitbucket, Jenkins, EKS, Confluence and Teams</li><li>Threads: every tool one ticket touched, 11 events · 11 tools</li><li>Bridge: 66 integrations, 39 connected, rights per integration</li><li>Matrix: five names, one identity, one authority per fact</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>Federation over copying. Adapters read source APIs, snapshots, webhooks and telemetry; each entity gets an immutable platform-issued identity with external names as aliases; authority is set per attribute, and contradictions are kept with a reconciliation owner (handbook 14.4, 14.5). Phase 1 covers one domain with read-only tools (14.12).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same problem, other tools</h2>
+        <p class="lede">Developer portals gather context around catalog entities, and enterprise search gathers it around documents. Vector's design gathers it around a ticket and a question, inside one environment.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="index.html"><span>← Map</span><b>The whole machine</b></a>
+    <a class="fwd" href="names.html"><span>Chapter 02 →</span><b>Names and the map</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp } = Field;
+  const A = (a) => (a === undefined ? 1 : a);
+
+  const TOOLS = {
+    jira: { m: "JI", n: "Jira" },
+    cf: { m: "CF", n: "Confluence" },
+    bb: { m: "BB", n: "Bitbucket" },
+    jk: { m: "JK", n: "Jenkins" },
+    eks: { m: "EKS", n: "Amazon EKS" },
+    tm: { m: "TM", n: "Teams" },
+    kf: { m: "KF", n: "Kafka · MSK" },
+  };
+
+  /* ---------------- small drawing helpers ---------------- */
+  // a tool's monogram tile, neutral: tools are not one of Vector's planes
+  function mono(g, x, y, s, label, o = {}) {
+    const a = A(o.a);
+    g.rect(x, y, s, s, { fill: o.fill || "#EEF0F4", stroke: o.stroke || "hair", lw: 1, r: s * 0.28, a });
+    const fs = label.length > 2 ? s * 0.31 : s * 0.4;
+    g.text(label, x + s / 2, y + s / 2 + fs * 0.36, { size: fs, weight: 600, color: o.color || "ink-2", align: "center", a });
+  }
+  function card(g, x, y, w, h, o = {}) {
+    const a = A(o.a), r = o.r || 9;
+    g.rect(x + 1.5, y + 3, w, h, { fill: "ink", r, a: a * 0.05 });
+    g.rect(x, y, w, h, { fill: o.fill || "card", stroke: o.stroke || "hair", lw: o.lw || 1.2, r, a, dash: o.dash });
+  }
+  function nLines(g, text, maxW, size, font, weight) {
+    const words = String(text).split(/\s+/); let line = "", n = 0;
+    for (const w of words) { const t = line ? line + " " + w : w; if (g.tw(t, size, font || "mono", weight || 500) > maxW && line) { n++; line = w; } else line = t; }
+    return n + (line ? 1 : 0);
+  }
+  // chips laid out in rows inside maxW; returns positions relative to (0,0)
+  function chipLayout(g, items, maxW, size) {
+    const h = Math.round(size * 1.75), gap = 6; let cx = 0, cy = 0; const pos = [];
+    items.forEach((it) => { const w = g.tw(it[0], size, "mono", 600) + 20; if (cx + w > maxW && cx > 0) { cx = 0; cy += h + gap; } pos.push({ x: cx, y: cy, w, h }); cx += w + gap; });
+    return { h: items.length ? cy + h : 0, pos };
+  }
+  function drawChips(g, x, y, items, L, size, a, stagger) {
+    items.forEach((it, i) => { const p = L.pos[i]; g.chip(x + p.x, y + p.y + p.h / 2, it[0], it[1], { size, a: A(a) * (stagger ? stagger(i) : 1) }); });
+  }
+  function avatar(g, x, y, r, initials, a) {
+    g.circle(x, y, r, { fill: "exp", a });
+    g.text(initials, x, y + r * 0.34, { size: r * 0.9, font: "ui", weight: 700, color: "#FFFFFF", align: "center", a });
+  }
+  function check(g, x, y, kind, a) {
+    // ✓ allowed, ⏸ needs approval, ✕ refused
+    const c = kind === "ok" ? "ok" : kind === "wait" ? "ctl" : "bad";
+    g.circle(x, y, 9, { fill: g.rgba(c, 0.12), stroke: c, lw: 1.3, dash: kind === "wait" ? [3, 3] : null, a });
+    g.text(kind === "ok" ? "✓" : kind === "wait" ? "…" : "✕", x, y + 4, { size: 11, weight: 700, color: c, align: "center", a });
+  }
+
+  /* ---------------- shared story content (v3 design) ---------------- */
+  const REVIEW = "This adds a field to order.confirmed.v2, which forbids extra properties. 8 consumers read v2, and ADR-031 asks for a v3 topic for new fields. Keep the decision internal for this release.";
+  const REVIEW_SRC = [["Matrix impact", "kno"], ["order-events.yaml", "kno"], ["build #418", "kno"], ["ADR-031", "kno"]];
+  const CONFLICT_TXT = "loyalty-consumer: Git says it reads v2; Kafka has seen no offsets for 48 h";
+
+  /* ---------------- hero: one question, six tools, one answer ---------------- */
+  const HERO = [
+    ["jira", "COM-2841", "keep the order event that 8 services consume unchanged"],
+    ["cf", "ADR-031", "new event fields go to a v3 topic"],
+    ["bb", "order-events.yaml", "OrderConfirmedV2 · additionalProperties: false"],
+    ["jk", "#418 · log 2208", "$.riskDecision: is not defined in the schema"],
+    ["eks", "nsx-dev-use1 / commerce", "loyalty-consumer 0/2 · CrashLoopBackOff"],
+    ["tm", "design review · 11:00", "@B saved notes and 2 decisions"],
+  ];
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g, tall = H > W * 0.95;
+    const P = 12.5, u = s.t % P, fo = 1 - ramp(u, P - 0.7, 0.5);
+    const pad = 20, top = Math.max(40, g.safeTop + 6);
+    // the question, typed into Vector's search field
+    const qh = 34;
+    g.rect(pad, top, W - pad * 2, qh, { fill: "card", stroke: "hair", lw: 1.2, r: qh / 2 });
+    g.bee(pad + 19, top + qh / 2, 18);
+    const qs = tall ? 12.5 : 14.5;
+    g.text("What breaks if order.confirmed.v2 changes?", pad + 36, top + qh / 2 + qs * 0.36, { size: qs, font: "ui", weight: 600 });
+    const found = HERO.map((h, i) => ramp(u, 0.8 + i * 0.75, 0.35) * fo);
+    const k = found.filter((f) => f > 0.5).length;
+    const ctr = k ? `${k} of 6 read` : "";
+    const qw = g.tw("What breaks if order.confirmed.v2 changes?", qs, "ui", 600);
+    if (ctr && pad + 36 + qw + 16 + g.tw(ctr, 10.5) < W - pad - 12) g.text(ctr, W - pad - 14, top + qh / 2 + 4, { size: 10.5, color: "exp", align: "right", weight: 600 });
+    // six windows
+    const cols = tall ? 2 : 3, rows = 6 / cols, gap = 10, brH = 26;
+    const ansH = tall ? 162 : 152;
+    const gy0 = top + qh + 14, gyEnd = H - pad - ansH - brH - 34;
+    const ww = (W - pad * 2 - gap * (cols - 1)) / cols, wh = (gyEnd - gy0 - gap * (rows - 1)) / rows;
+    HERO.forEach(([tk, lab, frag], i) => {
+      const r = Math.floor(i / cols), c = i % cols, x = pad + c * (ww + gap), y = gy0 + r * (wh + gap);
+      const t0 = 0.8 + i * 0.75, f = found[i], cur = fo > 0.5 && u > t0 - 0.1 && u < t0 + 0.75;
+      card(g, x, y, ww, wh, { stroke: cur ? "exp" : "hair", lw: cur ? 1.7 : 1.2 });
+      mono(g, x + 9, y + 9, 19, TOOLS[tk].m);
+      g.text(TOOLS[tk].n, x + 35, y + 23, { size: 12, font: "ui", weight: 600 });
+      if (f > 0.02) { g.circle(x + ww - 15, y + 18, 8.5, { fill: "exp", a: f }); g.text(String(i + 1), x + ww - 15, y + 21.5, { size: 9.5, weight: 700, color: "#FFFFFF", align: "center", a: f }); }
+      if (f < 0.98) for (let l = 0; l < 2; l++) g.rect(x + 10, y + 40 + l * 14, (ww - 20) * (0.8 - l * 0.3), 5, { fill: "grid", r: 2.5, a: 1 - f });
+      g.text(lab, x + 10, y + 44, { size: 10.5, color: "ink-3", a: f, maxW: ww - 20 });
+      g.wrap(frag, x + 10, y + 60, ww - 20, { size: 11, lh: 14, maxLines: 2, a: f });
+    });
+    // Bridge
+    const by = gyEnd + 16, ba = ramp(u, 5.4, 0.5) * fo;
+    for (let c = 0; c < cols; c++) { const x = pad + c * (ww + gap) + ww / 2; g.arrow(x, gyEnd + 2, x, by - 2, { color: "ink-3", lw: 1.1, head: 6, a: 0.3 + 0.7 * ba }); }
+    g.rect(pad, by, W - pad * 2, brH, { fill: "sheet", stroke: "ink-3", lw: 1.1, r: 7 });
+    g.text("Bridge", pad + 10, by + 17, { size: 11.5, font: "ui", weight: 700 });
+    HERO.forEach(([tk], i) => mono(g, pad + 60 + i * 23, by + 3, 20, TOOLS[tk].m, { a: 0.35 + 0.65 * found[i] }));
+    const note = "each system keeps its own records";
+    if (W - pad * 2 - (60 + 6 * 23 + 10) > g.tw(note, 10.5) + 16) g.text(note, W - pad - 10, by + 17, { size: 10.5, color: "ink-3", align: "right" });
+    // the answer
+    const ay = by + brH + 14, ah = H - pad - ay, aa = ramp(u, 6.3, 0.5) * fo;
+    g.arrow(W / 2, by + brH + 1, W / 2, ay - 1, { color: "exp", lw: 1.4, head: 6, a: 0.25 + 0.75 * aa });
+    g.rect(pad, ay, W - pad * 2, ah, { stroke: "ink-3", lw: 1, r: 10, dash: [4, 4], a: 1 - aa });
+    g.text("one answer · not assembled yet", W / 2, ay + ah / 2 + 4, { size: 11.5, color: "ink-3", align: "center", a: 1 - aa });
+    card(g, pad, ay, W - pad * 2, ah, { stroke: "exp", lw: 1.4, a: aa });
+    const ix = pad + 14, iw = W - pad * 2 - 28;
+    g.bee(ix + 8, ay + 18, 16, { a: aa });
+    g.text("@B review · PR #214", ix + 24, ay + 22.5, { size: 12, font: "ui", weight: 600, a: aa });
+    if (!tall) g.text("from Matrix, contracts and build #418", ix + iw, ay + 22.5, { size: 10.5, color: "ink-3", align: "right", a: aa });
+    let y = g.wrap(REVIEW, ix, ay + 46, iw, { size: tall ? 12 : 12.5, font: "ui", lh: tall ? 16 : 17, a: aa });
+    const L = chipLayout(g, REVIEW_SRC, iw, 10.5);
+    drawChips(g, ix, y - 6, REVIEW_SRC, L, 10.5, fo, (j) => ramp(u, 6.9 + j * 0.22, 0.3));
+    y = y - 6 + L.h + 8;
+    const ca = ramp(u, 8.1, 0.4) * fo;
+    const cw = g.chip(ix, y + 9, "1 conflict", "bad", { size: 10.5, a: ca });
+    g.wrap(CONFLICT_TXT, ix + cw + 8, y + 13, iw - cw - 8, { size: 10.5, color: "ink-2", lh: 14, maxLines: 2, a: ca });
+  }, { anim: true, restT: 10.5, zoom: 1.25, minW: 480, maxW: 900 });
+
+  /* ---------------- scrolly 1: the investigation ---------------- */
+  const HOPS6 = [
+    ["jira", "component Orders", "COM-2841: 8 services consume the event"],
+    ["cf", "Order Service", "ADR-031: new event fields go to a v3 topic"],
+    ["bb", "commerce/order-service", "order-events.yaml: additionalProperties: false"],
+    ["jk", "order-service · fraud-review", "#418, log 2208: $.riskDecision not in schema"],
+    ["eks", "app=order-service", "loyalty-consumer 1.8.2: 0/2, 214 restarts"],
+    ["tm", "#commerce-orders", "design review 11:00: 2 decisions saved"],
+  ];
+  const FIVE = [
+    ["Git", "commerce/order-service", "owns code"],
+    ["CMDB", "ORD-SVC-01", "owns owner"],
+    ["Kubernetes", "app=order-service", "owns runtime"],
+    ["Optimus Logger", "svc:orders", null],
+    ["Jira", "component Orders", null],
+  ];
+  const DOMAINS = [["Commerce", 168], ["Risk & identity", 121], ["Customer", 134], ["Payments", 97], ["Fulfilment", 88], ["Digital channels", 142], ["Data & intelligence", 109], ["Platform", 101]];
+
+  function sceneQuestion(g, a, tall, top, pad) {
+    const { W, H } = g, cw = W - pad * 2, x = pad;
+    const story = "As Risk Engineering, we want high-risk orders held for manual review before payment, so fraud losses fall without changing the order event that 8 services consume.";
+    const fs = tall ? 13 : 14.5, lh = Math.round(fs * 1.42);
+    const nl = nLines(g, story, cw - 32, fs, "ui", 500);
+    const ch = 96 + nl * lh + 40;
+    const tileRows = tall ? 2 : 1, th = 50, tg = 10;
+    const total = ch + 30 + 64 + 26 + tileRows * th + (tileRows - 1) * tg;
+    let y = top + Math.max(0, (H - top - pad - total) * 0.45);
+    card(g, x, y, cw, ch, { a });
+    mono(g, x + 16, y + 16, 22, "S", { a });
+    g.text("COM-2841", x + 46, y + 32, { size: 12.5, color: "ink-2", weight: 600, a });
+    g.text("Jira · story · In progress", x + cw - 16, y + 32, { size: 11, color: "ink-3", align: "right", a });
+    g.text("Add fraud review before order confirmation", x + 16, y + 66, { size: tall ? 16.5 : 20, font: "ui", weight: 700, a, maxW: cw - 32 });
+    const ey = g.wrap(story, x + 16, y + 96, cw - 32, { size: fs, font: "ui", lh, color: "ink-2", a });
+    g.line(x + 16, ey - lh + 14, x + cw - 16, ey - lh + 14, { color: "hair", lw: 1, dash: [3, 4], a });
+    const cy = ey - lh + 34;
+    const cl = "the constraint";
+    g.text(cl, x + 16, cy, { size: 10.5, color: "ink-3", a });
+    g.text("order.confirmed.v2 · 8 consumers · unchanged", x + 26 + g.tw(cl, 10.5), cy, { size: tall ? 11.5 : 12.5, weight: 600, a, maxW: cw - 50 - g.tw(cl, 10.5) });
+    // the question
+    y += ch + 30;
+    avatar(g, x + 16, y + 14, 15, "VT", a);
+    g.text("Venkatesh asks", x + 40, y + 6, { size: 11, color: "ink-3", a });
+    g.wrap("What breaks if order.confirmed.v2 changes?", x + 40, y + 30, cw - 40, { size: tall ? 17 : 22, font: "ui", weight: 700, lh: 24, a, maxLines: 2 });
+    // where the pieces live
+    y += 64;
+    g.text("the pieces live in", x, y + 10, { size: 11, color: "ink-3", a });
+    y += 22;
+    const tc = tall ? 3 : 6, tw = (cw - tg * (tc - 1)) / tc;
+    HOPS6.forEach(([tk], i) => {
+      const tx = x + (i % tc) * (tw + tg), ty = y + Math.floor(i / tc) * (th + tg);
+      g.rect(tx, ty, tw, th, { stroke: "ink-3", lw: 1, r: 8, dash: [4, 4], a });
+      mono(g, tx + 10, ty + 14, 22, TOOLS[tk].m, { a });
+      g.text(TOOLS[tk].n, tx + 40, ty + 30, { size: 11.5, font: "ui", weight: 600, a, maxW: tw - 50 });
+    });
+  }
+
+  function sceneHops(g, s, a, tall, top, pad) {
+    const { W, H } = g, cols = tall ? 2 : 3, rows = 6 / cols, gx = 34, gy = 34;
+    const ww = (W - pad * 2 - gx * (cols - 1)) / cols;
+    const avail = H - top - pad - 50;
+    const wh = Math.min(tall ? 146 : 166, (avail - gy * (rows - 1)) / rows);
+    const y0 = top + 6 + Math.max(0, (avail - rows * wh - gy * (rows - 1)) * 0.4);
+    const pos = HOPS6.map((h, i) => { const r = Math.floor(i / cols), c0 = i % cols, c = r % 2 ? cols - 1 - c0 : c0; return { x: pad + c * (ww + gx), y: y0 + r * (wh + gy) }; });
+    pos.forEach(({ x, y }, i) => {
+      const [tk, calls, holds] = HOPS6[i];
+      card(g, x, y, ww, wh, { a });
+      g.circle(x + 17, y + 18, 10, { fill: "exp", a });
+      g.text(String(i + 1), x + 17, y + 22, { size: 11, weight: 700, color: "#FFFFFF", align: "center", a });
+      mono(g, x + 33, y + 8, 20, TOOLS[tk].m, { a });
+      g.text(TOOLS[tk].n, x + 60, y + 23, { size: 12.5, font: "ui", weight: 600, a, maxW: ww - 130 });
+      g.text("own login", x + ww - 12, y + 23, { size: 10, color: "ink-3", align: "right", a });
+      g.line(x + 1, y + 34, x + ww - 1, y + 34, { color: "grid", lw: 1, a });
+      const sy = tall ? 50 : 54;
+      g.text("calls the service", x + 12, y + sy, { size: 10, color: "ink-3", a });
+      g.text(calls, x + 12, y + sy + 17, { size: 12, weight: 600, a, maxW: ww - 24 });
+      g.text("holds", x + 12, y + sy + 40, { size: 10, color: "ink-3", a });
+      g.wrap(holds, x + 12, y + sy + 57, ww - 24, { size: 11, lh: 14.5, maxLines: 2, a });
+    });
+    const segs = [];
+    for (let i = 0; i < 5; i++) {
+      const p = pos[i], q = pos[i + 1];
+      let s0, s1;
+      if (Math.abs(p.y - q.y) < 1) { const d = q.x > p.x ? 1 : -1; s0 = [d > 0 ? p.x + ww + 5 : p.x - 5, p.y + wh / 2]; s1 = [d > 0 ? q.x - 5 : q.x + ww + 5, q.y + wh / 2]; }
+      else { s0 = [p.x + ww / 2, p.y + wh + 5]; s1 = [q.x + ww / 2, q.y - 5]; }
+      segs.push([s0, s1]);
+      g.arrow(s0[0], s0[1], s1[0], s1[1], { color: "exp", lw: 1.5, head: 7, a });
+    }
+    const ph = (s.t * 0.8) % 5, si = Math.floor(ph), f = ease(ph - si), [s0, s1] = segs[si];
+    g.circle(lerp(s0[0], s1[0], f), lerp(s0[1], s1[1], f), 3.6, { fill: "exp", a: a * Math.sin(Math.PI * f) });
+    g.text("6 tools · 6 sign-ins · 6 vocabularies · 1 service", W / 2, H - pad - 6, { size: tall ? 12 : 13, color: "ink-2", align: "center", a });
+  }
+
+  function sceneFive(g, s, a, tall, top, pad) {
+    const { W, H } = g;
+    const rh = tall ? 50 : 54, rg = tall ? 10 : 12;
+    const listH = 5 * rh + 4 * rg;
+    const nodeW = tall ? 230 : 220, nodeH = 74;
+    const total = 36 + listH + (tall ? 40 + nodeH : 0) + 90;
+    const y0 = top + Math.max(0, (H - top - pad - total) * 0.45);
+    g.text("One service, five names", pad, y0 + 20, { size: tall ? 22 : 26, font: "display", weight: 800, a });
+    const ly = y0 + 40;
+    const lw = tall ? W - pad * 2 - 26 : (W - pad * 2) * 0.54;
+    const nx = tall ? W / 2 - nodeW / 2 : pad + lw + ((W - pad) - (pad + lw)) / 2 - nodeW / 2 + 12;
+    const ny = tall ? ly + listH + 40 : ly + listH / 2 - nodeH / 2;
+    const prog = ramp(s.b, 1.55, 0.5);
+    FIVE.forEach(([sys, val, auth], i) => {
+      const y = ly + i * (rh + rg);
+      card(g, pad, y, lw, rh, { a });
+      g.text(sys, pad + 14, y + 21, { size: 12.5, font: "ui", weight: 600, color: "ink-2", a });
+      g.text(val, pad + 14, y + 41, { size: tall ? 13 : 14, weight: 600, a, maxW: lw - 130 });
+      if (auth) g.chip(pad + lw - 12, y + rh / 2, auth, "kno", { size: 10.5, align: "right", a });
+      if (!tall) g.curve([pad + lw + 4, y + rh / 2], [nx - 30, y + rh / 2], [nx - 4, ny + nodeH / 2 + (i - 2) * 9], { color: "kno", lw: 1.3, head: 7, a: a * (auth ? 1 : 0.55), prog, dash: auth ? null : [4, 4] });
+      else { const bx = W - pad - 10; g.line(pad + lw + 2, y + rh / 2, bx, y + rh / 2, { color: "kno", lw: 1.2, a: a * (auth ? 1 : 0.55), dash: auth ? null : [4, 4] }); }
+    });
+    if (tall) { const bx = W - pad - 10; g.line(bx, ly + rh / 2, bx, ny + nodeH / 2, { color: "kno", lw: 1.3, a }); g.arrow(bx, ny + nodeH / 2, nx + nodeW + 4, ny + nodeH / 2, { color: "kno", lw: 1.3, head: 7, a }); }
+    g.rect(nx, ny, nodeW, nodeH, { fill: g.rgba("kno", 0.07), stroke: "kno", lw: 1.6, r: 12, a });
+    g.text("order-service", nx + 16, ny + 30, { size: 17, font: "ui", weight: 700, a });
+    g.text("one identity in Matrix", nx + 16, ny + 52, { size: 11, color: "kno", weight: 600, a });
+    const qy = tall ? ny + nodeH + 34 : ly + listH + 40;
+    g.wrap("“Each fact has one authority. CMDB owns ownership, Kubernetes labels own runtime identity, Git owns the code.”", pad, qy, W - pad * 2, { size: tall ? 13 : 14, font: "body", lh: 19, color: "ink-2", a, maxLines: 3 });
+    g.text("v3 Matrix · One service, five names", pad, H - pad - 4, { size: 10.5, color: "ink-3", a });
+  }
+
+  function sceneEstate(g, s, a, tall, top, pad) {
+    const { W, H } = g;
+    const nums = [["245", "applications"], ["960", "repositories"], ["2,875", "services"], ["8", "domains"]];
+    const ncols = tall ? 2 : 4, nrowH = tall ? 54 : 70;
+    const per = tall ? 2 : 4, sp = tall ? 6.4 : 8, dc = 16, ds = tall ? 4 : 5;
+    const blockH = 20 + Math.ceil(168 / dc) * sp + (tall ? 14 : 22);
+    const total = Math.ceil(4 / ncols) * nrowH + 16 + Math.ceil(8 / per) * blockH + 40;
+    const y0 = top + Math.max(0, (H - top - pad - total) * 0.4);
+    const nw = (W - pad * 2) / ncols;
+    nums.forEach(([n, l], i) => {
+      const x = pad + (i % ncols) * nw, y = y0 + Math.floor(i / ncols) * nrowH;
+      g.text(n, x, y + (tall ? 30 : 40), { size: tall ? 32 : 42, font: "display", weight: 800, a });
+      g.text(l, x, y + (tall ? 46 : 60), { size: 11, color: "ink-3", a });
+    });
+    const by0 = y0 + Math.ceil(4 / ncols) * nrowH + 16, bw = (W - pad * 2) / per;
+    DOMAINS.forEach(([d, n], i) => {
+      const bx = pad + (i % per) * bw, by = by0 + Math.floor(i / per) * blockH;
+      const yours = i === 0;
+      g.text(d, bx, by + 12, { size: 11.5, font: "ui", weight: 600, a, color: yours ? "exp" : "ink" });
+      g.text(String(n) + (yours ? " · yours" : ""), bx + g.tw(d, 11.5, "ui", 600) + 8, by + 12, { size: 10.5, color: yours ? "exp" : "ink-3", a });
+      for (let k = 0; k < n; k++) {
+        const x = bx + (k % dc) * sp, y = by + 22 + Math.floor(k / dc) * sp;
+        g.rect(x, y, ds, ds, { fill: yours && k === 0 ? "exp" : yours ? "ink-2" : "ink-3", r: 1, a: a * (yours ? 0.9 : 0.55) });
+      }
+      if (yours) g.circle(bx + ds / 2, by + 22 + ds / 2, ds + 2.5, { stroke: "exp", lw: 1.5, a });
+    });
+    const fy = by0 + Math.ceil(8 / per) * blockH + 8;
+    g.circle(pad + 5, fy - 4, 4, { fill: "exp", a });
+    g.text("commerce/order-service, one of 960", pad + 16, fy, { size: 11.5, color: "exp", weight: 600, a });
+    g.wrap("Synthetic estate. Totals match the Atlas prototype's generator; the domain split is the v3 Repositories screen's.", pad, fy + 20, W - pad * 2, { size: 10.5, color: "ink-3", lh: 14, a, maxLines: 2 });
+  }
+
+  function sceneAnswer(g, s, a, tall, top, pad) {
+    const { W, H } = g, cx = pad, cw = W - pad * 2, ix = cx + 16, iw = cw - 32;
+    const fs = tall ? 13 : 15, lh = tall ? 18 : 21;
+    const L = chipLayout(g, REVIEW_SRC, iw, 11);
+    const tl = nLines(g, REVIEW, iw, fs, "ui", 500);
+    const cl = nLines(g, CONFLICT_TXT, iw - 96, 11, "mono", 500);
+    const chH = 40 + tl * lh + 26 + L.h + 30 + 18 + cl * 15 + 14;
+    const rowH = tall ? 44 : 46, rg = 8, listH = 5 * rowH + 4 * rg;
+    const total = chH + 24 + 26 + 40 + listH;
+    const y0 = top + Math.max(0, (H - top - pad - total) * 0.35);
+    card(g, cx, y0, cw, chH, { stroke: "exp", lw: 1.5, a });
+    g.bee(ix + 9, y0 + 22, 18, { a });
+    g.text("@B review · PR #214", ix + 26, y0 + 27, { size: 13, font: "ui", weight: 600, a });
+    g.text("v3 Reviews", cx + cw - 16, y0 + 27, { size: 10.5, color: "ink-3", align: "right", a });
+    let y = g.wrap(REVIEW, ix, y0 + 56, iw, { size: fs, font: "ui", lh, a });
+    g.text("from Matrix, contracts and build #418", ix, y + 2, { size: 11, color: "ink-3", a });
+    y += 14;
+    drawChips(g, ix, y, REVIEW_SRC, L, 11, a);
+    y += L.h + 26;
+    g.text("Impact from Matrix · 2 callers · 8 dependents · 1 conflict", ix, y, { size: 11, color: "ink-2", a, maxW: iw });
+    y += 12;
+    const cwid = g.chip(ix, y + 10, "conflict", "bad", { size: 11, a });
+    g.wrap(CONFLICT_TXT, ix + cwid + 10, y + 14, iw - cwid - 10, { size: 11, color: "ink-2", lh: 15, a });
+    // Bridge, then the tools that hold each source
+    const barY = y0 + chH + 24;
+    g.arrow(W / 2, barY - 2, W / 2, y0 + chH + 3, { color: "exp", lw: 1.5, head: 7, a });
+    g.rect(cx, barY, cw, 26, { fill: "sheet", stroke: "ink-3", lw: 1.1, r: 7, a });
+    g.text("Bridge", cx + 10, barY + 17, { size: 11.5, font: "ui", weight: 700, a });
+    g.text(tall ? "reads each tool where it is" : "reads each tool where it is · each keeps its own records", cx + cw - 10, barY + 17, { size: 10.5, color: "ink-3", align: "right", a });
+    const ly = barY + 26 + 40;
+    g.arrow(W / 2, ly - 18, W / 2, barY + 29, { color: "ink-3", lw: 1.3, head: 7, a });
+    g.text("the tools that hold the sources", cx, ly - 10, { size: 10.5, color: "ink-3", a });
+    const TL = [
+      ["bb", tall ? "code, contracts" : "code, contracts, consumer declarations", ["Matrix impact", "order-events.yaml"], true],
+      ["kf", tall ? "consumer groups" : "consumer groups in msk-dev-use1", ["Matrix impact"], true],
+      ["eks", tall ? "pods, labels" : "pods and labels in nsx-dev-use1", ["Matrix impact"], false],
+      ["jk", "builds and logs", ["build #418"], false],
+      ["cf", "ADRs and runbooks", ["ADR-031"], false],
+    ];
+    const rx = cx + 18, rw = cw - 18, cs = tall ? 9.5 : 10.5;
+    TL.forEach(([tk, keeps, backs, dis], i) => {
+      const y1 = ly + i * (rowH + rg);
+      card(g, rx, y1, rw, rowH, { a });
+      mono(g, rx + 10, y1 + (rowH - 22) / 2, 22, TOOLS[tk].m, { a });
+      // chips from the right: the sources this tool backs, then a disagreement flag
+      const items = backs.map((b) => [b, "kno"]).concat(dis ? [["disagree", "bad"]] : []);
+      let xr = rx + rw - 10;
+      for (let k = items.length - 1; k >= 0; k--) { const w = g.chip(xr, y1 + rowH / 2, items[k][0], items[k][1], { size: cs, align: "right", a }); xr -= w + 6; }
+      const tmax = xr - (rx + 42) - 8;
+      if (tall) {
+        g.text(TOOLS[tk].n, rx + 42, y1 + 18, { size: 12, font: "ui", weight: 600, a, maxW: tmax });
+        g.text(keeps, rx + 42, y1 + 34, { size: 9.5, color: "ink-3", a, maxW: tmax });
+      } else {
+        g.text(TOOLS[tk].n, rx + 42, y1 + rowH / 2 + 4.5, { size: 12.5, font: "ui", weight: 600, a });
+        g.text(keeps, rx + 150, y1 + rowH / 2 + 4, { size: 10.5, color: "ink-3", a, maxW: tmax - 108 });
+      }
+    });
+    // Git and Kafka disagree about loyalty-consumer
+    const m0 = ly + rowH / 2, m1 = ly + rowH + rg + rowH / 2;
+    g.line(cx + 6, m0, cx + 6, m1, { color: "bad", lw: 1.5, dash: [4, 3], a });
+    g.line(cx + 6, m0, rx - 2, m0, { color: "bad", lw: 1.5, a }); g.line(cx + 6, m1, rx - 2, m1, { color: "bad", lw: 1.5, a });
+  }
+
+  Field.scene("invest", (g, s) => {
+    const { W, H } = g, tall = H > W * 0.95;
+    const pad = 24, top = Math.max(44, g.safeTop + 10);
+    const al = [0, 1, 2, 3, 4].map((i) => s.solo(i));
+    if (al[0] > 0.01) sceneQuestion(g, al[0], tall, top, pad);
+    if (al[1] > 0.01) sceneHops(g, s, al[1], tall, top, pad);
+    if (al[2] > 0.01) sceneFive(g, s, al[2], tall, top, pad);
+    if (al[3] > 0.01) sceneEstate(g, s, al[3], tall, top, pad);
+    if (al[4] > 0.01) sceneAnswer(g, s, al[4], tall, top, pad);
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 520, maxW: 1000 });
+
+  /* ---------------- scrolly 2: each system keeps its own records ---------------- */
+  const CATS = [["Models", 10], ["Developer tools", 9], ["Delivery", 11], ["Telemetry", 8], ["Knowledge", 8], ["Business", 7], ["Identity & infra", 7], ["Agent frameworks", 6]];
+  const STACK = [["JI", "Jira"], ["CF", "Confluence"], ["BB", "Bitbucket Data Center"], ["JK", "Jenkins"], ["EKS", "Amazon EKS"], ["TM", "Microsoft Teams"], ["OL", "Optimus Logger"], ["AWS", "Amazon Bedrock"], ["AZ", "Azure OpenAI"], ["SQ", "SonarQube"], ["HV", "HashiCorp Vault"], ["SN", "ServiceNow"], ["PD", "PagerDuty"], ["AF", "Artifactory"], ["DD", "Datadog"], ["KF", "Kafka · MSK"], ["LD", "LaunchDarkly"], ["GH", "GitHub Enterprise"]];
+
+  function sceneCatalog(g, s, a, tall, top, pad) {
+    const { W, H } = g, cw = W - pad * 2;
+    const catH = tall ? 8 * 20 : 230, barH = 64, stCols = tall ? 3 : 6, tileH = tall ? 30 : 40, tgap = tall ? 6 : 10;
+    const stRows = Math.ceil(18 / stCols), stackH = 26 + stRows * tileH + (stRows - 1) * tgap;
+    const total = (tall ? 30 : 46) + catH + 22 + barH + 18 + stackH;
+    let y = top + Math.max(0, (H - top - pad - total) * 0.4);
+    g.text("Bridge · 66 integrations in 8 categories", pad, y + 14, { size: tall ? 13 : 14.5, font: "ui", weight: 700, a });
+    y += tall ? 30 : 46;
+    if (!tall) {
+      const colW = cw / 8, base = y + 11 * 16 + 14;
+      CATS.forEach(([n, c], i) => {
+        const x = pad + i * colW + colW / 2;
+        for (let k = 0; k < c; k++) g.rect(x - 6, base - 12 - k * 16, 12, 12, { fill: "card", stroke: "ink-3", lw: 1.2, r: 3, a });
+        g.text(String(c), x, base - 12 - c * 16 - 4, { size: 12, weight: 600, align: "center", a });
+        g.line(pad + i * colW + 6, base + 4, pad + (i + 1) * colW - 6, base + 4, { color: "hair", lw: 1, a });
+        g.wrap(n, x - colW / 2 + 6, base + 22, colW - 12, { size: 11, font: "ui", lh: 14, color: "ink-2", a, maxLines: 2 });
+      });
+      y += catH;
+    } else {
+      CATS.forEach(([n, c], i) => {
+        const ry = y + i * 20;
+        g.text(n, pad, ry + 11, { size: 11, font: "ui", color: "ink-2", a });
+        for (let k = 0; k < c; k++) g.rect(pad + 130 + k * 14, ry + 1, 10, 10, { fill: "card", stroke: "ink-3", lw: 1.1, r: 2.5, a });
+        g.text(String(c), pad + 130 + c * 14 + 6, ry + 11, { size: 11, weight: 600, a });
+      });
+      y += catH;
+    }
+    // connected bar: the screen gives only the total
+    y += 22;
+    g.text("39 connected", pad, y, { size: 12, weight: 600, color: "ok", a });
+    g.text("27 not connected", pad + cw, y, { size: 11, color: "ink-3", align: "right", a });
+    const cg = tall ? 1.5 : 2, cwid = (cw - cg * 65) / 66;
+    for (let k = 0; k < 66; k++) g.rect(pad + k * (cwid + cg), y + 10, cwid, 14, k < 39 ? { fill: "ok", r: 1.5, a: a * 0.85 } : { stroke: "ink-3", lw: 0.8, r: 1.5, a: a * 0.6 });
+    g.text("the screen gives the total, not the split by category", pad, y + 42, { size: 10.5, color: "ink-3", a });
+    y += barH;
+    // your stack
+    y += 18;
+    g.text("Your stack · 18", pad, y + 6, { size: 12, font: "ui", weight: 700, a });
+    y += 20;
+    const stw = (cw - tgap * (stCols - 1)) / stCols;
+    STACK.forEach(([m, n], i) => {
+      const x = pad + (i % stCols) * (stw + tgap), ty = y + Math.floor(i / stCols) * (tileH + tgap), avail = i === 17;
+      g.rect(x, ty, stw, tileH, { fill: avail ? null : "card", stroke: avail ? "ink-3" : "hair", lw: 1, r: 7, dash: avail ? [4, 3] : null, a });
+      const ms = tall ? 18 : 22;
+      mono(g, x + 6, ty + (tileH - ms) / 2, ms, m, { a });
+      g.text(n, x + ms + 12, ty + tileH / 2 + 4, { size: tall ? 9.5 : 11, font: "ui", weight: 600, a, maxW: stw - ms - 30 });
+      if (avail) g.circle(x + stw - 10, ty + tileH / 2, 4, { stroke: "ink-3", lw: 1.2, a });
+      else g.circle(x + stw - 10, ty + tileH / 2, 4, { fill: "ok", a });
+    });
+    g.text("17 connected · GitHub Enterprise available", pad, y + stRows * (tileH + tgap) + 8, { size: 10.5, color: "ink-3", a });
+  }
+
+  function sceneRights(g, s, a, tall, top, pad) {
+    const { W, H } = g, t = s.t;
+    const sideW = tall ? 84 : 176, jW = tall ? 84 : 210;
+    const laneH = tall ? 66 : 74;
+    const detailsH = tall ? 112 : 0;
+    const total = 34 + 4 * laneH + 20 + detailsH;
+    const y0 = top + Math.max(0, (H - top - pad - total) * 0.4);
+    g.text("What Vector may do · Jenkins, in Dev", pad, y0 + 14, { size: tall ? 13 : 14.5, font: "ui", weight: 700, a });
+    const ly = y0 + 34, boxH = 4 * laneH;
+    // Vector box
+    g.rect(pad, ly, sideW, boxH, { fill: g.rgba("exp", 0.06), stroke: "exp", lw: 1.4, r: 12, a });
+    g.text("Vector", pad + 14, ly + 26, { size: 15, font: "ui", weight: 700, a });
+    if (!tall) g.wrap("Pipelines, Ratchet and @B ask through Bridge", pad + 14, ly + 48, sideW - 28, { size: 11, color: "ink-2", lh: 15, a, maxLines: 3 });
+    // Jenkins box
+    const jx = W - pad - jW;
+    card(g, jx, ly, jW, boxH, { a });
+    mono(g, jx + 12, ly + 12, 24, "JK", { a });
+    g.text("Jenkins", jx + (tall ? 12 : 44), ly + (tall ? 56 : 30), { size: 14, font: "ui", weight: 700, a });
+    if (!tall) {
+      let yy = ly + 64;
+      [["server", "jenkins.northstar.internal", "ink"], ["bound in Dev to", "folder commerce/dev · agent pool k8s-build", "exp"], ["credential reference", "vault://integrations/jenkins", "ink-2"]].forEach(([k, v, c]) => {
+        g.text(k, jx + 14, yy, { size: 10, color: "ink-3", a });
+        yy = g.wrap(v, jx + 14, yy + 16, jW - 28, { size: 11, color: c, lh: 14, a, maxLines: 2 }) + 10;
+      });
+      g.text("events, last hour: 1,284", jx + 14, ly + boxH - 16, { size: 10.5, color: "ink-3", a });
+    }
+    // lanes
+    const x1 = pad + sideW + 14, x2 = jx - 14;
+    const LANES = [
+      ["Read jobs, builds and logs", "ok", "in", "allowed"],
+      ["Receive build events", "ok", "in", "allowed"],
+      ["Re-run a stage", "wait", "out", "needs approval"],
+      ["Change job configuration", "bad", "out", "not allowed"],
+    ];
+    LANES.forEach(([lab, kind, dir, verdict], i) => {
+      const y = ly + i * laneH, ay = y + laneH * 0.66;
+      if (i) g.line(x1, y, x2, y, { color: "grid", lw: 1, a });
+      check(g, x1 + 10, y + laneH * 0.3, kind, a);
+      g.text(lab, x1 + 26, y + laneH * 0.3 + 4.5, { size: tall ? 12 : 13, font: "ui", weight: 600, a, maxW: x2 - x1 - 30 });
+      const c = kind === "ok" ? "ok" : kind === "wait" ? "ctl" : "bad";
+      if (!tall) g.text(verdict, x2, y + laneH * 0.3 + 4, { size: 10.5, color: c, align: "right", weight: 600, a });
+      const mid = (x1 + x2) / 2;
+      if (kind === "ok") {
+        g.arrow(x2, ay, x1, ay, { color: "ok", lw: 1.5, head: 7, a });
+        const u = (t * 0.5 + i * 0.37) % 1; g.circle(lerp(x2 - 8, x1 + 10, u), ay, 3.2, { fill: "ok", a: a * Math.sin(Math.PI * u) });
+      } else if (kind === "wait") {
+        g.line(x1, ay, mid - 14, ay, { color: "ctl", lw: 1.5, dash: [5, 4], a });
+        g.arrow(mid + 14, ay, x2, ay, { color: "ctl", lw: 1.5, head: 7, dash: [5, 4], a });
+        g.circle(mid, ay, 12, { fill: "card", stroke: "ctl", lw: 1.5, dash: [3, 3], a });
+        g.circle(mid, ay - 3, 3.2, { fill: "ctl", a });
+        g.rect(mid - 5, ay + 1.5, 10, 5, { fill: "ctl", r: 2.5, a });
+        if (tall) g.text("a person approves", mid + 18, ay - 8, { size: 9.5, color: "ctl", a });
+      } else {
+        g.line(x1, ay, mid - 10, ay, { color: "bad", lw: 1.5, a });
+        g.hatch(mid - 8, ay - 12, 16, 24, { color: "bad", a, r: 3 });
+        g.text("✕", mid + 18, ay + 5, { size: 14, color: "bad", weight: 700, a });
+      }
+    });
+    if (tall) {
+      const dy = ly + boxH + 16;
+      card(g, pad, dy, W - pad * 2, detailsH - 10, { a });
+      let yy = dy + 20;
+      [["bound in Dev to", "folder commerce/dev · agent pool k8s-build", "exp"], ["credential reference", "vault://integrations/jenkins", "ink-2"], ["events, last hour", "1,284", "ink"]].forEach(([k, v, c]) => {
+        g.text(k, pad + 14, yy, { size: 10, color: "ink-3", a });
+        g.text(v, W - pad - 14, yy, { size: 10.5, color: c, align: "right", a, maxW: (W - pad * 2) * 0.6 });
+        yy += 26;
+      });
+    } else {
+      g.text("v3 Bridge · Jenkins detail panel. Write actions wait for a person.", pad, ly + boxH + 24, { size: 10.5, color: "ink-3", a });
+    }
+  }
+
+  function sceneAuthority(g, s, a, tall, top, pad) {
+    const { W, H } = g, cw = W - pad * 2;
+    const ROWS = [
+      ["CMDB", "ServiceNow · ORD-SVC-01", "owner", "Commerce Platform · Maya Chen", true],
+      ["Kubernetes", "EKS label app=order-service", "runtime identity", "app=order-service · 2.14.0-rc2 · 2/2 pods in Dev", true],
+      ["Git", "Bitbucket · commerce/order-service", "code", "commerce/order-service · Bitbucket Data Center", true],
+      ["Optimus Logger", "svc:orders", "alias", "svc:orders", false],
+      ["Jira", "component Orders", "alias", "component Orders", false],
+    ];
+    const lw = cw * (tall ? 0.38 : 0.34), gapW = tall ? 46 : 70, rw = cw - lw - gapW;
+    const rh = tall ? 64 : 60, rg = tall ? 10 : 12;
+    const total = 40 + 70 + 5 * rh + 4 * rg + 50;
+    const y0 = top + Math.max(0, (H - top - pad - total) * 0.4);
+    g.text("Each fact has one authority", pad, y0 + 16, { size: tall ? 13 : 14.5, font: "ui", weight: 700, a });
+    // identity header over the right column
+    const rx = pad + lw + gapW, hy = y0 + 36;
+    g.rect(rx, hy, rw, 58, { fill: g.rgba("kno", 0.07), stroke: "kno", lw: 1.5, r: 10, a });
+    g.text("order-service", rx + 14, hy + 25, { size: 16, font: "ui", weight: 700, a });
+    g.text(tall ? "one identity in Matrix" : "one identity in Matrix · Commerce Platform · Java 21", rx + 14, hy + 44, { size: 10.5, color: "kno", a, maxW: rw - 28 });
+    const ry0 = hy + 70;
+    ROWS.forEach(([sys, sub, attr, val, owns], i) => {
+      const y = ry0 + i * (rh + rg);
+      // source system
+      card(g, pad, y, lw, rh, { a: a * (owns ? 1 : 0.8), dash: owns ? null : [4, 3], stroke: owns ? "hair" : "ink-3" });
+      g.text(sys, pad + 12, y + 22, { size: 12.5, font: "ui", weight: 600, a });
+      g.wrap(sub, pad + 12, y + 40, lw - 24, { size: 10.5, color: "ink-3", lh: 13, a, maxLines: 2 });
+      // attribute in the identity
+      g.rect(rx, y, rw, rh, { fill: "card", stroke: owns ? "kno" : "hair", lw: owns ? 1.3 : 1, r: 8, a, dash: owns ? null : [4, 3] });
+      g.text(attr, rx + 12, y + 20, { size: 10.5, color: owns ? "kno" : "ink-3", weight: 600, a });
+      g.wrap(val, rx + 12, y + 38, rw - 24, { size: tall ? 10.5 : 11.5, lh: 14, a, maxLines: 2 });
+      g.arrow(pad + lw + 4, y + rh / 2, rx - 4, y + rh / 2, { color: owns ? "kno" : "ink-3", lw: owns ? 1.6 : 1, head: 7, dash: owns ? null : [4, 4], a });
+      g.text(owns ? "owns" : "name", pad + lw + gapW / 2, y + rh / 2 - 7, { size: 9.5, color: owns ? "kno" : "ink-3", align: "center", a });
+    });
+    const fy = ry0 + 5 * (rh + rg) + 14;
+    g.wrap("“Every system stays the source of truth for its own records.”", pad, fy, cw, { size: tall ? 13 : 14, font: "body", color: "ink-2", lh: 18, a, maxLines: 2 });
+  }
+
+  function sceneConflict(g, s, a, tall, top, pad) {
+    const { W, H } = g, cw = W - pad * 2;
+    const cardH = tall ? 118 : 128, gap = 14;
+    const total = 50 + 30 + (tall ? 2 * cardH + gap : cardH) + 24 + 78 + 20 + 74;
+    const y0 = top + Math.max(0, (H - top - pad - total) * 0.4);
+    // the contested edge
+    const ey = y0 + 22;
+    const n1 = g.node(pad, ey, "loyalty-consumer", { size: tall ? 12 : 13.5, color: "ink-3", a });
+    const lab2 = "order.confirmed.v2";
+    const n2w = g.tw(lab2, tall ? 12 : 13.5) + 34;
+    g.node(W - pad - n2w, ey, lab2, { size: tall ? 12 : 13.5, color: "ink-3", a });
+    const lx1 = pad + n1 + 8, lx2 = W - pad - n2w - 8;
+    g.line(lx1, ey, lx2, ey, { color: "bad", lw: 1.8, dash: [6, 5], a });
+    g.text("consumes?", (lx1 + lx2) / 2, ey - 10, { size: 11, color: "bad", align: "center", weight: 600, a });
+    // two assertions
+    const cy = y0 + 76;
+    const cards = [
+      ["ok", "Git says yes", "confidence 0.95", "Consumer declared in loyalty/consumer.yaml on main.", "true since Aug 2", "learned Aug 2"],
+      ["bad", "Kafka msk-dev-use1 says no", "confidence 0.90", "No consumer-group offsets for 48 hours.", "observed until Oct 11 10:40", "learned today 08:00"],
+    ];
+    const ccw = tall ? cw : (cw - gap) / 2;
+    cards.forEach(([c, ttl, conf, body, t1, t2], i) => {
+      const x = tall ? pad : pad + i * (ccw + gap), y = tall ? cy + i * (cardH + gap) : cy;
+      if (!tall) g.line((lx1 + lx2) / 2, ey + 6, x + ccw / 2, y - 3, { color: c, lw: 1.2, a: a * 0.7 });
+      else if (i === 0) g.arrow((lx1 + lx2) / 2, ey + 6, (lx1 + lx2) / 2, y - 3, { color: "ink-3", lw: 1.2, head: 6, a });
+      card(g, x, y, ccw, cardH, { a });
+      g.circle(x + 18, y + 21, 5, { fill: c, a });
+      g.text(ttl, x + 30, y + 25.5, { size: 13, font: "ui", weight: 600, a, maxW: ccw - 140 });
+      g.text(conf, x + ccw - 14, y + 25, { size: 10.5, color: "ink-3", align: "right", a });
+      g.wrap(body, x + 14, y + 52, ccw - 28, { size: 12.5, font: "ui", color: "ink", lh: 17, a, maxLines: 2 });
+      // two clocks
+      const ty = y + cardH - 20;
+      g.text(t1, x + 14, ty, { size: 10.5, color: "ink-2", a });
+      g.text(t2, x + ccw - 14, ty, { size: 10.5, color: "ink-3", align: "right", a });
+    });
+    let y = cy + (tall ? 2 * cardH + gap : cardH) + 24;
+    g.text("each assertion keeps two clocks: when it was true, and when Matrix learned it", pad, y, { size: 10.5, color: "ink-3", a, maxW: cw });
+    y += 14;
+    card(g, pad, y, cw, 70, { a });
+    g.text("Likely reason", pad + 14, y + 22, { size: 11, color: "ink-3", a });
+    g.wrap("Dev runs loyalty-consumer 1.8.2, pinned in values-dev.yaml and still on the retired v1 topic. R-2207 redeploys 1.9.0.", pad + 14, y + 42, cw - 28, { size: tall ? 11.5 : 12.5, font: "ui", lh: 16, a, maxLines: 2 });
+    y += 92;
+    g.circle(pad + 15, y + 2, 14, { fill: g.rgba("exp", 0.12), stroke: "exp", lw: 1.3, a });
+    g.circle(pad + 15, y - 2, 4.2, { fill: "exp", a });
+    g.rect(pad + 8.5, y + 4, 13, 6.5, { fill: "exp", r: 3.2, a });
+    g.text("A person decides; no model settles a conflict.", pad + 38, y + 7, { size: tall ? 12.5 : 14, font: "ui", weight: 600, a, maxW: cw - 40 });
+    const by = y + 26;
+    const b1 = "Keep and open COM-2856", b1w = g.tw(b1, 11.5, "ui", 600) + 26;
+    g.rect(pad + 38, by, b1w, 28, { fill: "exp", r: 7, a });
+    g.text(b1, pad + 38 + b1w / 2, by + 18.5, { size: 11.5, font: "ui", weight: 600, color: "#FFFFFF", align: "center", a });
+    const b2 = "Mark retired", b2w = g.tw(b2, 11.5, "ui", 600) + 26;
+    g.rect(pad + 48 + b1w, by, b2w, 28, { fill: "card", stroke: "hair", lw: 1.2, r: 7, a });
+    g.text(b2, pad + 48 + b1w + b2w / 2, by + 18.5, { size: 11.5, font: "ui", weight: 600, align: "center", a });
+  }
+
+  Field.scene("records", (g, s) => {
+    const { W, H } = g, tall = H > W * 0.95;
+    const pad = 24, top = Math.max(44, g.safeTop + 10);
+    const al = [0, 1, 2, 3].map((i) => s.solo(i));
+    if (al[0] > 0.01) sceneCatalog(g, s, al[0], tall, top, pad);
+    if (al[1] > 0.01) sceneRights(g, s, al[1], tall, top, pad);
+    if (al[2] > 0.01) sceneAuthority(g, s, al[2], tall, top, pad);
+    if (al[3] > 0.01) sceneConflict(g, s, al[3], tall, top, pad);
+  }, { anim: true, restT: 2, zoom: 1.3, minW: 520, maxW: 1000 });
+
+  /* ---------------- lab: count the hops ---------------- */
+  const QS = {
+    f418: {
+      q: "Why did #418 fail?",
+      screen: "Pipelines · build #418", who: ["VT", "Venkatesh"], ask: "Why did #418 fail? Is it my change?",
+      agent: "Ratchet · pipeline agent", agentKind: "ratchet",
+      ans: "Yes — commit a41c9e2. It adds riskDecision to the order.confirmed.v2 event. The v2 schema rejects unknown fields, so the contract test fails at line 38. #417 passed on the same agent and image, so this is not infrastructure.",
+      cites: ["log 2208", "a41c9e2", "order-events.yaml:14", "#417 diff"], conflicts: [],
+      foot: "High confidence · 3 signals agree", where: "Pipelines, Ratchet's answer",
+      hops: [
+        ["jk", "build #418 console", "line 2208: $.riskDecision: is not defined in the schema"],
+        ["bb", "commit a41c9e2", "adds riskDecision to the event · +42 −3"],
+        ["bb", "order-events.yaml", "the v2 schema: additionalProperties: false"],
+        ["jk", "build #417, last green", "same agent and image passed, so not infrastructure"],
+      ],
+    },
+    loyalty: {
+      q: "Why is loyalty-consumer failing in Dev?",
+      screen: "@B · #commerce-orders in Teams", who: ["AM", "Arjun Mehta · 14:31"], ask: "@B why is loyalty-consumer failing in Dev?",
+      agent: "@B · context used as Arjun's permissions", agentKind: "bee",
+      ans: "Dev runs 1.8.2 because values-dev.yaml pins it. 1.8.2 reads order.confirmed.v1, which was retired in msk-dev-use1 on Friday, so it times out and restarts. main declares 1.9.0 on v2 — redeploying 1.9.0 in Dev should fix it.",
+      cites: ["pod logs", "configmap loyalty-cfg", "Matrix edge", "COM-2856"],
+      conflicts: ["the Matrix conflict on COM-2856: Kafka hasn't seen the consumer for 48 h"],
+      foot: "R-2207 redeploys 1.9.0 · waits for Sam Patel", where: "@B in Teams, with Ratchet's matching diagnosis on Clusters",
+      hops: [
+        ["eks", "pod logs · loyalty-consumer", "Topic order.confirmed.v1 not present · exit code 1"],
+        ["eks", "configmap loyalty-cfg", "LOYALTY_TOPIC is order.confirmed.v1 in Dev"],
+        ["bb", "loyalty-consumer on main", "consumer.yaml declares v2; values-dev.yaml pins 1.8.2"],
+        ["kf", "msk-dev-use1", "v1 retired Friday; no v2 offsets for 48 h"],
+        ["jira", "COM-2856", "Loyalty consumer silent on order.confirmed.v2"],
+      ],
+      hidden: [2, 3, "Git declares a v2 consumer; Kafka sees none"],
+    },
+    event: {
+      q: "What breaks if order.confirmed.v2 changes?",
+      screen: "Reviews · PR #214", who: ["VT", "OrderService.java · line under review"], ask: "event.put(\"riskDecision\", decision.label());", askCode: true,
+      agent: "@B review · from Matrix, contracts and build #418", agentKind: "bee",
+      ans: REVIEW,
+      cites: ["Matrix impact", "order-events.yaml", "build #418", "ADR-031"],
+      conflicts: ["loyalty-consumer: Git says it reads v2; Kafka has seen no offsets for 48 h"],
+      foot: "Impact from Matrix · 2 callers · 8 dependents · 1 conflict", where: "Reviews, @B's review on PR #214",
+      hops: [
+        ["bb", "consumer declarations in Git", "who says they read order.confirmed.v2"],
+        ["kf", "msk-dev-use1 consumer groups", "who is actually reading it"],
+        ["eks", "nsx-dev-use1 / commerce", "which consumers are running"],
+        ["bb", "order-events.yaml", "OrderConfirmedV2: additionalProperties: false"],
+        ["cf", "ADR-031", "new event fields go to a v3 topic"],
+        ["jk", "build #418", "the contract test a new field fails"],
+      ],
+      hidden: [0, 1, "loyalty-consumer: declared in Git, unseen by Kafka"],
+    },
+    ready: {
+      q: "Is 2.14.0-rc2 ready for QA?",
+      screen: "GroundBridge · Releases", who: ["15:30", "Release readiness · Order Service 2.14 · in 10 min"], ask: "Prep for 15:30", whoCal: true,
+      agent: "@B · prep for 15:30 on Home", agentKind: "bee",
+      ans: "Build #419 is green and running, evals pass 8 of 8, and the promotion to QA waits on Security. One open risk: fraud-risk-api p99 is 412 ms (RISK-412).",
+      cites: ["build #419 · 5c0d7e1", "trace run-0001", "evals 8 of 8", "Risk Reasoner 3", "Maya Chen ✓ 15:14", "Lena Fischer · pending"],
+      conflicts: ["1 conflicting edge in Dev: loyalty-consumer, marked unrelated"],
+      foot: "4 of 4 gates on cfg-7f3a9c · approvals bound to sha256:7f3a…c91e", where: "GroundBridge gates and approvals, with @B's prep on Home",
+      hops: [
+        ["jk", "build #419", "all 9 stages passed at 11:04, Evals stage 8 of 8"],
+        ["bb", "PR #214 · 5c0d7e1", "the commit the build used; 2 of 2 approvals"],
+        ["eks", "nsx-dev-use1 / commerce", "2.14.0-rc2 on 2/2 pods since 11:09"],
+        ["jira", "COM-2841", "acceptance criteria, including Owner and Security sign-off"],
+        ["tm", "Maya Chen, Lena Fischer", "whether each has signed"],
+      ],
+      gap: "cfg-7f3a9c, the fingerprint that ties the four gates to one configuration, is a Vector record in the design. None of these tools holds it.",
+    },
+  };
+  const toolsOf = (Q) => [...new Set(Q.hops.map((h) => h[0]))];
+
+  function labToday(g, Q, el, tall, pad, y0) {
+    const { W, H } = g;
+    const n = Q.hops.length, extra = Q.gap ? 1 : 0, rows = n + extra;
+    const tools = toolsOf(Q);
+    const bottomH = tall ? 142 : 0;
+    const listW = tall ? W - pad * 2 : W * 0.6 - pad;
+    const x0 = pad + 32, cw = listW - 32, gap = 16;
+    const gh = Q.gap ? nLines(g, Q.gap, cw - 24, 10.5) * 13.5 + 16 : 0;
+    const hh = Math.min(62, (H - y0 - pad - bottomH - gap * (rows - 1) - gh) / n);
+    const seen = new Set();
+    const mids = [];
+    Q.hops.forEach(([tk, where, what], i) => {
+      const y = y0 + i * (hh + gap), a = ramp(el, 0.1 + i * 0.28, 0.25);
+      mids.push(y + hh / 2);
+      g.circle(pad + 12, y + hh / 2, 11, { fill: "exp", a: Math.max(0.15, a) });
+      g.text(String(i + 1), pad + 12, y + hh / 2 + 4, { size: 11, weight: 700, color: "#FFFFFF", align: "center", a: Math.max(0.15, a) });
+      if (i < rows - 1) g.arrow(pad + 12, y + hh / 2 + 13, pad + 12, y + hh + gap + hh / 2 - 13, { color: "ink-3", lw: 1.2, head: 6, a: ramp(el, 0.3 + i * 0.28, 0.2) });
+      card(g, x0, y, cw, hh, { a: Math.max(0.12, a) });
+      mono(g, x0 + 10, y + 9, 20, TOOLS[tk].m, { a });
+      const again = seen.has(tk); seen.add(tk);
+      const nm = TOOLS[tk].n + (again ? " again" : "");
+      g.text(nm, x0 + 38, y + 23, { size: 12.5, font: "ui", weight: 600, a });
+      const nw = g.tw(nm, 12.5, "ui", 600);
+      g.text(where, x0 + 38 + nw + 10, y + 23, { size: 10.5, color: "ink-3", a, maxW: cw - 58 - nw });
+      g.wrap(what, x0 + 38, y + 43, cw - 50, { size: 11, lh: 14, maxLines: hh > 58 ? 2 : 1, a });
+    });
+    if (Q.gap) {
+      const y = y0 + n * (hh + gap), a = ramp(el, 0.1 + n * 0.28, 0.25);
+      g.circle(pad + 12, y + gh / 2, 11, { stroke: "ink-3", lw: 1.2, dash: [3, 3], a });
+      g.text("?", pad + 12, y + gh / 2 + 4, { size: 11, weight: 700, color: "ink-3", align: "center", a });
+      g.rect(x0, y, cw, gh, { stroke: "ink-3", lw: 1.1, r: 9, dash: [4, 4], a });
+      g.wrap(Q.gap, x0 + 12, y + 20, cw - 24, { size: 10.5, color: "ink-2", lh: 13.5, maxLines: 4, a });
+    }
+    // a disagreement no tool flags
+    const ha = ramp(el, 0.2 + rows * 0.28, 0.35);
+    let noteY = null;
+    if (Q.hidden) {
+      const [i, j, txt] = Q.hidden, ya = mids[i], yb = mids[j];
+      const bx = tall ? 10 : x0 + cw + 14;
+      const tick = tall ? 10 : -10;
+      g.line(bx, ya, bx, yb, { color: "bad", lw: 1.5, dash: [4, 3], a: ha });
+      g.line(bx, ya, bx + tick, ya, { color: "bad", lw: 1.5, a: ha }); g.line(bx, yb, bx + tick, yb, { color: "bad", lw: 1.5, a: ha });
+      if (!tall) {
+        const tx = bx + 22, tw = W - pad - tx, my = (ya + yb) / 2;
+        g.line(bx, my, tx - 6, my, { color: "bad", lw: 1.2, a: ha });
+        g.text(`hops ${i + 1} and ${j + 1} disagree`, tx, my - 6, { size: 11.5, weight: 600, color: "bad", a: ha });
+        g.wrap(txt + ". Neither tool says so.", tx, my + 12, tw, { size: 10.5, color: "ink-2", lh: 14, a: ha, maxLines: 3 });
+      } else noteY = `hops ${i + 1} and ${j + 1} disagree: ${txt}. Neither tool says so.`;
+    }
+    // tallies
+    const ta = ramp(el, 0.15 + rows * 0.28, 0.4);
+    if (!tall) {
+      const rx = pad + listW + 40, rw = W - pad - rx, by = H - pad - 172;
+      g.text("tools opened", rx, by, { size: 10.5, color: "ink-3", a: ta });
+      g.text(String(tools.length), rx + rw, by + 4, { size: 30, font: "display", weight: 800, align: "right", a: ta });
+      const tw = Math.min(64, rw / Math.max(5, tools.length));
+      tools.forEach((tk, i) => { const x = rx + i * tw; mono(g, x, by + 14, 24, TOOLS[tk].m, { a: ta }); g.text(TOOLS[tk].n, x, by + 52, { size: 9, font: "ui", color: "ink-2", a: ta, maxW: tw - 4 }); });
+      g.text(`places looked: ${n}  ·  sign-ins: ${tools.length}`, rx, by + 76, { size: 11, color: "ink-2", a: ta });
+      g.rect(rx, by + 90, rw, 62, { stroke: "ink-3", lw: 1, r: 8, dash: [4, 4], a: ta });
+      g.wrap("The answer is yours to assemble. Nothing links it back to its sources.", rx + 12, by + 112, rw - 24, { size: 11, color: "ink-2", lh: 15, a: ta, maxLines: 3 });
+    } else {
+      const by = H - pad - bottomH + 14, tw = (W - pad * 2) / Math.max(5, tools.length);
+      g.text(`tools opened ${tools.length} · places looked ${n}`, pad, by, { size: 11, color: "ink-2", a: ta, weight: 600 });
+      tools.forEach((tk, i) => { const x = pad + i * tw; mono(g, x, by + 10, 22, TOOLS[tk].m, { a: ta }); g.text(TOOLS[tk].n, x, by + 46, { size: 9, font: "ui", color: "ink-2", a: ta, maxW: tw - 4 }); });
+      let yy = by + 70;
+      if (noteY) yy = g.wrap(noteY, pad, yy, W - pad * 2, { size: 10.5, color: "bad", lh: 14, a: ha, maxLines: 2 });
+      g.wrap("The answer is yours to assemble. Nothing links it back to its sources.", pad, yy + (noteY ? 2 : 0), W - pad * 2, { size: 10.5, color: "ink-2", lh: 14, a: ta, maxLines: 2 });
+    }
+  }
+
+  function labVector(g, Q, el, tall, pad, y0, t) {
+    const { W, H } = g;
+    const tools = toolsOf(Q);
+    const ww = tall ? W - pad * 2 : W * 0.66 - pad;
+    const toolsH = tall ? 96 : 0;
+    // size the window to its content
+    const iw = ww - 34, alh = tall ? 17 : 19;
+    const nAns = nLines(g, Q.ans, iw - 32, tall ? 12.5 : 13.5, "ui", 500);
+    const Lm = chipLayout(g, Q.cites.map((c_) => [c_, "kno"]), iw - 32, 11);
+    const cwm = g.tw("conflict", 11, "mono", 600) + 20;
+    const confH = Q.conflicts.length ? Q.conflicts.reduce((s_, cf) => s_ + nLines(g, cf, iw - 42 - cwm, 11) * 15 + 6, 0) : 22;
+    const need = 24 + 22 + 44 + 40 + nAns * alh + 4 + 8 + Lm.h + 18 + confH + 8 + 22;
+    const wh = Math.min(H - y0 - pad - toolsH - 30, need);
+    y0 += Math.max(0, (H - y0 - pad - toolsH - 30 - wh) * 0.35);
+    const wa = ramp(el, 0, 0.3);
+    const c = g.win(pad, y0, ww, wh, { title: Q.screen, env: "Dev", a: wa, tsize: 12 });
+    const ix = c.x + 16;
+    g.wrap("In the design: " + Q.where + ".", pad + 2, y0 + wh + 22, ww - 4, { size: 10.5, color: "ink-3", lh: 14, a: wa, maxLines: 2 });
+    let y = c.y + 22;
+    // who asked
+    if (Q.whoCal) { g.rect(ix, y - 8, 40, 22, { fill: g.rgba("exp", 0.1), r: 6, a: wa }); g.text(Q.who[0], ix + 20, y + 7, { size: 10.5, weight: 600, color: "exp", align: "center", a: wa }); }
+    else avatar(g, ix + 12, y + 3, 12, Q.who[0], wa);
+    g.text(Q.who[1], ix + 48, y - 1, { size: 11, color: "ink-3", a: wa, maxW: iw - 50 });
+    if (Q.askCode) g.text(Q.ask, ix + 48, y + 17, { size: tall ? 10.5 : 11.5, weight: 600, a: wa, maxW: iw - 50 });
+    else g.text(Q.ask, ix + 48, y + 17, { size: tall ? 12.5 : 13.5, font: "ui", weight: 600, a: wa, maxW: iw - 50 });
+    y += 44;
+    g.line(ix, y - 8, ix + iw, y - 8, { color: "grid", lw: 1, a: wa });
+    // the answer
+    const aa = ramp(el, 0.3, 0.35);
+    if (Q.agentKind === "bee") g.bee(ix + 12, y + 10, 22, { a: aa });
+    else { g.rect(ix + 1, y - 1, 22, 22, { fill: g.rgba("exe", 0.14), stroke: "exe", lw: 1.2, r: 6, a: aa }); g.text("R", ix + 12, y + 14.5, { size: 12, weight: 700, color: "exe", align: "center", a: aa }); }
+    g.text(Q.agent, ix + 32, y + 14, { size: 11.5, font: "ui", weight: 600, color: "ink-2", a: aa, maxW: iw - 34 });
+    y = g.wrap(Q.ans, ix + 32, y + 40, iw - 32, { size: tall ? 12.5 : 13.5, font: "ui", lh: tall ? 17 : 19, a: aa });
+    // sources
+    y += 4;
+    g.text("Sources", ix + 32, y, { size: 10.5, color: "ink-3", a: aa });
+    const items = Q.cites.map((cname) => [cname, "kno"]);
+    const L = chipLayout(g, items, iw - 32, 11);
+    drawChips(g, ix + 32, y + 8, items, L, 11, 1, (j) => ramp(el, 0.6 + j * 0.12, 0.25));
+    y += 8 + L.h + 18;
+    const ca = ramp(el, 0.7 + Q.cites.length * 0.12, 0.3);
+    if (Q.conflicts.length) {
+      Q.conflicts.forEach((cf) => {
+        const cw = g.chip(ix + 32, y, "conflict", "bad", { size: 11, a: ca });
+        y = g.wrap(cf, ix + 32 + cw + 10, y + 4, iw - 42 - cw, { size: 11, color: "ink-2", lh: 15, a: ca, maxLines: 2 }) + 6;
+      });
+    } else { g.text("0 conflicts among the sources", ix + 32, y + 4, { size: 11, color: "ink-3", a: ca }); y += 22; }
+    g.text(Q.foot, ix + 32, Math.min(c.y + c.h - 14, y + 8), { size: 10.5, color: "ink-3", a: ca, maxW: iw - 32 });
+    // the same tools, read through Bridge
+    const la = ramp(el, 0.4, 0.4);
+    if (!tall) {
+      const rx = pad + ww + 52, rw = W - pad - rx, nh = 46, ng = 12;
+      const ny0 = y0 + 30 + Math.max(0, (wh - 30 - tools.length * (nh + ng)) / 2);
+      g.text("read through Bridge", rx, ny0 - 14, { size: 10.5, color: "ink-3", a: la });
+      tools.forEach((tk, i) => {
+        const y1 = ny0 + i * (nh + ng), first = Q.hops.find((h) => h[0] === tk);
+        card(g, rx, y1, rw, nh, { a: la });
+        mono(g, rx + 8, y1 + 12, 22, TOOLS[tk].m, { a: la });
+        g.text(TOOLS[tk].n, rx + 38, y1 + 20, { size: 11.5, font: "ui", weight: 600, a: la, maxW: rw - 44 });
+        g.text(first[1], rx + 38, y1 + 36, { size: 9.5, color: "ink-3", a: la, maxW: rw - 44 });
+        g.arrow(rx - 4, y1 + nh / 2, pad + ww + 6, y1 + nh / 2, { color: "ink-3", lw: 1.1, head: 6, a: la });
+        const u = (t * 0.45 + i * 0.23) % 1; g.circle(lerp(rx - 8, pad + ww + 10, u), y1 + nh / 2, 2.6, { fill: "kno", a: la * Math.sin(Math.PI * u) });
+      });
+      g.wrap("each keeps its own records", rx, ny0 + tools.length * (nh + ng) + 6, rw, { size: 10.5, color: "ink-3", lh: 14, a: la, maxLines: 2 });
+    } else {
+      const ty = y0 + wh + 52, tw = (W - pad * 2) / Math.max(5, tools.length);
+      g.text("read through Bridge · each keeps its own records", pad, ty, { size: 10, color: "ink-3", a: la });
+      tools.forEach((tk, i) => {
+        const x = pad + i * tw;
+        mono(g, x, ty + 12, 22, TOOLS[tk].m, { a: la });
+        g.text(TOOLS[tk].n, x, ty + 50, { size: 9, font: "ui", color: "ink-2", a: la, maxW: tw - 4 });
+      });
+    }
+  }
+
+  Field.scene("hops", (g, s) => {
+    const st = s.state; if (!st.q || !st.mode) return;
+    const { W, H } = g, tall = H > W * 0.95;
+    const Q = QS[st.q], today = st.mode === "today";
+    const el = (performance.now() - (st._since || 0)) / 1000;
+    const pad = 24, top = Math.max(50, g.safeTop + 14);
+    g.text(today ? "Today · the places a person opens" : "With Vector · the v3 design's answer", pad, top, { size: 11.5, weight: 600, color: today ? "ink-2" : "exp" });
+    const qs = tall ? 16 : 19, ql = nLines(g, "“" + Q.q + "”", W - pad * 2, qs, "ui", 700);
+    g.wrap("“" + Q.q + "”", pad, top + 26, W - pad * 2, { size: qs, font: "ui", weight: 700, lh: qs + 4 });
+    const y0 = top + 48 + (ql - 1) * (qs + 4);
+    if (today) labToday(g, Q, el, tall, pad, y0); else labVector(g, Q, el, tall, pad, y0, s.t);
+  }, {
+    controls: "hop-ctl", anim: true, restT: 5, zoom: 1.3, minW: 520, maxW: 1000,
+    onState: (st) => {
+      const key = st.q + "|" + st.mode;
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      const Q = QS[st.q], today = st.mode === "today", tools = toolsOf(Q);
+      document.getElementById("o-tools").textContent = today ? tools.length : 1;
+      document.getElementById("o-src").textContent = today ? Q.hops.length : Q.cites.length;
+      document.getElementById("o-src-l").textContent = today ? "places looked" : "sources cited";
+      document.getElementById("o-conf").textContent = today ? 0 : Q.conflicts.length;
+      const tn = tools.map((t) => TOOLS[t].n).join(", ");
+      document.getElementById("o-log").textContent = today
+        ? `${Q.hops.length} places in ${tools.length} tools: ${tn}.${Q.hidden ? " Two of them disagree, and no tool says so." : ""} The answer is assembled by hand.`
+        : `One screen, ${Q.cites.length} sources cited, ${Q.conflicts.length} ${Q.conflicts.length === 1 ? "conflict" : "conflicts"} called out. In the design: ${Q.where}.`;
+    },
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3", who: ["this design"], what: "Bridge connects 66 integrations, 39 of them connected, each with a list of what Vector may do. Home fuses what @B read in six tools, Threads follows one ticket through every tool it touched, and answers cite their sources and call out conflicts. Matrix gives each service one identity and one authority per fact.", vs: "<b>The baseline for this chapter.</b> Vector links the tools and leaves them in place: each system stays the source of truth for its own records, and every answer is scoped to one environment." },
+      { name: "Backstage", who: ["open source", "CNCF"], what: "An open source framework for building developer portals. Its Software Catalog is “a centralized system that keeps track of ownership and metadata for all the software in your ecosystem.” Metadata YAML files live in source control beside the code, owning teams maintain them, and Backstage harvests and shows them. Other tools are organized around the catalog's entities.", vs: "Backstage starts from the entity and the metadata its team writes. Vector's design starts from the ticket and the question, and Matrix compares what Git declares with what Kafka and EKS observe. That needs collectors and identity resolution a YAML-first catalog avoids. The proposal lists Backstage entities as a catalog-federation format (handbook 14.14), so Vector could read a Backstage catalog.", src: [["Software Catalog overview", "https://backstage.io/docs/features/software-catalog/"], ["What is Backstage?", "https://backstage.io/docs/overview/what-is-backstage"]] },
+      { name: "Port", who: ["internal developer portal"], what: "You define blueprints, the types your organization tracks, such as services, environments, deployments and incidents, with their properties and relations. Integrations such as GitHub, Kubernetes, PagerDuty and Jira keep populating entities that match them. Port calls the result its context lake, “your unified engineering knowledge layer.”", vs: "Port leaves the data model to you. Vector's design fixes one: assertions stay verified, inferred or conflicting, every window holds one environment, and each ticket gets a thread. Less freedom to model, more rules about evidence built in.", src: [["Build your software catalog", "https://docs.port.io/build-your-software-catalog"]] },
+      { name: "Atlassian Compass", who: ["Atlassian"], what: "A developer platform for managing a software catalog of components, teams and scorecards. Integrations already configured in Jira, such as Bitbucket Cloud and GitHub, can populate the catalog, and incoming webhooks bring deployments, builds, commits and pushes into each component's activity feed. Atlassian says Compass scorecards and catalog functionality will move into the DX app.", vs: "Compass's feed belongs to a component. Vector's Thread belongs to a ticket: COM-2841 collects 11 events from 11 tools, and its acceptance criteria are checked from evidence such as eval cases and build #419.", src: [["Getting started with Compass", "https://support.atlassian.com/compass/docs/getting-started-with-compass"], ["Populate component events", "https://support.atlassian.com/compass/docs/populate-component-events"]] },
+      { name: "Glean", who: ["enterprise search"], what: "Connectors index content, identities, permissions and activity from the systems where content lives. They fetch each source's permission map, and Glean mirrors those controls so people see only what they can already open in the source.", vs: "Vector's design uses the same permission rule: @B answers with each person's own permissions, and Knowledge uses only pages you can open. Glean spans documents and messages across the company. Vector narrows to engineering and adds structure Glean does not aim at: one environment per window, a graph that keeps conflicts, and approvals bound to a bundle.", src: [["About connectors", "https://docs.glean.com/connectors/about"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · Home, Threads, Reviews, Pipelines, Clusters, Compute, Matrix, Repositories, Knowledge, Releases, Approvals, Bridge and @B boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Vector, annotated (v3 explainer film) · chapter 01 narration", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+      ["Vector Sigma Films · 01 The Scattered Answer", "https://claude.ai/artifact/W4XMFpXyBPrftXBEah4xzQ"],
+      ["Atlas handbook · 1.1 What this application is · 1.8 The central business story · 1.9 What success means", ""],
+      ["Atlas handbook · 4 Overview (fixed estate labels) · 5.1 Four representations · 5.2 Repository estate generation · 5.7 Knowledge sources and reconciliation", ""],
+      ["Atlas handbook · 8.1 Integration catalog structure · 8.2 Configure, test, save · 8.7 Catalog boundaries · reference: all integration descriptors", ""],
+      ["Atlas handbook · 14.4 Canonical knowledge and evidence · 14.5 Ingestion and projections · 14.12 Delivery sequence · 14.14 Standards · 16 Limitations", ""],
+    ],
+  });
+})();
+</script>
+</body>
+</html>

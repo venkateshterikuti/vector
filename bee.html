@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>@B · Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .rules { counter-reset: rule; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0; border-top: 1px solid var(--hair); }
+  .rules li { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--hair); display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .rules li::before { counter-increment: rule; content: "Rule " counter(rule); font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--exp); }
+  .rules.crit li::before { content: "Criterion " counter(rule); color: var(--ink-3); }
+  .rules b { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; line-height: 1.05; }
+  .rules span { font-size: 0.95rem; color: var(--ink-2); line-height: 1.45; }
+  .prose h3 { font-size: 1.6rem; }
+  #ask-msg { width: 100%; }
+  .tbl td:first-child { white-space: nowrap; }
+  @media (max-width: 700px) { .tbl td:first-child { white-space: normal; min-width: 14ch; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B" aria-current="page">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="n">14</span> Observe and ask · the Teams front door</span>
+        <h1>Just <em>ask</em>, in Teams</h1>
+        <p class="dek">@B, pronounced “bee”, brings Vector into Microsoft Teams with the same context, evidence and rules as the app. It answers with your own permissions and shows what it read, and anything that changes Dev waits for a person. It is planned; nothing in Teams exists yet.</p>
+        <div class="files">
+          <span class="tag t-exp"><i class="bee"></i>v3 · @B</span>
+          <span class="tag t-exp"><i></i>v3 · Home</span>
+          <span class="tag t-ctl"><i></i>v3 · Approvals</span>
+          <span class="tag t-exe"><i></i>v3 · Clusters</span>
+          <span class="tag">handbook 15</span>
+          <span class="tag">handbook 1.2</span>
+        </div>
+      </div>
+      <div class="board stage-card" data-stage="hero" data-label="A sketch of the #commerce-orders Teams thread. Arjun Mehta asks why loyalty-consumer is failing in Dev; @B answers with a Context used card whose chips have leader lines to their sources: a pod log line, the loyalty-cfg configmap, the Matrix conflict and Jira COM-2856. Below, Venkatesh's redeploy request becomes run R-2207, whose approval step by Sam Patel waits, drawn dashed.">
+        <span class="ruler">#commerce-orders · 14:31 to 14:33</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ask">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">A question in a channel</span>
+        <h2>Answered as the person who asked</h2>
+        <p class="lede">At 14:31 Arjun Mehta asks @B in #commerce-orders why loyalty-consumer is failing in Dev. Five steps turn that mention into an answer that only Arjun's access could have produced, with the sources it used on show.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">1 · Teams</span><h4>A mention is a request</h4><p>People mention @B in a channel thread or group chat, or talk to it in its personal scope. The mention has to resolve to the installed bot's verified identity. A message that merely contains the characters “@b” is not a call, and replies stay in the thread or chat they came from.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">2 · Verified adapter</span><h4>The adapter checks, then hands over</h4><p>The Teams adapter verifies the incoming activity, tenant, user, conversation and bot mention. It owns validation, mention parsing, conversation references, card rendering and delivery. Authorization, retrieval, execution, models, budgets, approvals and evidence belong to the common platform services, so the bot never becomes a second execution authority.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">3 · Identity</span><h4>Arjun's permissions, nobody else's</h4><p>The Teams user maps to Arjun's Vector identity, and @B works with his access. Its own service credential must not enlarge what he can see. The design's answer says so on the card: “Context used as Arjun's permissions.”</p></div></div>
+          <div class="beat"><div class="card"><span class="k">4 · Bounded context</span><h4>Only what is relevant and allowed</h4><p>A mention is not access to every message and repository. Conversation history is bounded by relevance, time and size, and only sources Arjun may open are retrieved. Text in messages and sources is task data; it cannot override policy. Arjun can correct the result with Change scope.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">5 · Reply</span><h4>An answer that shows its sources</h4><p>@B names six sources and explains the crash: Dev pins 1.8.2, which still reads the retired order.confirmed.v1 topic. That is the same conflict Matrix flagged on loyalty-consumer, and Ratchet's diagnosis on the Clusters screen cites the same four pieces of evidence.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="ask" data-label="Five steps in a row: the @B mention in Teams, the verified adapter, identity, bounded context and the reply. Below, a panel for each step: the mention, the adapter's five checks and what it owns, the identity mapping, the context filter, and the answer tied to the Matrix conflict."><span class="ruler">one mention · five steps</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="run">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">From question to tracked run</span>
+        <h2>A change becomes a run that waits</h2>
+        <p class="lede">Two minutes later Venkatesh asks @B to redeploy 1.9.0 in Dev. @B does not deploy. It opens run R-2207, shows its steps, and asks the right person to approve.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">14:33 · the request</span><h4>R-2207 is a durable run</h4><p>The redeploy request becomes run R-2207, linked to the tenant, the conversation, the incoming message and the exact action. The same run appears in Vector: Approvals lists it as “Requested via @B · waiting for Sam Patel”, and Home's pipeline card shows “Deploy waiting for approval · R-2207”.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">The run card</span><h4>Four steps, one person</h4><p>The bundle loyalty-consumer 1.9.0 (sha256:61d3…ad82) is verified. Approval by the Customer Platform owner, Sam Patel, was requested at 14:33. Roll-out on nsx-dev-use1 and the Kafka consumer group on v2 have not started. The card's footer says it plainly: “Agent-initiated deploys need a person.”</p></div></div>
+          <div class="beat"><div class="card"><span class="k">The approval</span><h4>Bound to the bundle and to Dev</h4><p>Sam gets the approval card in a direct message at 14:33. The approval is bound to that exact bundle and to Dev, and his permissions are checked when he clicks. If the action changes, the receipt expires; anyone else who clicks needs their own authorization. At 14:42 Maya Chen notes Sam is in a review until 15:30.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Status</span><h4>Six honest states</h4><p>A run card moves through accepted, working, waiting for approval, and then completed, failed or cancelled. R-2207 sits at waiting for approval in the design. Each card update comes from the persisted run state, so Teams and Vector cannot disagree.</p></div></div>
+          <div class="beat"><div class="card"><span class="k">Retries and cancellation</span><h4>Once, and truthfully</h4><p>Repeated message deliveries and card clicks are deduplicated. A retry after a timeout must not create a second pull request or deployment. Cancelling stops pending work it can stop and reports the effects already committed; it cannot promise to undo every external action.</p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="run" data-label="Venkatesh's 14:33 request and the R-2207 run card at the top. Below, per step: the durable run record and where the same run shows in Vector; the four steps with a gate at Sam Patel; the approval card bound to the bundle and Dev; the status lifecycle with R-2207 at waiting for approval; and deduplication, retry and cancellation."><span class="ruler">run R-2207 · redeploy in Dev</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="guardrails">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">Guardrails in action</span>
+        <h2>When @B asks, and when it answers privately</h2>
+        <p class="lede">The @B board shows two guardrails beside the main thread and states a third under them. A fourth, the recheck on follow-ups, comes from the handbook plan.</p>
+      </header>
+      <figure>
+        <div class="board fig-board short" data-stage="guards" data-label="Four panels. #wheeljack at 13:05: deploy wheeljack gets a clarifying question with options vector-shell, teams-bee and Cancel. #commerce-orders at 12:20: show the fraud model thresholds gets a short restricted reply and a private message. Sam Patel's direct message: the R-2207 approval card is bound to the bundle and Dev, and permissions are checked at the click. A follow-up reuses context and rechecks access."><span class="ruler">four guardrails · one thread each</span></div>
+        <figcaption>The first three panels quote the v3 @B board. The fourth is drawn from handbook 15.2 and 15.5, which ask that follow-ups keep useful context while access and action scope are checked again.</figcaption>
+      </figure>
+      <ol class="rules">
+        <li><b>Uses each person's own permissions</b><span>The asker's identity decides what @B reads. Permissions are checked again on follow-ups, approval clicks, cached results and outgoing content.</span></li>
+        <li><b>Private results go to a direct message</b><span>If a result cannot be shown to everyone in the channel, the channel gets a minimal status and the asker gets the rest privately.</span></li>
+        <li><b>Asks when a request is ambiguous</b><span>Wheeljack is a team, so “deploy wheeljack” needs an application, a version and an environment before anything runs.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="design">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">In the design</span>
+        <h2>Where @B shows up on screen</h2>
+        <p class="lede">@B has its own board in the v3 canvas, and it also appears on the others: a button in every sidebar, notes and prep on Home, and requests in the Approvals inbox. Select a plate to open the full screen.</p>
+      </header>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Bee.webp" data-w="1600" data-h="1000" data-crop="240,90,1360,910" data-title="@B — Teams and Vector (v3)">
+          <span class="pin c-exp" data-x="527" data-y="282">1</span>
+          <span class="pin c-kno" data-x="902" data-y="359">2</span>
+          <span class="pin" data-x="586" data-y="487">3</span>
+          <span class="pin c-exe" data-x="872" data-y="630">4</span>
+          <span class="pin c-ctl" data-x="590" data-y="699">5</span>
+          <span class="pin c-ctl" data-x="1556" data-y="319">6</span>
+          <span class="pin c-ctl" data-x="1556" data-y="529">7</span>
+          <span class="pin c-ctl" data-x="1556" data-y="921">8</span>
+          <span class="ring" data-box="616,337,618,111"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 14.1 · the @B board</span>
+          <h3>A Teams thread, inside Vector</h3>
+          <ol class="pins">
+            <li><span><b>Teams conversations, synced.</b> Three channels (#commerce-orders, #wheeljack, #risk-engineering) and two direct messages: your personal @B with the 15:30 prep, and Sam Patel's approval card.</span></li>
+            <li><span><b>Context used, as Arjun's permissions.</b> Six chips name what @B read, with Change scope to correct it.</span></li>
+            <li><span><b>The answer.</b> Dev pins 1.8.2, which reads the retired order.confirmed.v1 topic; redeploying 1.9.0 should fix it.</span></li>
+            <li><span><b>Run R-2207.</b> Venkatesh's request becomes a run card with four steps and the status “Waiting for approval”.</span></li>
+            <li><span><b>The person it waits for.</b> Approval by the Customer Platform owner, Sam Patel, requested 14:33.</span></li>
+            <li><span><b>Ambiguity.</b> “@B deploy wheeljack” gets a question back, with vector-shell, teams-bee and Cancel.</span></li>
+            <li><span><b>Restriction.</b> “@B show the fraud model thresholds” gets a short reply and a private message.</span></li>
+            <li><span><b>Approvals in Teams</b> are bound to the exact bundle and to Dev, and each approver's permissions are checked when they click.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Main.webp" data-w="1600" data-h="1000" data-title="Home — @B across the day (v3)">
+          <span class="pin c-exp" data-x="410" data-y="24">1</span>
+          <span class="pin c-exp" data-x="240" data-y="210">2</span>
+          <span class="pin c-exp" data-x="1164" data-y="385">3</span>
+          <span class="pin c-exp" data-x="1124" data-y="612">4</span>
+          <span class="pin" data-x="268" data-y="645">5</span>
+          <span class="pin c-exe" data-x="1548" data-y="672">6</span>
+          <span class="pin c-exp" data-x="230" data-y="970">7</span>
+          <span class="ring" data-box="805,590,350,106"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 14.2 · Home</span>
+          <h3>@B across the day</h3>
+          <ol class="pins">
+            <li><span><b>Search or ask @B.</b> The title-bar search takes questions as well as tickets, repos, pods and pipelines.</span></li>
+            <li><span><b>Since this morning.</b> “@B read Jira, Bitbucket, Jenkins, EKS, Confluence and Teams.”</span></li>
+            <li><span><b>Meeting notes.</b> The 11:00 COM-2841 design review: “notes saved by @B”.</span></li>
+            <li><span><b>Prep for 15:30.</b> Build #419 green and running, evals 8 of 8, promotion waiting on Security, one open risk: fraud-risk-api p99 at 412 ms (RISK-412).</span></li>
+            <li><span><b>WJ-91 · @B pilot for the Commerce channel</b>, in the backlog. In the story, @B in Teams is still a plan.</span></li>
+            <li><span><b>teams-bee workspace</b> ws-vt-04 on spike/adaptive-cards: “Approval card works in sandbox.”</span></li>
+            <li><span><b>Ask @B</b>, Ctrl B, at the foot of every screen's sidebar.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="plate">
+        <figure class="shot" data-src="screens/v3/Approvals.webp" data-w="1600" data-h="1000" data-crop="250,90,1350,910" data-title="Approvals — requests from @B (v3)">
+          <span class="pin c-ctl" data-x="950" data-y="158">1</span>
+          <span class="pin c-ctl" data-x="590" data-y="466">2</span>
+          <span class="pin c-ctl" data-x="590" data-y="668">3</span>
+          <span class="pin c-ctl" data-x="1307" data-y="300">4</span>
+          <span class="pin c-exp" data-x="1052" data-y="976">5</span>
+          <span class="ring" data-box="264,387,322,100"></span>
+        </figure>
+        <div class="key">
+          <span class="k-label">Plate 14.3 · Approvals</span>
+          <h3>Requests from Teams land here</h3>
+          <ol class="pins">
+            <li><span><b>One inbox</b> for “promotions, deploys and agent write actions that need a person. Each approval is bound to the exact bundle.”</span></li>
+            <li><span><b>R-2207</b>, redeploy loyalty-consumer 1.9.0 in Dev: “Requested via @B · waiting for Sam Patel”.</span></li>
+            <li><span><b>A write tool call</b> for COM-2867: “@B on behalf of Arjun Mehta · v3 topic draft”. @B acts for a named person.</span></li>
+            <li><span><b>Lena Fischer</b>, Application Security, “reminded in Teams”. Each approver's permissions are checked again when they sign.</span></li>
+            <li><span><b>Remind in Teams</b> sends the nudge through the same channel @B uses.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prototype">
+    <div class="wrap stack">
+      <header>
+        <span class="eyebrow">How the prototype does it</span>
+        <h2>It does not, yet</h2>
+        <p class="lede">Atlas, the working prototype, has no Teams code at all. The handbook records the plan and the boundary a real bot would have to respect.</p>
+      </header>
+      <div class="split">
+        <div class="prose">
+          <p>Handbook chapter 15 is marked “planned, not implemented”. The repository has no Teams route, conversation component, webhook, Adaptive Card implementation, Graph client, Teams SDK package, token handler or bot run state.</p>
+          <p>One detail can mislead a demo. In the synthetic integration catalog, 39 of the 66 cards start as configured, and Microsoft Teams is one of them. That flag says nothing about a bot; @B and real Teams connectivity are absent.</p>
+          <p>The existing plan asks for a local proof of concept: a Teams-style conversation on the same Order Service fraud scenario, a visible @B mention, a context card, animated investigation, check and evaluation steps, a proposed change, an approval state and an Open in Atlas handoff. It should also show denied access, missing context, failed checks and cancellation. Its cards would share state with Atlas's run, evaluation and release screens and stay labelled as a simulation, because an “approved” card disconnected from the release fingerprint would undermine the evidence story.</p>
+        </div>
+        <div class="code">
+          <div class="hd"><span>handbook 15.4 · proposed adapter boundary</span><span>mermaid</span></div>
+<pre><span class="k">flowchart</span> LR
+  Teams[<span class="s">Teams activity or card action</span>] --&gt; Adapter[<span class="s">Verified Teams adapter</span>]
+  Adapter --&gt; Identity[<span class="s">Tenant/user mapping and authorization</span>]
+  Identity --&gt; Context[<span class="s">Bounded conversation and enterprise context</span>]
+  Context --&gt; Run[<span class="s">Common platform run service</span>]
+  Run --&gt; Checks[<span class="s">Retrieval, diagnostics, evaluations</span>]
+  Run --&gt; Policy[<span class="s">Action policy and approval</span>]
+  Policy --&gt; Tools[<span class="s">Approved tool/delivery adapters</span>]
+  Checks --&gt; Evidence[<span class="s">Run evidence and audit</span>]
+  Tools --&gt; Evidence
+  Evidence --&gt; Reply[<span class="s">Audience-checked status/result card</span>]
+  Reply --&gt; Teams
+
+<span class="c"># The adapter owns validation, mention parsing, conversation</span>
+<span class="c"># references, card rendering and result delivery. Platform</span>
+<span class="c"># services own authorization, retrieval, execution, model</span>
+<span class="c"># selection, budgets, approvals and evidence.</span></pre>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>What each request would need first</h3>
+        <p>The handbook maps example requests to the capability that would serve them, and to what must exist before the request is real. None of them works today. The handbook uses the earlier names Teletraan, Space Bridge and Perceptor; they appear here as CodeX, Bridge and Evals.</p>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Request to @B</th><th>Capability path</th><th>Must exist first</th></tr></thead>
+          <tbody>
+            <tr><td>what depends on customer-profile-api?</td><td>Matrix graph and retrieval</td><td>Authorized canonical graph and source evidence</td></tr>
+            <tr><td>open this repository in CodeX</td><td>Workspace broker, coding experience</td><td>Verified repository identity, permitted snapshot, working editor handoff</td></tr>
+            <tr><td>review this Bitbucket PR for breaking API changes</td><td>Bridge, Matrix, CodeX</td><td>Supported Git adapter, accessible diff and contracts, evaluated review behaviour</td></tr>
+            <tr><td>run the fraud evaluation on this branch</td><td>Evals</td><td>Pinned branch or source artifact, real dataset and evaluator binding, run service</td></tr>
+            <tr><td>create a RAG experiment in AllSpark</td><td>Retrieval, model and prompt configuration</td><td>Scoped source recipe, compatible approved model, reproducible input</td></tr>
+            <tr><td>show Optimus Logger evidence for this trace</td><td>Existing observability tool via an approved adapter</td><td>Its real API or query contract, identity, trace mapping, disclosure rules</td></tr>
+            <tr><td>prepare a fix</td><td>CodeX and bounded execution</td><td>Isolated workspace, proposed patch, checks, write policy</td></tr>
+            <tr><td>promote this approved build to staging</td><td>GroundBridge and Sentinel</td><td>Immutable bundle, fresh approvals, authorized delivery adapter, outcome reconciliation</td></tr>
+            <tr><td>diagnose yesterday's deployment failure</td><td>Ratchet with telemetry and delivery evidence</td><td>Real incident data, scoped diagnostics, source-linked reasoning</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <h3>Acceptance criteria for a real integration</h3>
+        <p>Handbook 15.8 lists what a real @B would have to prove before anyone relies on it.</p>
+      </div>
+      <ol class="rules crit">
+        <li><b>The right identity</b><span>A correct mention resolves the proper user, tenant, conversation and project; unrelated messages trigger nothing.</span></li>
+        <li><b>Denied stays denied</b><span>Denied or revoked repositories stay inaccessible.</span></li>
+        <li><b>No leaks in previews</b><span>Shared conversations never receive private source content through summaries or previews.</span></li>
+        <li><b>Evidence and run IDs</b><span>Checks return source-linked evidence and run IDs.</span></li>
+        <li><b>Bound approvals</b><span>Approvals bind the exact action, the environment and the authorized identities.</span></li>
+        <li><b>Effects happen once</b><span>Duplicate delivery cannot repeat effects.</span></li>
+        <li><b>Truthful status</b><span>Failures, throttling and cancellation produce truthful status.</span></li>
+        <li><b>Follow-ups reauthorize</b><span>Follow-ups keep useful context while scope is authorized again.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="lab">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Try it</span>
+        <h2>Ask @B something</h2>
+        <p class="lede">Pick a message, who sends it and where. Watch the request cross the adapter boundary, see where it ends, and what @B would post back.</p>
+      </header>
+      <div class="lab">
+        <div class="controls" id="bee-ctl">
+          <div class="ctl"><label for="ask-msg">Message</label>
+            <select class="sel" id="ask-msg">
+              <option value="why">@B why is loyalty-consumer failing in Dev?</option>
+              <option value="redeploy">@B redeploy loyalty-consumer 1.9.0 in Dev</option>
+              <option value="wheeljack">@B deploy wheeljack</option>
+              <option value="thresholds">@B show the fraud model thresholds</option>
+              <option value="depends">@B what depends on customer-profile-api?</option>
+            </select>
+          </div>
+          <div class="ctl"><span class="lbl">Who asks</span>
+            <div class="seg" id="who" role="group" aria-label="Who asks">
+              <button type="button" value="AM" aria-pressed="true">Arjun Mehta</button><button type="button" value="VT" aria-pressed="false">Venkatesh</button><button type="button" value="MC" aria-pressed="false">Maya Chen</button>
+            </div>
+          </div>
+          <div class="ctl"><span class="lbl">Where</span>
+            <div class="seg" id="where" role="group" aria-label="Where">
+              <button type="button" value="channel" aria-pressed="true">Channel</button><button type="button" value="dm" aria-pressed="false">Direct message</button>
+            </div>
+          </div>
+          <label class="switch">Verified @B mention <input type="checkbox" id="verified" checked></label>
+          <div class="readout">
+            <div><b id="o-end" style="font-size:1.25rem">–</b><span>request ends at</span></div>
+            <div><b id="o-reply" style="font-size:1.25rem">–</b><span>reply</span></div>
+          </div>
+          <p class="logline" id="o-why" aria-live="polite"></p>
+          <p class="note">The first four messages and their replies are the v3 design's. The fifth is a handbook 15.3 example with no answer in the design, so the lab draws only its path. The path is the handbook's proposed adapter boundary. Where the design does not say who may see what, the lab says only that the request is checked against the asker's permissions.</p>
+        </div>
+        <div class="board" data-stage="asklab" data-label="The asker's message, then the adapter boundary path: Teams activity, verified adapter, identity, bounded context, run service, checks or policy and approval, evidence and audit, and the audience-checked reply. Steps light in turn; the step where the request ends is marked, and a preview shows what @B posts back."><span class="ruler">one message · the adapter boundary</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div class="facts">
+        <div><b>6</b><span>sources in Arjun's Context used card</span></div>
+        <div><b>2 min</b><span>from Arjun's question (14:31) to run R-2207 (14:33)</span></div>
+        <div><b>4 / 1</b><span>steps on R-2207 / waiting for a person</span></div>
+        <div><b>3</b><span>rules under “How @B behaves”</span></div>
+        <div><b>6</b><span>run statuses, accepted to cancelled</span></div>
+        <div><b>0</b><span>lines of Teams code in the Atlas prototype</span></div>
+      </div>
+      <div class="status3">
+        <div class="today"><span class="k-label"><i></i>Atlas prototype today</span><p>Nothing. No Teams route, webhook, Adaptive Card, Graph client, Teams SDK, token handler or bot run state. The Microsoft Teams card in the integration catalog defaults to configured, which does not mean a bot exists.</p></div>
+        <div class="design"><span class="k-label"><i></i>v3 design</span><ul><li>The @B board: synced channels, Context used, run R-2207, guardrails</li><li>@B across screens: Ask @B in every sidebar, Home's prep and notes, @B review on PR #214, requests in Approvals</li><li>WJ-91 pilot in the backlog; “Pilot team for @B” is a Phase 1 decision</li></ul></div>
+        <div class="prop"><span class="k-label"><i></i>Production proposal</span><p>A verified adapter in front of common platform services; identity mapping and bounded context; durable runs with deduplication, safe retries and truthful cancellation; the 15.8 acceptance criteria. Open: pilot team, allowed actions, installation policy, consent, history limits, retention, audience checks and the Teams SDK.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="others">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Other ways to do it</span>
+        <h2>Same question, other assistants</h2>
+        <p class="lede">Chat assistants and ChatOps bots differ mostly in three places: whose permissions they use, what context they read, and who must say yes before something changes.</p>
+      </header>
+      <div class="compare" id="alts"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><div class="sources" id="sources"></div></div>
+  </section>
+</main>
+<nav class="next" aria-label="Chapter navigation">
+  <div class="wrap">
+    <a href="observe.html"><span>← Chapter 13</span><b>Observe and cost</b></a>
+    <a class="fwd" href="interface.html"><span>Chapter 15 →</span><b>The interface</b></a>
+  </div>
+</nav>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp } = Field;
+
+  /* ---------------- shared facts from the v3 @B board ---------------- */
+  const ANSWER = "Dev runs 1.8.2 because values-dev.yaml pins it. 1.8.2 reads order.confirmed.v1, which was retired in msk-dev-use1 on Friday, so it times out and restarts. main declares 1.9.0 on v2 — redeploying 1.9.0 in Dev should fix it.";
+  const ANSWER_SHORT = "Dev runs 1.8.2 because values-dev.yaml pins it. 1.8.2 reads order.confirmed.v1, which was retired in msk-dev-use1 on Friday, so it times out and restarts.";
+  const SCOPE = [{ t: "loyalty-consumer", c: "ink-2" }, { t: "nsx-dev-use1 / commerce", c: "exe" }];
+  const EVID = [
+    { t: "pod logs", c: "tel", k: "EKS · last log line", v: "WARN Topic order.confirmed.v1 not present" },
+    { t: "configmap loyalty-cfg", c: "exe", k: "Compute · config", v: "LOYALTY_TOPIC in Dev: order.confirmed.v1" },
+    { t: "Matrix edge", c: "kno", k: "Matrix · conflict", v: "Git yes 0.95 · Kafka no 0.90" },
+    { t: "COM-2856", c: "exp", k: "Jira", v: "Loyalty consumer silent on order.confirmed.v2" },
+  ];
+  const STEPS = [
+    { t: "Bundle loyalty-consumer 1.9.0 · sha256:61d3…ad82", short: "Bundle loyalty-consumer 1.9.0", st: "verified", k: "ok" },
+    { t: "Approval by the Customer Platform owner", short: "Approval by the Customer Platform owner", st: "Sam Patel · requested 14:33", sst: "Sam Patel · 14:33", k: "wait" },
+    { t: "Roll out on nsx-dev-use1", short: "Roll out on nsx-dev-use1", st: "not started", k: "idle" },
+    { t: "Kafka consumer group active on v2", short: "Kafka consumer group active on v2", st: "not started", k: "idle" },
+  ];
+  const WHO = { AM: "Arjun Mehta", VT: "Venkatesh", MC: "Maya Chen", SP: "Sam Patel" };
+  const FIRST = { AM: "Arjun", VT: "Venkatesh", MC: "Maya" };
+
+  /* ---------------- drawing helpers ---------------- */
+  function lines(g, s, maxW, size, fam, wt) {
+    const words = String(s).split(/\s+/), out = []; let line = "";
+    for (const w of words) { const t = line ? line + " " + w : w; if (g.tw(t, size, fam || "ui", wt || 500) > maxW && line) { out.push(line); line = w; } else line = t; }
+    if (line) out.push(line); return out;
+  }
+  // draw wrapped text; returns the y after the last line
+  function para(g, s, x, y, maxW, o) {
+    const L = lines(g, s, maxW, o.size, o.font || "ui", o.weight || 500);
+    const lh = o.lh || o.size * 1.38, n = o.maxLines ? Math.min(o.maxLines, L.length) : L.length;
+    for (let i = 0; i < n; i++) g.text(L[i], x, y + i * lh, Object.assign({ font: "ui" }, o));
+    return y + n * lh;
+  }
+  function avatar(g, x, y, ini, r, a) {
+    g.circle(x, y, r, { fill: "ink-2", a });
+    g.text(ini, x, y + r * 0.34, { size: r * 0.82, font: "ui", weight: 700, color: "#FFFFFF", align: "center", a });
+  }
+  // one Teams message: avatar (or the @B mark), name and time, then the text. Returns {y, mx, my} (y after; mention mark centre)
+  function msg(g, x, y, w, o) {
+    const r = o.r || 11, a = o.a === undefined ? 1 : o.a, fs = o.size || 12.5;
+    if (o.bee) g.bee(x + r, y + r, r * 2, { a }); else avatar(g, x + r, y + r, o.ini, r, a);
+    const tx = x + r * 2 + 10;
+    g.text(o.name, tx, y + 10, { size: fs - 0.5, font: "ui", weight: 700, a });
+    if (o.time) g.text(o.time, tx + g.tw(o.name, fs - 0.5, "ui", 700) + 7, y + 10, { size: fs - 1.5, font: "ui", color: "ink-3", a });
+    let yy = y + 10 + fs + 7, mx = 0, my = 0;
+    if (o.text) {
+      let bx = tx;
+      if (o.mention) { mx = tx + fs * 0.75; my = yy - fs * 0.36; g.bee(mx, my, fs * 1.5, { a }); bx = tx + fs * 1.5 + 6; }
+      yy = para(g, o.text, bx, yy, w - (bx - x), { size: fs, a, maxLines: o.maxLines || 3, color: o.color || "ink" });
+    } else yy = y + 2 * r + 4;
+    return { y: Math.max(yy - fs * 0.6, y + 2 * r + 2), mx, my, tx };
+  }
+  function chanHead(g, x, y, name, sub, a, o = {}) {
+    const fs = o.size || 13;
+    g.rect(x, y, 22, 22, { fill: g.rgba("exp", 0.1), r: 6, a });
+    g.text(o.dm ? "@" : "#", x + 11, y + 16, { size: 12, font: "ui", weight: 700, color: "exp", align: "center", a });
+    g.text(name, x + 31, y + 10, { size: fs, font: "ui", weight: 700, a });
+    if (sub) g.text(sub, x + 31, y + 25, { size: fs - 2.5, font: "ui", color: "ink-3", a, maxW: o.maxW });
+  }
+  // the R-2207 run card; returns its height. o.short uses shorter labels, o.hl highlights a step
+  function runCard(g, x, y, w, o = {}) {
+    const a = o.a === undefined ? 1 : o.a, fs = o.fs || 12, rh = o.rh || 22, t = o.t || 0, hh = o.hh || 32, dash = o.dash || null;
+    const foot = o.foot !== false, h = hh + 6 + STEPS.length * rh + (foot ? 34 : 6);
+    g.rect(x, y, w, h, { fill: "card", stroke: o.stroke || "hair", lw: 1.2, r: 10, a, dash });
+    g.circle(x + 15, y + hh / 2, 4, { fill: "ctl", a });
+    g.text("Run R-2207 · Redeploy in Dev", x + 26, y + hh / 2 + 4.5, { size: fs + 0.5, font: "ui", weight: 700, a });
+    const bl = "Waiting for approval", bw = g.tw(bl, fs - 1.5, "ui", 600) + 16;
+    g.rect(x + w - 10 - bw, y + hh / 2 - 9, bw, 18, { fill: g.rgba("ctl", 0.12), r: 5, a });
+    g.text(bl, x + w - 10 - bw / 2, y + hh / 2 + 4, { size: fs - 1.5, font: "ui", weight: 600, color: "ctl", align: "center", a });
+    g.line(x + 1, y + hh, x + w - 1, y + hh, { color: "hair", lw: 1, a });
+    STEPS.forEach((s_, i) => {
+      const yy = y + hh + 6 + i * rh + rh / 2;
+      const c = s_.k === "ok" ? "ok" : s_.k === "wait" ? "ctl" : "ink-3";
+      if (i === o.hl) g.rect(x + 5, yy - rh / 2 + 1, w - 10, rh - 2, { fill: g.rgba(c, 0.1), r: 6, a });
+      if (s_.k === "ok") g.circle(x + 16, yy, 3.8, { fill: c, a });
+      else if (s_.k === "wait") { g.circle(x + 16, yy, 4.6, { stroke: c, lw: 1.4, dash: [2, 2], a }); g.circle(x + 16, yy, 2.1, { fill: c, a: a * (0.55 + 0.45 * Math.sin(t * 3)) }); }
+      else g.circle(x + 16, yy, 3.8, { stroke: c, lw: 1.2, dash: [2, 2], a });
+      const st = o.short ? (s_.sst || s_.st) : s_.st;
+      const stw = g.tw(st, fs - 1, "ui", 600);
+      g.text(o.short ? s_.short : s_.t, x + 28, yy + 4, { size: fs - 0.5, font: "ui", color: s_.k === "idle" ? "ink-3" : "ink", a, maxW: w - 50 - stw });
+      g.text(st, x + w - 12, yy + 4, { size: fs - 1, font: "ui", color: c, align: "right", a, weight: s_.k === "idle" ? 500 : 600 });
+    });
+    if (foot) {
+      const fy = y + hh + 6 + STEPS.length * rh + 4;
+      g.line(x + 1, fy, x + w - 1, fy, { color: "hair", lw: 1, a });
+      let bx = x + 12;
+      ["Open in Vector", "COM-2856"].forEach((b) => { const bw2 = g.tw(b, fs - 1.5, "ui", 600) + 16; g.rect(bx, fy + 6, bw2, 19, { fill: "card", stroke: "hair", lw: 1, r: 5, a }); g.text(b, bx + bw2 / 2, fy + 19.5, { size: fs - 1.5, font: "ui", weight: 600, align: "center", a }); bx += bw2 + 6; });
+      if (w - (bx - x) > g.tw("Agent-initiated deploys need a person", fs - 1.5, "ui") + 20) g.text("Agent-initiated deploys need a person", x + w - 12, fy + 19.5, { size: fs - 1.5, font: "ui", color: "ink-3", align: "right", a });
+    }
+    return h;
+  }
+  function chipW(g, label, size) { return g.tw(label, size, "mono", 600) + 20; }
+  // the Context used card (two columns of chips); returns {h, ends:[{x,y}] for the evidence chips}
+  function ctxCard(g, x, y, w, o = {}) {
+    const a = o.a === undefined ? 1 : o.a, cs = o.cs || 10.5, rh = o.rh || 21, who = o.who || "Arjun";
+    const h = 30 + EVID.length * rh + 6;
+    g.rect(x, y, w, h, { fill: "card", stroke: "hair", lw: 1.2, r: 9, a, dash: o.dash || null });
+    g.text("Context used", x + 12, y + 19, { size: 12, font: "ui", weight: 700, a });
+    g.text(`as ${who}'s permissions`, x + 12 + g.tw("Context used", 12, "ui", 700) + 7, y + 19, { size: 11, font: "ui", color: "ink-3", a });
+    if (o.scope && w > 330) g.text("Change scope", x + w - 12, y + 19, { size: 11, font: "ui", weight: 600, color: "exp", align: "right", a });
+    const lw_ = Math.max(...SCOPE.map((c) => chipW(g, c.t, cs)));
+    const ends = [];
+    SCOPE.forEach((c, i) => g.chip(x + 10, y + 30 + i * rh + rh / 2 - 1, c.t, c.c, { size: cs, a: a * (o.dimScope ? 0.5 : 1) }));
+    EVID.forEach((c, i) => { const cx = x + 10 + lw_ + 8, cy = y + 30 + i * rh + rh / 2 - 1; const cw = g.chip(cx, cy, c.t, c.c, { size: cs, a }); ends.push({ x: cx + cw, y: cy, c: c.c }); });
+    return { h, ends, need: 10 + lw_ + 8 + Math.max(...EVID.map((c) => chipW(g, c.t, cs))) + 10 };
+  }
+  function kicker(g, s, x, y, c, a, size) { g.text(s.toUpperCase(), x, y, { size: size || 9.5, color: c, ls: 0.7, a, weight: 600 }); }
+
+  /* ---------------- hero: the #commerce-orders thread with sources ---------------- */
+  Field.scene("hero", (g, s) => {
+    const { W, H } = g, t = s.t;
+    const pad = 14, top = Math.max(40, g.safeTop + 4);
+    const pw = Math.round(W * 0.61), px = pad, py = top, ph = H - top - 10;
+    const compact = ph < 455, tight = ph < 420;
+    const gapR = tight ? 5 : compact ? 6 : 9, crh = tight ? 18 : compact ? 19 : 20, ctxGap = tight ? 10 : 14;
+    g.rect(px + 2, py + 4, pw, ph, { fill: "ink", r: 10, a: 0.05 });
+    g.rect(px, py, pw, ph, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    chanHead(g, px + 12, py + 9, "commerce-orders", "Teams channel · 24 members · @B installed", 1, { size: 12.5 });
+    g.line(px + 1, py + 42, px + pw - 1, py + 42, { color: "hair", lw: 1 });
+    const ix = px + 12, iw = pw - 24;
+    let y = py + 52;
+    const m1 = msg(g, ix, y, iw, { ini: "AM", name: "Arjun Mehta", time: "14:31", text: "why is loyalty-consumer failing in Dev?", mention: true, size: 12, r: 10 });
+    y = m1.y + gapR;
+    const b1 = msg(g, ix, y, iw, { bee: true, name: "@B", time: "14:31", size: 12, r: 10 });
+    const cx0 = b1.tx, cw0 = ix + iw - cx0;
+    const ctx = ctxCard(g, cx0, y + 18, cw0, { rh: crh, cs: 10 });
+    y = y + 18 + ctx.h + ctxGap;
+    if (!compact) {
+      // quote whole sentences only: the full first two sentences if they fit in two lines, else the first
+      const two = lines(g, ANSWER_SHORT, cw0, 11, "ui").length <= 2;
+      y = para(g, two ? ANSWER_SHORT : "Dev runs 1.8.2 because values-dev.yaml pins it.", cx0, y + 2, cw0, { size: 11, color: "ink-2", lh: 14.5, maxLines: 2 }) - 2;
+    }
+    y += gapR;
+    const m2 = msg(g, ix, y, iw, { ini: "VT", name: "Venkatesh", time: "14:33", text: "redeploy loyalty-consumer 1.9.0 in Dev", mention: true, size: 12, r: 10 });
+    y = m2.y + gapR;
+    msg(g, ix, y, iw, { bee: true, name: "@B", time: "14:33", size: 12, r: 10 });
+    const ry = y + 18, rh = runCard(g, cx0, ry, cw0, { short: true, fs: 11.2, rh: tight ? 17 : compact ? 18 : 19, hh: 28, foot: false, t });
+    // ---- annotations: leader lines from the evidence chips to their sources ----
+    const lx = px + pw + 22, lw = W - lx - 10, ks = 9, vs = 10.2, vlh = 12.5;
+    const labs = [];
+    const ctxTop = m1.y + gapR + 18; // context card top
+    labs.push({ ty: ctxTop + 15, k: "Identity", v: "answers as Arjun, with his own permissions", c: "ctl", fx: cx0 + 12 + g.tw("Context used", 12, "ui", 700) + 7 + g.tw("as Arjun's permissions", 11, "ui") + 4 });
+    ctx.ends.forEach((e, i) => labs.push({ ty: e.y, k: EVID[i].k, v: EVID[i].v, c: e.c, fx: e.x + 2 }));
+    labs.push({ ty: ry + 28 + 6 + (tight ? 17 : compact ? 18 : 19) * 1.5, k: "Control · R-2207", v: "waits for Sam Patel, the Customer Platform owner", c: "ctl", fx: cx0 + cw0 + 1 });
+    labs.forEach((L) => { L.lines = lines(g, L.v, lw, vs, "mono", 500).slice(0, 2); L.h = 13 + L.lines.length * vlh; L.y = L.ty - L.h / 2 + 4; });
+    for (let i = 1; i < labs.length; i++) { const p = labs[i - 1]; if (labs[i].y < p.y + p.h + 7) labs[i].y = p.y + p.h + 7; }
+    const maxB = H - 12; const over = labs[labs.length - 1].y + labs[labs.length - 1].h - maxB;
+    if (over > 0) for (let i = labs.length - 1; i >= 0; i--) { const lim = i === labs.length - 1 ? maxB - labs[i].h : labs[i + 1].y - labs[i].h - 7; if (labs[i].y > lim) labs[i].y = lim; }
+    labs.forEach((L, i) => {
+      const pr = ramp(t, 0.3 + i * 0.22, 0.5), a = Math.max(0.15, pr);
+      const ly = L.y + 8, ex = px + pw + 6;
+      g.circle(L.fx, L.ty, 2.6, { fill: L.c, a });
+      g.poly([[L.fx, L.ty], [ex, L.ty], [lx - 6, ly - 3]], { color: L.c, lw: 1, a: a * 0.9 });
+      kicker(g, L.k, lx, L.y + 7, L.c, a, ks);
+      L.lines.forEach((ln, j) => g.text(ln, lx, L.y + 20 + j * vlh, { size: vs, color: "ink-2", a }));
+    });
+    void rh;
+  }, { anim: true, restT: 4, zoom: 1.12, minW: 640, maxW: 960 });
+
+  /* ---------------- scrolly 1: a question in a channel ---------------- */
+  const ASKN = [
+    { k: "1 · Teams", t: "@B mention", c: "exp" },
+    { k: "2 · Adapter", t: "Verified", c: "exp" },
+    { k: "3 · Identity", t: "Arjun's view", c: "ctl" },
+    { k: "4 · Context", t: "Bounded", c: "kno" },
+    { k: "5 · Reply", t: "Context used", c: "exp" },
+  ];
+  function listBox(g, x, y, w, title, items, o) {
+    const a = o.a, rh = o.rh || 21, h = 36 + items.length * rh + 4;
+    g.box(x, y, w, h, { color: o.color || "ink-3", wash: o.wash === undefined ? 0.05 : o.wash, a, lw: 1.3 });
+    g.text(title, x + 12, y + 23, { size: 13, font: "ui", weight: 700, a });
+    items.forEach((it, i) => {
+      const yy = y + 44 + i * rh, c = it.c || o.color || "ink-3";
+      if (it.mark) g.text(it.mark, x + 14, yy + 4, { size: 13, color: it.mc || c, weight: 700, a: a * (it.ma === undefined ? 1 : it.ma) });
+      else g.rect(x + 13, yy - 4, 8, 8, { fill: c, r: 2, a });
+      g.text(it.t, x + 30, yy + 4, { size: 12, color: "ink-2", a, maxW: w - 40 });
+    });
+    return h;
+  }
+  const ASKP = [
+    // 0 · the mention
+    (g, R, a, tall) => {
+      const w = tall ? R.w : Math.min(540, R.w * 0.6);
+      const y0 = R.y;
+      g.rect(R.x, y0, w, 104, { fill: "card", stroke: "hair", lw: 1.2, r: 10, a });
+      chanHead(g, R.x + 12, y0 + 10, "commerce-orders", "Teams channel · 24 members · @B installed", a);
+      g.line(R.x + 1, y0 + 44, R.x + w - 1, y0 + 44, { color: "hair", lw: 1, a });
+      const m = msg(g, R.x + 14, y0 + 56, w - 28, { ini: "AM", name: "Arjun Mehta", time: "14:31", text: "why is loyalty-consumer failing in Dev?", mention: true, a, size: 13 });
+      // callout on the mention: down out of the card, then right, so it crosses no text
+      g.circle(m.mx, m.my, 13, { stroke: "exp", lw: 1.4, a });
+      const ly = y0 + 104 + 22, lx = m.mx + 26;
+      g.poly([[m.mx, m.my + 13], [m.mx, ly], [lx - 6, ly]], { color: "exp", lw: 1.2, a });
+      g.text("Verified mention", lx, ly + 5, { size: 13, font: "ui", weight: 700, color: "exp", a });
+      const cy0 = para(g, "resolved to the installed bot's identity, never by display text", lx, ly + 23, R.x + R.w - lx, { size: 12, font: "mono", color: "ink-2", a, lh: 16 });
+      let y = cy0 + 18;
+      // a lookalike that is not a call
+      const hw = tall ? R.w : Math.min(R.w, w + 300);
+      g.hatch(R.x, y, hw, 44, { color: "ink-3", a: a * 0.7, r: 8 });
+      g.rect(R.x + 10, y + 10, Math.min(hw - 20, g.tw("A message that only contains the text \"@b\"", 12.5, "ui") + 20), 24, { fill: "card", r: 6, a });
+      g.text("A message that only contains the text \"@b\"", R.x + 20, y + 26, { size: 12.5, font: "ui", color: "ink-2", a });
+      g.text("✕ not a call", R.x + hw - 12, y + 27, { size: 12.5, weight: 600, color: "bad", align: "right", a });
+      y += 44 + 34;
+      kicker(g, "Where people can ask", R.x, y, "ink-3", a, 10.5);
+      let cx = R.x; y += 22;
+      ["channel thread", "group chat", "personal scope"].forEach((c) => { cx += g.chip(cx, y, c, "exp", { size: 12, a }) + 8; });
+      y += 34;
+      para(g, "Replies stay in the thread or chat the question came from.", R.x, y, R.w, { size: 13, color: "ink-2", a });
+    },
+    // 1 · the adapter
+    (g, R, a, tall, s) => {
+      const checks = ["incoming activity", "tenant", "user", "conversation", "bot mention"];
+      const lw_ = tall ? R.w : Math.min(270, R.w * 0.32);
+      const h1 = listBox(g, R.x, R.y, lw_, "Verified Teams adapter", checks.map((c, i) => { const k = ramp(s.b, 0.5 + i * 0.09, 0.12); return { t: "checks the " + c, mark: k > 0.5 ? "✓" : "○", mc: k > 0.5 ? "ok" : "ink-3" }; }), { a, color: "exp", wash: 0.06, rh: 22 });
+      const own = [{ t: "validation", c: "exp" }, { t: "mention parsing", c: "exp" }, { t: "conversation references", c: "exp" }, { t: "card rendering", c: "exp" }, { t: "result delivery", c: "exp" }];
+      const plat = [{ t: "authorization", c: "ctl" }, { t: "retrieval", c: "kno" }, { t: "execution", c: "exe" }, { t: "model selection", c: "exe" }, { t: "budgets", c: "tel" }, { t: "approvals", c: "ctl" }, { t: "evidence", c: "kno" }];
+      let x2, y2, w2;
+      if (tall) { x2 = R.x; y2 = R.y + h1 + 40; w2 = (R.w - 30) / 2; } else { x2 = R.x + lw_ + 40; y2 = R.y; w2 = (R.w - lw_ - 40 - 30) / 2; }
+      if (!tall) g.arrow(R.x + lw_ + 6, R.y + 30, x2 - 6, R.y + 30, { color: "exp", lw: 1.4, head: 7, a });
+      const hA = listBox(g, x2, y2, w2, "The adapter owns", own, { a, color: "exp", wash: 0.04, rh: 21 });
+      const hB = listBox(g, x2 + w2 + 30, y2, w2, "Platform services own", plat, { a, color: "ink-3", wash: 0.03, rh: 21 });
+      const bx = x2 + w2 + 15, bt = y2 - 16, bb = y2 + Math.max(hA, hB) + 10;
+      g.line(bx, bt, bx, bb, { color: "ink-3", lw: 1.3, dash: [5, 4], a });
+      g.text("boundary", bx, bt - 6, { size: 10.5, color: "ink-3", align: "center", a });
+      const fy = Math.max(y2 + Math.max(hA, hB), R.y + h1) + 40;
+      para(g, "This split keeps the Teams bot from becoming a second, independent execution authority.", R.x, fy, R.w, { size: 13, color: "ink-2", a, lh: 18 });
+    },
+    // 2 · identity
+    (g, R, a, tall) => {
+      const nodes = [["Teams user", "Arjun Mehta", "exp"], ["Tenant and user mapping", "authorization", "ctl"], ["Vector identity", "Arjun's own permissions", "ctl"]];
+      let y = R.y;
+      const bw = tall ? R.w : (R.w - 2 * 36) / 3, bh = 58;
+      nodes.forEach(([k, v, c], i) => {
+        const x = tall ? R.x : R.x + i * (bw + 36), yy = tall ? y + i * (bh + 22) : y;
+        g.box(x, yy, bw, bh, { color: c, wash: 0.07, a });
+        kicker(g, k, x + 12, yy + 22, c, a, 10.5);
+        g.text(v, x + 12, yy + 43, { size: 13.5, font: "ui", weight: 600, a, maxW: bw - 24 });
+        if (i < 2) { if (tall) g.arrow(x + 40, yy + bh + 3, x + 40, yy + bh + 19, { color: c, lw: 1.4, head: 7, a }); else g.arrow(x + bw + 4, yy + bh / 2, x + bw + 32, yy + bh / 2, { color: c, lw: 1.4, head: 7, a }); }
+      });
+      y = tall ? y + 3 * bh + 2 * 22 + 30 : y + bh + 34;
+      const hw = tall ? R.w : Math.min(R.w, 560);
+      g.hatch(R.x, y, hw, 46, { color: "bad", a: a * 0.6, r: 8 });
+      g.rect(R.x + 10, y + 11, g.tw("@B's own service credential", 12.5, "ui", 600) + 20, 24, { fill: "card", r: 6, a });
+      g.text("@B's own service credential", R.x + 20, y + 28, { size: 12.5, font: "ui", weight: 600, a });
+      g.text("cannot enlarge the asker's authority", R.x + hw - 12, y + 28, { size: 12, color: "bad", weight: 600, align: "right", a, maxW: hw - g.tw("@B's own service credential", 12.5, "ui", 600) - 60 });
+      y += 46 + 34;
+      kicker(g, "Checked again on", R.x, y, "ink-3", a, 10.5);
+      let cx = R.x, cy = y + 22;
+      ["follow-ups", "approval clicks", "cached results", "outgoing content"].forEach((c) => { const cw = chipW(g, c, 12); if (cx + cw > R.x + R.w) { cx = R.x; cy += 30; } cx += g.chip(cx, cy, c, "ctl", { size: 12, a }) + 8; });
+      y = cy + 40;
+      kicker(g, "In the design", R.x, y, "ink-3", a, 10.5);
+      g.text("Context used", R.x, y + 24, { size: 13, font: "ui", weight: 700, a });
+      g.text("as Arjun's permissions", R.x + g.tw("Context used", 13, "ui", 700) + 8, y + 24, { size: 12.5, font: "ui", color: "ink-3", a });
+    },
+    // 3 · bounded context
+    (g, R, a, tall) => {
+      const ins = [{ t: "conversation history", c: "exp" }, { t: "pod logs", c: "tel" }, { t: "configmap loyalty-cfg", c: "exe" }, { t: "Matrix edge", c: "kno" }, { t: "COM-2856", c: "exp" }];
+      if (!tall) {
+        const iw = Math.min(250, R.w * 0.28), rh = 34, fx = R.x + iw + 50, fw = Math.min(190, R.w * 0.21), ox = fx + fw + 50, ow = R.x + R.w - ox;
+        kicker(g, "Could be read", R.x, R.y + 4, "ink-3", a, 10.5);
+        ins.forEach((it, i) => { const y = R.y + 20 + i * rh; g.node(R.x, y + 13, it.t, { color: it.c, size: 12, h: 26, a }); g.arrow(R.x + iw - 4, y + 13, fx - 6, R.y + 30 + 2 * rh, { color: it.c, lw: 1.1, head: 6, a: a * 0.75 }); });
+        const hy = R.y + 20 + ins.length * rh + 8;
+        g.hatch(R.x, hy, iw, 40, { color: "ink-3", a: a * 0.7, r: 8 });
+        g.text("every message and repo", R.x + 10, hy + 25, { size: 11.5, color: "ink-2", a, maxW: iw - 46 });
+        g.text("✕", R.x + iw - 14, hy + 26, { size: 15, color: "bad", weight: 700, align: "right", a });
+        // the filter
+        const fy = R.y + 20, fh = ins.length * rh + 48;
+        g.box(fx, fy, fw, fh, { color: "ctl", wash: 0.07, a });
+        g.text("Bounded", fx + 12, fy + 24, { size: 14, font: "ui", weight: 700, a });
+        let yy = para(g, "History: by relevance, time and size", fx + 12, fy + 50, fw - 24, { size: 12, color: "ink-2", a, lh: 16 });
+        para(g, "Sources: only what Arjun may open", fx + 12, yy + 12, fw - 24, { size: 12, color: "ink-2", a, lh: 16 });
+        g.arrow(fx + fw + 6, fy + fh / 2, ox - 6, fy + fh / 2, { color: "kno", lw: 1.6, head: 8, a });
+        // the output
+        const cw = Math.max(ow, 0); const c = ctxCard(g, ox, fy + 10, cw, { a, scope: true, cs: 10.5, rh: 22 });
+        void c;
+        para(g, "Messages, attachments and retrieved pages are task data. Nothing in them can override execution policy.", R.x, Math.max(hy + 72, fy + fh + 40), R.w, { size: 13, color: "ink-2", a, lh: 18 });
+      } else {
+        kicker(g, "Could be read", R.x, R.y + 4, "ink-3", a, 10.5);
+        let cx = R.x, cy = R.y + 26;
+        ins.forEach((it) => { const cw = chipW(g, it.t, 11.5); if (cx + cw > R.x + R.w) { cx = R.x; cy += 30; } cx += g.chip(cx, cy, it.t, it.c, { size: 11.5, a }) + 8; });
+        cy += 26;
+        g.hatch(R.x, cy, R.w, 34, { color: "ink-3", a: a * 0.7, r: 8 });
+        g.text("every message and repo", R.x + 12, cy + 22, { size: 12, color: "ink-2", a });
+        g.text("✕ not retrieved", R.x + R.w - 12, cy + 22, { size: 12, color: "bad", weight: 600, align: "right", a });
+        cy += 34 + 16;
+        g.arrow(R.x + R.w / 2, cy, R.x + R.w / 2, cy + 18, { color: "ctl", lw: 1.4, head: 7, a });
+        cy += 24;
+        g.box(R.x, cy, R.w, 66, { color: "ctl", wash: 0.07, a });
+        g.text("Bounded", R.x + 12, cy + 24, { size: 14, font: "ui", weight: 700, a });
+        g.text("History: by relevance, time and size", R.x + 12, cy + 44, { size: 12, font: "ui", color: "ink-2", a });
+        g.text("Sources: only what Arjun may open", R.x + 12, cy + 60, { size: 12, font: "ui", color: "ink-2", a });
+        cy += 66 + 6;
+        g.arrow(R.x + R.w / 2, cy, R.x + R.w / 2, cy + 18, { color: "kno", lw: 1.4, head: 7, a });
+        cy += 24;
+        const c = ctxCard(g, R.x, cy, R.w, { a, scope: true, cs: 11, rh: 22 });
+        para(g, "Messages, attachments and retrieved pages are task data. Nothing in them can override execution policy.", R.x, cy + c.h + 30, R.w, { size: 12.5, color: "ink-2", a, lh: 17 });
+      }
+    },
+    // 4 · the answer, tied to the Matrix conflict
+    (g, R, a, tall) => {
+      const aw = tall ? R.w : Math.min(470, R.w * 0.54);
+      const ax = R.x, ay = R.y;
+      const head = msg(g, ax, ay, aw, { bee: true, name: "@B", time: "14:31", a, size: 12.5 });
+      const c = ctxCard(g, head.tx, ay + 22, ax + aw - head.tx, { a, cs: 10.5, rh: 21 });
+      const ty = ay + 22 + c.h + 22;
+      const L = lines(g, ANSWER, ax + aw - head.tx, 12.5, "ui");
+      L.forEach((ln, i) => g.text(ln, head.tx, ty + i * 18, { size: 12.5, font: "ui", a }));
+      const aBottom = ty + L.length * 18;
+      // Matrix assertion card
+      const mx = tall ? R.x : R.x + aw + 46, my = tall ? aBottom + 46 : R.y + 18, mw = tall ? R.w : R.x + R.w - mx;
+      const mh = 168;
+      g.box(mx, my, mw, mh, { color: "kno", wash: 0.06, a });
+      kicker(g, "Matrix · conflict assertion", mx + 12, my + 20, "kno", a, 10);
+      para(g, "loyalty-consumer consumes order.confirmed.v2", mx + 12, my + 42, mw - 24, { size: 13, weight: 700, a, maxLines: 2, lh: 17 });
+      const rows = [["Git says yes", "0.95", "declared in loyalty/consumer.yaml on main", "ok"], ["Kafka msk-dev-use1 says no", "0.90", "no consumer-group offsets for 48 hours", "bad"]];
+      rows.forEach(([k, conf, v, col], i) => {
+        const yy = my + 76 + i * 38;
+        g.text(k, mx + 12, yy, { size: 12, font: "ui", weight: 600, color: col, a });
+        g.text(conf, mx + mw - 12, yy, { size: 11.5, color: "ink-3", align: "right", a });
+        g.text(v, mx + 12, yy + 16, { size: 11, color: "ink-2", a, maxW: mw - 24 });
+      });
+      g.text("A person decides; no model settles a conflict.", mx + 12, my + mh - 12, { size: 11.5, font: "ui", color: "ink-3", a, maxW: mw - 24 });
+      // connector
+      if (!tall) { g.curve([ax + aw + 4, ty + 6], [ax + aw + 26, my + mh / 2], [mx - 4, my + mh / 2], { color: "kno", lw: 1.4, head: 7, a }); g.text("same conflict", mx, my + mh + 22, { size: 11.5, color: "kno", weight: 600, a }); g.text("Matrix flagged", mx, my + mh + 38, { size: 11.5, color: "kno", weight: 600, a }); }
+      else { g.arrow(R.x + 60, aBottom + 6, R.x + 60, my - 6, { color: "kno", lw: 1.4, head: 7, a }); g.text("the same conflict Matrix flagged", R.x + 72, (aBottom + my) / 2 + 4, { size: 11.5, color: "kno", weight: 600, a }); }
+      const fy = Math.max(aBottom, my + mh) + (tall ? 34 : 40);
+      para(g, "Ratchet's diagnosis on the Clusters screen cites the same four sources: pod logs, configmap loyalty-cfg, Matrix edge and COM-2856.", R.x, fy, R.w, { size: 12.5, color: "ink-2", a, lh: 17 });
+    },
+  ];
+  Field.scene("ask", (g, s) => {
+    const { W, H } = g, b = s.b;
+    const pad = 22, tall = H > W * 0.95;
+    const zy = Math.max(46, g.safeTop + 14), ny = zy + 12, nh = 54, gap = 22;
+    const nw = (W - pad * 2 - gap * 4) / 5, nx = (i) => pad + i * (nw + gap);
+    const zones = [[0, 1, "Teams and adapter"], [2, 3, "Vector platform"], [4, 4, "Back in Teams"]];
+    zones.forEach(([i0, i1, l]) => { const x0 = nx(i0), x1 = nx(i1) + nw; g.text(l.toUpperCase(), (x0 + x1) / 2, zy, { size: 9.5, color: "ink-3", ls: 0.8, align: "center" }); g.line(x0 + 4, zy + 4, x1 - 4, zy + 4, { color: "hair", lw: 1 }); });
+    [[1, 2], [3, 4]].forEach(([i, j]) => { const x = (nx(i) + nw + nx(j)) / 2; g.line(x, zy - 6, x, ny + nh + 14, { color: "ink-3", lw: 1.1, dash: [4, 4] }); });
+    ASKN.forEach((n, i) => {
+      const on = Math.abs(b - i) < 0.5, reached = b > i - 0.5, c = reached ? n.c : "ink-3", a = reached ? 1 : 0.55;
+      g.rect(nx(i), ny, nw, nh, { fill: on ? g.rgba(n.c, 0.09) : "card", stroke: c, lw: on ? 2 : 1.2, r: 9, a });
+      g.text(n.k.toUpperCase(), nx(i) + 10, ny + 20, { size: 9.5, color: c, ls: 0.5, a, weight: 600, maxW: nw - 16 });
+      g.text(n.t, nx(i) + 10, ny + 41, { size: 13, font: "ui", weight: 600, color: reached ? "ink" : "ink-3", maxW: nw - 16, a });
+      if (i < 4) g.arrow(nx(i) + nw + 3, ny + nh / 2, nx(i + 1) - 3, ny + nh / 2, { color: b > i + 0.5 ? n.c : "hair", lw: 1.4, head: 7 });
+    });
+    if (s.n) { const p = clamp(b, 0, 4), i0 = Math.min(3, Math.floor(p)), f = p - i0; const px = lerp(nx(i0) + nw / 2, nx(i0 + 1) + nw / 2, f); g.circle(px, ny + nh + 10, 4.5, { fill: "exp" }); }
+    const R = { x: pad, y: ny + nh + 44, w: W - pad * 2, h: H - (ny + nh + 44) - pad };
+    for (let i = 0; i < 5; i++) { const a = s.solo(i); if (a > 0.01) ASKP[i](g, R, a, tall, s); }
+  }, { anim: false, restT: 1, zoom: 1.3, minW: 640, maxW: 1000 });
+
+  /* ---------------- scrolly 2: from question to tracked run ---------------- */
+  function lifeNode(g, x, y, w, h, label, o) {
+    const a = o.a, c = o.c || "ink-3";
+    g.rect(x, y, w, h, { fill: o.on ? g.rgba(c, 0.1) : "card", stroke: c, lw: o.on ? 2 : 1.2, r: 9, dash: o.dash ? [5, 4] : null, a });
+    g.text(label, x + w / 2, y + h / 2 + 4.5, { size: 12.5, font: "ui", weight: 600, align: "center", color: o.dash ? "ink-3" : "ink", a, maxW: w - 12 });
+  }
+  const RUNP = [
+    // 0 · durable run record + same run in Vector
+    (g, R, a, tall) => {
+      const rw = tall ? R.w : Math.min(400, R.w * 0.47);
+      const rows = [["run", "R-2207"], ["tenant", "verified with the activity"], ["conversation", "#commerce-orders"], ["incoming activity", "Venkatesh · 14:33"], ["action", "redeploy loyalty-consumer 1.9.0"], ["environment", "Dev · nsx-dev-use1 / commerce"]];
+      const rh = tall ? 22 : 24, h = 40 + rows.length * rh;
+      g.box(R.x, R.y, rw, h, { color: "exe", wash: 0.05, a });
+      g.text("Durable run record", R.x + 12, R.y + 24, { size: 13.5, font: "ui", weight: 700, a });
+      rows.forEach(([k, v], i) => { const y = R.y + 50 + i * rh; g.text(k, R.x + 12, y, { size: 11.5, color: "ink-3", a }); g.text(v, R.x + rw - 12, y, { size: 11.5, color: i === 0 ? "exe" : "ink", weight: i === 0 ? 600 : 500, align: "right", a, maxW: rw * 0.62 }); });
+      const vx = tall ? R.x : R.x + rw + 50, vy = tall ? R.y + h + 30 : R.y, vw = tall ? R.w : R.x + R.w - vx;
+      kicker(g, "The same run in Vector", vx, vy + 4, "ink-3", a, 10.5);
+      const cards = [["Approvals", "R-2207 · Redeploy loyalty-consumer 1.9.0 in Dev", "Requested via @B · waiting for Sam Patel", "ctl"], ["Home · Pipelines", "loyalty-consumer · main #77", "Deploy waiting for approval · R-2207", "exe"], ["Clusters · diagnosis", "R-2207 · waiting for Sam Patel", "Open approval", "exe"]];
+      cards.forEach(([k, t1, t2, c], i) => {
+        const y = vy + 16 + i * 66;
+        g.rect(vx, y, vw, 56, { fill: "card", stroke: "hair", lw: 1.2, r: 9, a });
+        g.rect(vx, y + 8, 3, 40, { fill: c, r: 1.5, a });
+        kicker(g, k, vx + 14, y + 17, c, a, 9.5);
+        g.text(t1, vx + 14, y + 34, { size: 12, font: "ui", weight: 600, a, maxW: vw - 26 });
+        g.text(t2, vx + 14, y + 49, { size: 11, font: "ui", color: "ink-3", a, maxW: vw - 26 });
+        if (!tall) g.arrow(R.x + rw + 6, R.y + 50, vx - 6, y + 28, { color: "ink-3", lw: 1, head: 6, a: a * 0.6 });
+      });
+      const fy = Math.max(R.y + h, vy + 16 + 3 * 66) + 26;
+      if (fy + 18 < R.y + R.h) para(g, "Card updates read this record, so the thread and Vector show the same state.", R.x, fy, R.w, { size: 13, color: "ink-2", a, lh: 18 });
+    },
+    // 1 · the four steps, with the gate
+    (g, R, a, tall, s) => {
+      const st = [["Bundle 1.9.0", "verified", "ok", false], ["Approval", "Sam Patel · 14:33", "ctl", true], ["Roll out", "nsx-dev-use1", "ink-3", true], ["Consumer group", "active on v2", "ink-3", true]];
+      const sub = ["sha256:61d3…ad82", "Customer Platform owner", "not started", "not started"];
+      if (!tall) {
+        const gap = 34, w = (R.w - gap * 3) / 4, y = R.y + 44, h = 76;
+        g.dim(R.x + w + gap, R.x + R.w, R.y + 12, "waits for a person", { color: "ctl", size: 12 });
+        st.forEach(([t1, t2, c, d], i) => {
+          const x = R.x + i * (w + gap);
+          g.rect(x, y, w, h, { fill: i === 1 ? g.rgba("ctl", 0.08) : "card", stroke: c, lw: i === 1 ? 2 : 1.3, r: 10, dash: d ? [5, 4] : null, a });
+          g.text(t1, x + 12, y + 24, { size: 13.5, font: "ui", weight: 700, a, color: c === "ink-3" ? "ink-2" : "ink", maxW: w - 24 });
+          g.text(t2, x + 12, y + 44, { size: 12, color: c === "ink-3" ? "ink-2" : c, weight: 600, a, maxW: w - 24 });
+          g.text(sub[i], x + 12, y + 62, { size: 11, color: "ink-3", a, maxW: w - 24 });
+          if (i < 3) g.arrow(x + w + 4, y + h / 2, x + w + gap - 4, y + h / 2, { color: i === 0 ? "ok" : "ink-3", lw: 1.4, head: 7, dash: i === 0 ? null : [4, 4], a });
+        });
+        avatar(g, R.x + w + gap + w - 22, y + 22, "SP", 12, a);
+        const py = y + h + 46;
+        g.text("“Agent-initiated deploys need a person.”", R.x, py, { size: 15, font: "body", color: "ink", a });
+        g.text("run card footer, v3 @B board", R.x, py + 20, { size: 11, color: "ink-3", a });
+        g.text("“Promotions, deploys and agent write actions that need a person.”", R.x, py + 58, { size: 15, font: "body", color: "ink", a, maxW: R.w });
+        g.text("Approvals inbox, v3", R.x, py + 78, { size: 11, color: "ink-3", a });
+      } else {
+        const h = 50, gap = 20, w = R.w;
+        st.forEach(([t1, t2, c, d], i) => {
+          const y = R.y + 10 + i * (h + gap);
+          g.rect(R.x, y, w, h, { fill: i === 1 ? g.rgba("ctl", 0.08) : "card", stroke: c, lw: i === 1 ? 2 : 1.3, r: 10, dash: d ? [5, 4] : null, a });
+          g.text(t1, R.x + 12, y + 21, { size: 13.5, font: "ui", weight: 700, a, color: c === "ink-3" ? "ink-2" : "ink" });
+          g.text(sub[i], R.x + 12, y + 39, { size: 11, color: "ink-3", a });
+          g.text(t2, R.x + w - 12, y + 30, { size: 12, color: c === "ink-3" ? "ink-2" : c, weight: 600, align: "right", a });
+          if (i < 3) g.arrow(R.x + 40, y + h + 3, R.x + 40, y + h + gap - 3, { color: i === 0 ? "ok" : "ink-3", lw: 1.4, head: 7, dash: i === 0 ? null : [4, 4], a });
+        });
+        const py = R.y + 10 + 4 * (h + gap) + 24;
+        g.text("“Agent-initiated deploys need a person.”", R.x, py, { size: 15, font: "body", color: "ink", a });
+        g.text("run card footer, v3 @B board", R.x, py + 20, { size: 11, color: "ink-3", a });
+      }
+    },
+    // 2 · the approval card in Sam's DM
+    (g, R, a, tall, s) => {
+      const dw = tall ? R.w : Math.min(430, R.w * 0.5);
+      const t = s.t;
+      g.rect(R.x, R.y, dw, 214, { fill: "card", stroke: "hair", lw: 1.2, r: 10, a });
+      chanHead(g, R.x + 12, R.y + 10, "Sam Patel", "Direct · R-2207 approval card sent · 14:33", a, { dm: true, size: 12.5, maxW: dw - 60 });
+      g.line(R.x + 1, R.y + 42, R.x + dw - 1, R.y + 42, { color: "hair", lw: 1, a });
+      const hd = msg(g, R.x + 12, R.y + 52, dw - 24, { bee: true, name: "@B", time: "14:33", a, size: 12 });
+      const cx = hd.tx, cy = R.y + 74, cw = R.x + dw - 12 - cx;
+      g.rect(cx, cy, cw, 126, { fill: "card", stroke: "ctl", lw: 1.3, r: 9, a });
+      g.text("R-2207 · approval", cx + 12, cy + 20, { size: 12.5, font: "ui", weight: 700, a });
+      [["bundle", "loyalty-consumer 1.9.0"], ["", "sha256:61d3…ad82"], ["environment", "Dev"]].forEach(([k, v], i) => { const yy = cy + 42 + i * 18; g.text(k, cx + 12, yy, { size: 11, color: "ink-3", a }); g.text(v, cx + cw - 12, yy, { size: 11, color: i === 2 ? "exp" : "ink", weight: 600, align: "right", a }); });
+      const bx = cx + 12, by = cy + 94, bw = 78;
+      g.rect(bx, by, bw, 22, { fill: "ctl", r: 6, a });
+      g.text("Approve", bx + bw / 2, by + 15, { size: 11.5, font: "ui", weight: 600, color: "#FFFFFF", align: "center", a });
+      const pu = (t % 2.4) / 2.4, k = 2 + pu * 6;
+      g.rect(bx - k, by - k, bw + 2 * k, 22 + 2 * k, { stroke: "ctl", lw: 1.3, r: 6 + k, a: a * (1 - pu) });
+      g.text("permissions checked at the click", bx + bw + 14, by + 15, { size: 11, color: "ctl", weight: 600, a, maxW: cw - bw - 38 });
+      // rules on the right (or below)
+      const rx = tall ? R.x : R.x + dw + 40, ry = tall ? R.y + 214 + 30 : R.y, rw = tall ? R.w : R.x + R.w - rx;
+      const rules = [["Bound", "to the exact bundle and to Dev", "ctl", false], ["Expires", "when the action changes", "ctl", true], ["Independent", "a different person clicking needs their own authorization", "ctl", false]];
+      let yy = ry;
+      rules.forEach(([k, v, c, d]) => {
+        const L = lines(g, v, rw - 28, 12, "ui"); const h = 30 + L.length * 16;
+        g.rect(rx, yy, rw, h, { fill: g.rgba(c, 0.05), stroke: c, lw: 1.2, r: 9, dash: d ? [5, 4] : null, a });
+        kicker(g, k, rx + 12, yy + 18, c, a, 10);
+        L.forEach((ln, j) => g.text(ln, rx + 12, yy + 36 + j * 16, { size: 12, font: "ui", color: "ink-2", a }));
+        yy += h + 10;
+      });
+      const my = Math.max(R.y + 214, yy) + 26;
+      if (my + 40 < R.y + R.h) msg(g, R.x, my, R.w, { ini: "MC", name: "Maya Chen", time: "14:42", text: "Sam is in a review until 15:30 — I'll nudge him.", a, size: 12.5 });
+    },
+    // 3 · status lifecycle
+    (g, R, a, tall, s) => {
+      const t = s.t;
+      const nodes = ["accepted", "working", "waiting for approval"], ends = [["completed", "ok"], ["failed", "bad"], ["cancelled", "ink-3"]];
+      let wp;
+      if (!tall) {
+        const w = Math.min(150, (R.w - 3 * 34) / 4.2), h = 40, y = R.y + 70;
+        nodes.forEach((n, i) => { const x = R.x + i * (w + 34); const ww = i === 2 ? w + 40 : w; lifeNode(g, x, y, ww, h, n, { a, c: i === 2 ? "ctl" : "exe", on: i === 2 }); if (i < 2) g.arrow(x + w + 4, y + h / 2, x + w + 30, y + h / 2, { color: "exe", lw: 1.4, head: 7, a }); if (i === 2) wp = { x: x + ww / 2, y, xr: x + ww }; });
+        const ex = wp.xr + 60, ew = Math.min(150, R.x + R.w - ex);
+        ends.forEach(([n, c], i) => { const ey = y - 58 + i * 58; lifeNode(g, ex, ey, ew, h, n, { a, c, dash: true }); g.curve([wp.xr + 4, y + h / 2], [wp.xr + 30, ey + h / 2], [ex - 4, ey + h / 2], { color: "ink-3", lw: 1.2, head: 6, dash: [4, 4], a }); });
+        const bob = Math.sin(t * 2.2) * 2;
+        g.poly([[wp.x, y - 6 + bob], [wp.x - 6, y - 16 + bob], [wp.x + 6, y - 16 + bob]], { fill: "ctl", close: true, a });
+        g.text("R-2207 is here in the design", wp.x, y - 24 + bob, { size: 12, color: "ctl", weight: 600, align: "center", a });
+        const fy = y + h + 110;
+        para(g, "Every status card is rendered from the persisted run state, never from the memory of a bot process. A dashed state has not happened yet.", R.x, fy, R.w, { size: 13, color: "ink-2", a, lh: 18 });
+      } else {
+        const w = R.w * 0.62, h = 40, gap = 26;
+        nodes.forEach((n, i) => { const y = R.y + 30 + i * (h + gap); lifeNode(g, R.x, y, w, h, n, { a, c: i === 2 ? "ctl" : "exe", on: i === 2 }); if (i < 2) g.arrow(R.x + 40, y + h + 3, R.x + 40, y + h + gap - 3, { color: "exe", lw: 1.4, head: 7, a }); if (i === 2) wp = { x: R.x + w, y: y + h / 2, yb: y + h }; });
+        g.text("◀ R-2207 in the design", wp.x + 10, wp.y + 4, { size: 11.5, color: "ctl", weight: 600, a });
+        const ey = wp.yb + 44, ew = (R.w - 2 * 12) / 3;
+        ends.forEach(([n, c], i) => { const x = R.x + i * (ew + 12); lifeNode(g, x, ey, ew, h, n, { a, c, dash: true }); g.arrow(R.x + 40, wp.yb + 3, x + ew / 2, ey - 3, { color: "ink-3", lw: 1.1, head: 6, dash: [4, 4], a }); });
+        para(g, "Every status card is rendered from the persisted run state, never from the memory of a bot process. A dashed state has not happened yet.", R.x, ey + h + 40, R.w, { size: 12.5, color: "ink-2", a, lh: 17 });
+      }
+    },
+    // 4 · dedupe, retry, cancel
+    (g, R, a, tall, s) => {
+      const t = s.t;
+      const cols = [["Duplicate delivery", "The same message or card click arriving twice maps to the one run."], ["Retry after a timeout", "No second pull request or deployment."], ["Cancel", "Stops pending work it can stop and reports effects already committed. Undoing every external action is not promised."]];
+      const n = 3, gap = 18, cw = tall ? R.w : (R.w - gap * 2) / 3, ch = tall ? Math.min(140, (R.h - 24) / 3) : 250;
+      cols.forEach(([k, v], i) => {
+        const x = tall ? R.x : R.x + i * (cw + gap), y = tall ? R.y + i * (ch + 14) : R.y;
+        g.rect(x, y, cw, ch, { fill: "card", stroke: "hair", lw: 1.2, r: 10, a });
+        kicker(g, k, x + 12, y + 22, "exe", a, 10.5);
+        const dy = y + (tall ? 34 : 40), dh = tall ? 50 : 110, mid = dy + dh / 2;
+        if (i === 0) {
+          [mid - 18, mid + 18].forEach((yy, j) => { g.rect(x + 14, yy - 11, 86, 22, { fill: "card", stroke: "exp", lw: 1.2, r: 6, a }); g.text(j ? "delivery 2" : "delivery 1", x + 57, yy + 4, { size: 10.5, align: "center", color: "exp", a }); g.arrow(x + 104, yy, x + cw - 108, mid, { color: "ink-3", lw: 1.1, head: 6, a }); });
+          g.rect(x + cw - 100, mid - 15, 86, 30, { fill: g.rgba("exe", 0.08), stroke: "exe", lw: 1.5, r: 7, a });
+          g.text("R-2207", x + cw - 57, mid + 5, { size: 12.5, weight: 600, color: "exe", align: "center", a });
+        } else if (i === 1) {
+          const x1 = x + 14, x2 = x + cw - 100;
+          g.text("attempt 1", x1, mid - 12, { size: 11, color: "ink-2", a });
+          g.line(x1 + 70, mid - 16, x2 - 16, mid - 16, { color: "ink-3", lw: 1.2, dash: [3, 3], a });
+          g.text("timeout", (x1 + 70 + x2 - 16) / 2, mid - 22, { size: 10.5, color: "bad", align: "center", a });
+          g.text("attempt 2", x1, mid + 20, { size: 11, color: "ink-2", a });
+          g.arrow(x1 + 70, mid + 16, x2 - 6, mid, { color: "ink-3", lw: 1.1, head: 6, a });
+          g.rect(x2, mid - 15, 86, 30, { fill: g.rgba("exe", 0.08), stroke: "exe", lw: 1.5, r: 7, a });
+          g.text("1 deploy", x2 + 43, mid + 5, { size: 12, weight: 600, color: "exe", align: "center", a });
+        } else {
+          const sw = (cw - 28 - 3 * 6) / 4;
+          ["bundle ✓", "approval", "roll out", "group"].forEach((l, j) => { const bx = x + 14 + j * (sw + 6); if (j === 0) g.rect(bx, mid - 13, sw, 26, { fill: g.rgba("ok", 0.12), stroke: "ok", lw: 1.2, r: 6, a }); else g.hatch(bx, mid - 13, sw, 26, { color: "ink-3", a: a * 0.8, r: 6 }); g.text(l, bx + sw / 2, mid + 4, { size: 10.5, color: j ? "ink-2" : "ok", align: "center", a, maxW: sw - 6 }); });
+        }
+        para(g, v, x + 12, dy + dh + (tall ? 20 : 24), cw - 24, { size: 12, color: "ink-2", a, lh: 16, maxLines: tall ? 2 : 4 });
+        void t; void n;
+      });
+    },
+  ];
+  Field.scene("run", (g, s) => {
+    const { W, H } = g, b = s.b, t = s.t;
+    const pad = 22, tall = H > W * 0.95;
+    const top = Math.max(46, g.safeTop + 12);
+    const cw = Math.min(620, W - pad * 2);
+    const m = msg(g, pad, top, cw, { ini: "VT", name: "Venkatesh", time: "14:33", text: "redeploy loyalty-consumer 1.9.0 in Dev", mention: true, size: 12.5 });
+    const y2 = m.y + 10;
+    const hb = msg(g, pad, y2, cw, { bee: true, name: "@B", time: "14:33", size: 12.5 });
+    const hl = b > 0.5 && b < 2.5 ? 1 : -1;
+    const rcw = cw - (hb.tx - pad);
+    const rh = runCard(g, hb.tx, y2 + 22, rcw, { fs: 12, rh: 22, t, hl });
+    if (!tall && W - pad - (hb.tx + rcw) > 150) {
+      const nx_ = hb.tx + rcw + 24;
+      g.text("from the v3 @B board", nx_, y2 + 40, { size: 11, color: "ink-3" });
+      g.text("14:31 question", nx_, y2 + 62, { size: 11, color: "ink-3" });
+      g.text("14:33 run", nx_, y2 + 80, { size: 11, color: "ctl", weight: 600 });
+      g.text("14:42 Sam in a review", nx_, y2 + 98, { size: 11, color: "ink-3" });
+    }
+    const R = { x: pad, y: y2 + 22 + rh + 40, w: W - pad * 2, h: 0 };
+    R.h = H - R.y - pad;
+    g.line(pad, R.y - 20, W - pad, R.y - 20, { color: "hair", lw: 1 });
+    for (let i = 0; i < 5; i++) { const a = s.solo(i); if (a > 0.01) RUNP[i](g, R, a, tall, s); }
+  }, { anim: true, restT: 1, zoom: 1.3, minW: 640, maxW: 1000 });
+
+  /* ---------------- guardrails: four panels ---------------- */
+  // a bare mention line: the @B mark and the text (the design does not name who asked)
+  function askLine(g, x, y, text, fs) { g.bee(x + 10, y - fs * 0.36, fs * 1.5); g.text(text, x + fs * 1.5 + 8, y, { size: fs, font: "ui" }); }
+  function bubble(g, p, ry, w, text, fs) {
+    const rx = p.x + 44, L = lines(g, text, w - 24, fs, "ui"), h = 14 + L.length * 17;
+    g.bee(p.x + 24, ry + 11, 20);
+    g.rect(rx, ry, w, h, { fill: g.rgba("ctl", 0.05), stroke: "ctl", lw: 1.1, r: 8 });
+    L.forEach((ln, i) => g.text(ln, rx + 12, ry + 18 + i * 17, { size: fs, font: "ui" }));
+    return { x: rx, h };
+  }
+  Field.scene("guards", (g, s) => {
+    const { W, H } = g, t = s.t;
+    const pad = 20, top = Math.max(44, g.safeTop + 10);
+    const tall = H > W * 0.95;
+    const cols = tall ? 1 : 2, rows = tall ? 4 : 2, gx = 18, gy = tall ? 12 : 16;
+    const pw = (W - pad * 2 - gx * (cols - 1)) / cols, ph = (H - top - pad - gy * (rows - 1)) / rows;
+    const P = (i) => ({ x: pad + (i % cols) * (pw + gx), y: top + Math.floor(i / cols) * (ph + gy) });
+    const head = (p, left, rule) => { g.rect(p.x, p.y, pw, ph, { fill: "card", stroke: "hair", lw: 1.2, r: 10 }); g.text(left, p.x + 14, p.y + 22, { size: 11, color: "ink-3" }); g.text(rule.toUpperCase(), p.x + pw - 14, p.y + 22, { size: 10, color: "ctl", ls: 0.6, weight: 600, align: "right" }); };
+    const fs = 12.5, small = ph < 185;
+    // 1 · ambiguity
+    let p = P(0); head(p, "# wheeljack · 13:05", "asks when ambiguous");
+    askLine(g, p.x + 14, p.y + 50, "deploy wheeljack", fs);
+    let ry = p.y + 66, rw = pw - 58;
+    let bb = bubble(g, p, ry, rw, "Wheeljack is a team, not an application. Which one did you mean, and which version?", fs);
+    let cy = ry + bb.h + 18, cx = bb.x;
+    ["vector-shell", "teams-bee", "Cancel"].forEach((c) => { cx += g.chip(cx, cy, c, c === "Cancel" ? "ink-3" : "exp", { size: 11 }) + 6; });
+    const nt = "needs an app, a version and an environment";
+    if (cx + g.tw(nt, 10.5) + 24 < p.x + pw - 14) g.text(nt, p.x + pw - 14, cy + 4, { size: 10.5, color: "ink-3", align: "right" });
+    // 2 · restricted, then private
+    p = P(1); head(p, "# commerce-orders · 12:20", "private results by DM");
+    askLine(g, p.x + 14, p.y + 50, "show the fraud model thresholds", fs);
+    const dmw = small ? 0 : Math.min(150, pw * 0.3);
+    rw = pw - 58 - (dmw ? dmw + 30 : 0);
+    bb = bubble(g, p, ry = p.y + 66, rw, "That page is restricted. I sent you a private message with what you are allowed to see.", fs);
+    if (dmw) {
+      const dx = bb.x + rw + 30, dy = ry, dh = Math.max(bb.h, 56);
+      g.arrow(bb.x + rw + 4, ry + 16, dx - 4, ry + 16, { color: "exp", lw: 1.3, head: 7, dash: [4, 3] });
+      g.rect(dx, dy, dmw, dh, { fill: g.rgba("exp", 0.06), stroke: "exp", lw: 1.2, r: 8, dash: [5, 4] });
+      g.text("Direct message", dx + 10, dy + 20, { size: 11.5, font: "ui", weight: 700 });
+      para(g, "what the asker is allowed to see", dx + 10, dy + 37, dmw - 20, { size: 11, color: "ink-2", lh: 14, maxLines: 2 });
+    } else g.chip(bb.x, ry + bb.h + 18, "then a private message", "exp", { size: 11 });
+    // 3 · the approval click
+    p = P(2); head(p, "Direct · Sam Patel · 14:33", "checked at the click");
+    const ax = p.x + 14, ay = p.y + 36, aw = Math.min(pw - 28, small ? 300 : 330), ah = Math.min(ph - 50, 108);
+    g.rect(ax, ay, aw, ah, { fill: "card", stroke: "ctl", lw: 1.3, r: 9 });
+    g.text("R-2207 · approval", ax + 12, ay + 20, { size: 12.5, font: "ui", weight: 700 });
+    g.text("bundle sha256:61d3…ad82", ax + 12, ay + 40, { size: 11, color: "ink-2" });
+    g.text("environment Dev", ax + 12, ay + 57, { size: 11, color: "exp", weight: 600 });
+    const bx = ax + 12, by = ay + ah - 32, pu = (t % 2.4) / 2.4, k = 2 + pu * 6;
+    g.rect(bx, by, 74, 22, { fill: "ctl", r: 6 });
+    g.text("Approve", bx + 37, by + 15, { size: 11.5, font: "ui", weight: 600, color: "#FFFFFF", align: "center" });
+    g.rect(bx - k, by - k, 74 + 2 * k, 22 + 2 * k, { stroke: "ctl", lw: 1.3, r: 6 + k, a: 1 - pu });
+    const tx3 = ax + aw + 22, tw3 = p.x + pw - 14 - tx3;
+    if (tw3 > 120) { const yy = para(g, "Approvals in Teams are bound to the exact bundle and to Dev.", tx3, ay + 18, tw3, { size: 12, color: "ink", lh: 16 }); para(g, "Each approver's permissions are checked when they click.", tx3, yy + 8, tw3, { size: 12, color: "ink-2", lh: 16 }); }
+    // 4 · follow-ups
+    p = P(3); head(p, "Any thread · handbook 15.2, 15.5", "each person's permissions");
+    const steps = [["question", "exp"], ["answer + context", "exp"], ["follow-up", "exp"], ["access rechecked", "ctl"], ["reply", "exp"]];
+    const n = steps.length, sgap = 10, sw = (pw - 28 - sgap * (n - 1)) / n, sy = p.y + (small ? 40 : 48);
+    steps.forEach(([l, c], i) => {
+      const x = p.x + 14 + i * (sw + sgap);
+      g.rect(x, sy, sw, 46, { fill: i === 3 ? g.rgba("ctl", 0.08) : "card", stroke: c, lw: i === 3 ? 1.8 : 1.1, r: 8 });
+      const L = lines(g, l, sw - 14, 11, "mono", 500).slice(0, 2), y0 = sy + 23 - (L.length - 1) * 7 + 4;
+      L.forEach((ln, j) => g.text(ln, x + sw / 2, y0 + j * 14, { size: 11, color: c === "ctl" ? "ctl" : "ink-2", align: "center", weight: c === "ctl" ? 600 : 500 }));
+      if (i < n - 1) g.arrow(x + sw + 1, sy + 23, x + sw + sgap - 1, sy + 23, { color: "ink-3", lw: 1.1, head: 5 });
+    });
+    para(g, "Follow-ups reuse useful context. Access, cached results and the action's scope are checked again for whoever asks.", p.x + 14, sy + 46 + (small ? 22 : 30), pw - 28, { size: 12, color: "ink-2", lh: 16, maxLines: small ? 2 : 3 });
+  }, { anim: true, restT: 1, zoom: 1.15, minW: 620, maxW: 1200 });
+
+  /* ---------------- lab: ask @B ---------------- */
+  const LN = [
+    { n: "Teams activity", c: "exp" }, { n: "Verified adapter", c: "exp" }, { n: "Identity", c: "ctl" }, { n: "Bounded context", c: "kno" },
+    { n: "Run service", c: "exe" }, { n: "Checks", c: "exe" }, { n: "Policy and approval", c: "ctl" }, { n: "Evidence and audit", c: "kno" }, { n: "Audience-checked reply", c: "exp" },
+  ];
+  const MSGS = {
+    why: { text: "why is loyalty-consumer failing in Dev?", chan: "#commerce-orders" },
+    redeploy: { text: "redeploy loyalty-consumer 1.9.0 in Dev", chan: "#commerce-orders" },
+    wheeljack: { text: "deploy wheeljack", chan: "#wheeljack" },
+    thresholds: { text: "show the fraud model thresholds", chan: "#commerce-orders" },
+    depends: { text: "what depends on customer-profile-api?", chan: "a channel thread" },
+  };
+  function decide(st) {
+    const who = st.who || "AM", name = WHO[who], first = FIRST[who], dm = st.where === "dm";
+    const where = dm ? "direct message" : MSGS[st["ask-msg"]].chan;
+    const sub = { 0: where, 1: "mention verified", 2: "as " + name, 3: "checked against " + first + "'s access", 4: "common run service", 7: "sources and run ID" };
+    if (!st.verified) return { seq: [0, 1], stop: 1, kind: "none", end: "Verified adapter", reply: "None", sub: { 0: where, 1: "no bot mention" }, why: "A message that merely contains the characters @b is not treated as a bot invocation (handbook 15.1). Nothing reaches Vector." };
+    const m = st["ask-msg"];
+    if (m === "why") return { seq: [0, 1, 2, 3, 4, 5, 7, 8], stop: 8, kind: "answer", end: "Reply", reply: "Answer + context", sub: Object.assign(sub, { 5: "pod logs, config, Matrix", 8: dm ? "in the direct message" : "in the thread" }), why: who === "AM" ? "As in the design: @B answers in the thread with a Context used card “as Arjun's permissions” and six sources." : `@B answers with a Context used card “as ${first}'s permissions”. The design shows this answer for Arjun; for ${first}, every source is checked against their own access.` };
+    if (m === "redeploy") return { seq: [0, 1, 2, 3, 4, 6, 7, 8], stop: 6, kind: "run", end: "Policy and approval", reply: "Tracked run", sub: Object.assign(sub, { 4: "run R-2207", 6: "waits for Sam Patel", 7: "bundle verified", 8: dm ? "run card in the DM" : "run card in the thread" }), why: (who === "VT" ? "As in the design: run R-2207 at 14:33. " : `The design shows this request from Venkatesh. For ${first}, it is first checked against their permissions. `) + "The bundle is verified and the run waits for Sam Patel, the Customer Platform owner, who gets the approval card by direct message." };
+    if (m === "wheeljack") return { seq: [0, 1, 2, 3, 8], stop: 3, kind: "ask", end: "Bounded context", reply: "Question", sub: Object.assign(sub, { 3: "no application named", 8: "clarifying question" }), why: "Wheeljack is a team, not an application. The scope is missing, so @B asks which application and version before anything runs." };
+    if (m === "thresholds") return { seq: [0, 1, 2, 3, 4, 5, 7, 8], stop: 8, kind: "private", end: "Audience check", reply: dm ? "Private answer" : "Status + DM", sub: Object.assign(sub, { 3: "includes a restricted page", 5: "retrieval", 8: dm ? "private conversation" : "channel gets status only" }), why: dm ? `In a direct message the reply is already private: only what ${first} is allowed to see.` : `The page is restricted, so the channel gets a short status and ${first} gets a private message with what they are allowed to see.` };
+    return { seq: [0, 1, 2, 3, 4, 5, 7, 8], stop: 8, kind: "depends", end: "Reply", reply: "Answer + context", sub: Object.assign(sub, { 3: "Matrix graph", 5: "graph retrieval", 8: dm ? "in the direct message" : "in the thread" }), why: "A handbook 15.3 example: Matrix graph and retrieval, answered with source evidence. The design shows no answer, so none is drawn." };
+  }
+  function replyPreview(g, x, y, w, h, st, d, a) {
+    const who = st.who || "AM", first = FIRST[who], dm = st.where === "dm";
+    // content first; the frame is stroked afterwards around what was drawn
+    const done = (bot) => g.rect(x, y, w, Math.min(h, bot - y + 16), { stroke: "hair", lw: 1.2, r: 10, a });
+    kicker(g, "@B replies · " + (dm ? "direct message" : MSGS[st["ask-msg"]].chan), x + 12, y + 20, "exp", a, 10);
+    const ix = x + 12, iw = w - 24;
+    let yy = y + 36;
+    if (d.kind === "none") { g.hatch(ix, yy, iw, 64, { color: "ink-3", a: a * 0.6, r: 8 }); g.text("no reply", ix + iw / 2, yy + 37, { size: 13, color: "ink-3", align: "center", a }); done(yy + 64); return; }
+    const hd = msg(g, ix, yy, iw, { bee: true, name: "@B", a, size: 12, r: 10 });
+    const cx = hd.tx, cw = ix + iw - cx; yy += 24;
+    if (d.kind === "answer") {
+      const c = ctxCard(g, cx, yy, cw, { a, cs: 10, rh: 19, who: first, dash: who === "AM" ? null : [5, 4] });
+      yy += c.h + 20;
+      if (who === "AM") yy = para(g, ANSWER, cx, yy, cw, { size: 11.5, a, lh: 15.5 });
+      else yy = para(g, `The design shows this card for Arjun. For ${first}, each source is checked against their own access before it is used.`, cx, yy, cw, { size: 11.5, color: "ink-2", a, lh: 15.5, maxLines: 3 });
+      done(yy - 8);
+    } else if (d.kind === "run") {
+      const rh = runCard(g, cx, yy, cw, { a, fs: 11, rh: 19, hh: 28, foot: false, short: cw < 420, t: performance.now() / 1000, dash: who === "VT" ? null : [5, 4], stroke: who === "VT" ? "hair" : "ink-3" });
+      yy += rh + 22;
+      g.chip(cx, yy, "approval card → Sam Patel · direct message", "ctl", { size: 10.5, a });
+      if (who !== "VT") yy = para(g, `The design shows this run for Venkatesh's request. For ${first}, the request is first checked against their permissions.`, cx, yy + 30, cw, { size: 11.5, color: "ink-2", a, lh: 15.5, maxLines: 3 }) - 4;
+      done(yy + 10);
+    } else if (d.kind === "ask") {
+      const L = lines(g, "Wheeljack is a team, not an application. Which one did you mean, and which version?", cw - 24, 12, "ui");
+      g.rect(cx, yy, cw, 14 + L.length * 16, { fill: g.rgba("ctl", 0.05), stroke: "ctl", lw: 1.1, r: 8, a });
+      L.forEach((ln, i) => g.text(ln, cx + 12, yy + 18 + i * 16, { size: 12, font: "ui", a }));
+      yy += 14 + L.length * 16 + 22;
+      let bx = cx; ["vector-shell", "teams-bee", "Cancel"].forEach((c) => { bx += g.chip(bx, yy, c, c === "Cancel" ? "ink-3" : "exp", { size: 11, a }) + 6; });
+      done(yy + 10);
+    } else if (d.kind === "private") {
+      if (!dm) {
+        const L = lines(g, "That page is restricted. I sent you a private message with what you are allowed to see.", cw - 24, 12, "ui");
+        g.rect(cx, yy, cw, 14 + L.length * 16, { fill: g.rgba("ctl", 0.05), stroke: "ctl", lw: 1.1, r: 8, a });
+        L.forEach((ln, i) => g.text(ln, cx + 12, yy + 18 + i * 16, { size: 12, font: "ui", a }));
+        yy += 14 + L.length * 16 + 14;
+      }
+      g.rect(cx, yy, cw, 50, { fill: g.rgba("exp", 0.05), stroke: "exp", lw: 1.2, r: 8, dash: [5, 4], a });
+      g.text(`Direct message to ${first}`, cx + 12, yy + 20, { size: 12, font: "ui", weight: 700, a });
+      g.text(`only what ${first} is allowed to see`, cx + 12, yy + 38, { size: 11, color: "ink-2", a, maxW: cw - 24 });
+      done(yy + 50);
+    } else {
+      g.rect(cx, yy, cw, 70, { fill: "card", stroke: "ink-3", lw: 1.2, r: 8, dash: [5, 4], a });
+      g.text("Context used", cx + 12, yy + 20, { size: 12, font: "ui", weight: 700, a });
+      g.text(`as ${first}'s permissions`, cx + 12 + g.tw("Context used", 12, "ui", 700) + 7, yy + 20, { size: 11, font: "ui", color: "ink-3", a });
+      g.chip(cx + 12, yy + 44, "Matrix graph", "kno", { size: 10.5, a });
+      g.chip(cx + 22 + chipW(g, "Matrix graph", 10.5), yy + 44, "source evidence", "kno", { size: 10.5, a });
+      done(para(g, "No answer is drawn: the design does not show one.", cx, yy + 92, cw, { size: 11.5, color: "ink-3", a, lh: 15 }) - 6);
+    }
+  }
+  Field.scene("asklab", (g, s) => {
+    const st = s.state; if (!st["ask-msg"]) return;
+    const { W, H } = g, tall = H > W * 0.95;
+    const d = decide(st), el = (performance.now() - (st._since || 0)) / 1000;
+    const pad = 22, top = Math.max(44, g.safeTop + 10);
+    const colW = tall ? W - pad * 2 - 22 : W * 0.47;
+    // the asker's message
+    const who = st.who || "AM";
+    const mw = tall ? W - pad * 2 : W - colW - pad * 3;
+    const mx = tall ? pad : pad * 2 + colW, my = top;
+    g.rect(mx, my, mw, 60, { fill: "card", stroke: "hair", lw: 1.2, r: 10 });
+    const m = msg(g, mx + 12, my + 9, mw - 24, { ini: who, name: WHO[who], time: st.where === "dm" ? "to @B" : MSGS[st["ask-msg"]].chan, text: st.verified ? MSGS[st["ask-msg"]].text : "@b " + MSGS[st["ask-msg"]].text, mention: !!st.verified, size: 12, r: 10, maxLines: 1 });
+    void m;
+    // path
+    const py0 = tall ? my + 76 : top;
+    const rows = [[0], [1], [2], [3], [4], [5, 6], [7], [8]];
+    const sh = tall ? 34 : Math.min(52, (H - py0 - pad - 7 * 12) / 8), gap = tall ? 9 : Math.min(18, (H - py0 - pad - sh * 8) / 7);
+    const order = d.seq, pos = (id) => order.indexOf(id);
+    const nodeRect = {};
+    rows.forEach((r, ri) => {
+      const y = py0 + ri * (sh + gap);
+      r.forEach((id, k) => {
+        const w = r.length === 2 ? (colW - 10) / 2 : colW, x = pad + k * (w + 10);
+        nodeRect[id] = { x, y, w, h: sh };
+        const N = LN[id], p = pos(id), on = p >= 0, lit = on ? ramp(el, p * 0.22, 0.2) : 0, isStop = id === d.stop;
+        const stopC = d.kind === "none" ? "bad" : id === 6 ? "ctl" : id === 3 ? "kno" : N.c;
+        const col = isStop ? stopC : on ? N.c : "ink-3";
+        const a = on ? 0.35 + 0.65 * lit : 0.32;
+        g.rect(x, y, w, sh, { fill: "card", stroke: col, lw: isStop ? 2 : 1.2, r: 8, dash: (isStop && (d.kind === "run" || d.kind === "ask")) ? [5, 4] : null, a });
+        if (on && lit > 0.5) g.rect(x, y, w, sh, { fill: g.rgba(N.c, 0.07), r: 8 });
+        const sb = on ? d.sub[id] : null, two = r.length === 2 && sb && sh >= 40;
+        g.text(N.n, x + 12, two ? y + 17 : y + sh / 2 + 4.5, { size: 12.5, font: "ui", weight: 600, a, maxW: w - 24 });
+        if (two) g.text(sb, x + 12, y + 33, { size: 10.5, color: isStop ? col : "ink-2", a, maxW: w - 24 });
+        else if (sb && r.length === 1) { const nw = g.tw(N.n, 12.5, "ui", 600); if (w - nw - 36 > 60) g.text(sb, x + w - 12, y + sh / 2 + 4, { size: 11, color: isStop ? col : "ink-2", align: "right", a, maxW: w - nw - 36 }); }
+        if (isStop && lit > 0.6) {
+          const mxx = pad + colW + 10, myy = y + sh / 2;
+          if (d.kind === "run") { g.rect(mxx, myy - 7, 4, 14, { fill: "ctl", r: 1 }); g.rect(mxx + 7, myy - 7, 4, 14, { fill: "ctl", r: 1 }); }
+          else g.text(d.kind === "none" ? "✕" : d.kind === "ask" ? "?" : "✓", mxx, myy + 6, { size: 16, color: d.kind === "none" ? "bad" : d.kind === "ask" ? "kno" : "ok", weight: 700 });
+        }
+      });
+    });
+    // arrows between consecutive steps on the path
+    for (let i = 0; i < order.length - 1; i++) {
+      const A = nodeRect[order[i]], B = nodeRect[order[i + 1]], lit = ramp(el, (i + 1) * 0.22, 0.2);
+      if (order[i] === 3 && order[i + 1] === 8) {
+        const xr = pad + colW + 2, x2 = xr + (tall ? 6 : 14);
+        g.poly([[xr - 2, A.y + A.h / 2], [x2, A.y + A.h / 2], [x2, B.y + B.h / 2], [xr + 2, B.y + B.h / 2]], { color: "kno", lw: 1.3, dash: [4, 4], a: lit });
+        g.head(xr + 2, B.y + B.h / 2, Math.PI, { color: "kno", size: 7, a: lit });
+        continue;
+      }
+      const xs = A.w >= B.w ? B.x + Math.min(30, B.w / 2) : A.x + Math.min(30, A.w / 2);
+      g.arrow(xs, A.y + A.h + 1, xs, B.y - 1, { color: "ink-3", lw: 1.2, head: 6, a: lit });
+    }
+    // reply preview
+    const ra = ramp(el, order.length * 0.22, 0.25);
+    const rx = tall ? pad : mx, ry = tall ? py0 + 8 * (sh + gap) + 8 : my + 76, rw = tall ? W - pad * 2 : mw, rh = Math.max(120, H - ry - pad);
+    replyPreview(g, rx, ry, rw, rh, st, d, Math.max(0.15, ra));
+  }, {
+    controls: "bee-ctl", anim: true, restT: 4, zoom: 1.3, minW: 620, maxW: 1000,
+    onState: (st) => {
+      const key = [st["ask-msg"], st.who, st.where, st.verified].join("|");
+      if (key !== st._key) { st._key = key; st._since = performance.now(); }
+      const d = decide(st);
+      document.getElementById("o-end").textContent = d.end;
+      document.getElementById("o-reply").textContent = d.reply;
+      document.getElementById("o-why").textContent = d.why;
+    },
+  });
+
+  /* ---------------- comparisons ---------------- */
+  Field.alts("alts", "sources", {
+    rows: [
+      { self: true, name: "Vector v3 · @B", who: ["this design", "planned"], what: "A mention in Teams goes through a verified adapter to Vector's common services. @B answers with the asker's own permissions, shows a Context used card, sends restricted results by direct message, asks when a request is ambiguous, and turns any change to Dev into a tracked run that waits for a named owner.", vs: "<b>The baseline for this chapter.</b> Nothing in Teams exists yet; the handbook lists the pilot team, consent, history limits, audience rules and SDK as open decisions." },
+      { name: "Microsoft 365 Copilot", who: ["Microsoft", "in Teams and Microsoft 365"], what: "Reaches content through Microsoft Graph and only surfaces organizational data that the user has at least view permission to, using the same access controls as other Microsoft 365 services. Microsoft describes its output as drafts and summaries for a person to review rather than fully automated tasks.", vs: "Same reading rule as @B: answer as the asker. The @B design adds a visible list of the sources it read, with Change scope, and routes changes to Dev into runs with a bound approval.", src: [["Data, privacy and security for Microsoft 365 Copilot", "https://learn.microsoft.com/microsoft-365-copilot/microsoft-365-copilot-privacy"]] },
+      { name: "Slack AI", who: ["Slack"], what: "AI features only use Slack data that members have access to at the time of the request, AI search never surfaces results regular search would not, and summaries and search answers are ephemeral responses that disappear when you navigate away.", vs: "Slack checks access at request time, as the @B design does. Slack keeps many AI answers out of the channel; @B posts its answer in the thread and moves restricted results to a direct message.", src: [["Security for AI features in Slack", "https://slack.com/help/articles/28310650165907-Security-for-Slack-AI"]] },
+      { name: "GitHub Copilot cloud agent in Teams", who: ["GitHub", "Microsoft Teams app"], what: "Mention @GitHub in a Teams chat with a task. The agent captures the entire thread as context, replies with a summary of planned changes and links to the pull requests or issues it creates. Each user links a GitHub account first, and only users with write access can trigger changes; in shared channels the pull request is created under the app's identity.", vs: "<b>Closest in shape:</b> a mention becomes tracked work with a link back. GitHub reads the whole thread and ends at a pull request a person reviews. @B bounds the history it reads, shows it, and ends at a run whose deploy waits for the application's owner.", src: [["Integrating Copilot cloud agent with Teams", "https://docs.github.com/en/copilot/how-tos/copilot-integrations/integrate-cloud-agent-with-teams"]] },
+      { name: "PagerDuty for Microsoft Teams", who: ["PagerDuty", "incident ChatOps"], what: "Incident notifications post to channels, members act on them there, and every action updates the incident in PagerDuty. A person's PagerDuty and Teams accounts must be linked first; unlinked users get a private bot message with a personal link. Connecting a service to a channel with @PagerDuty needs the Admin or Manager role.", vs: "Same identity habit: the Teams user maps to an account in the system of record before acting, and private steps go by bot message. PagerDuty's actions are scoped to incidents; @B's design sends every request through Vector's policy, approvals and evidence.", src: [["Microsoft Teams user guide", "https://docs.pagerduty.com/integrations/microsoft-teams/microsoft-teams-user-guide"]] },
+      { name: "Errbot", who: ["open source", "classic ChatOps"], what: "A chatbot framework whose ACCESS_CONTROLS can allow or deny each command by user and by room, allow it only in direct messages or only inside rooms, and reserve admin-only commands for BOT_ADMINS.", vs: "Classic ChatOps keeps the rules in the bot's own configuration, keyed to chat users and rooms. The @B design keeps the bot as an adapter: the platform decides with each person's permissions, so the bot never becomes a second execution authority.", src: [["Errbot administration: access controls", "https://errbot.readthedocs.io/en/latest/user_guide/administration.html"]] },
+    ],
+    sources: [
+      ["Vector UI Concepts v3 · @B, Home, Approvals, Clusters, Compute and Matrix boards", "https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss"],
+      ["Atlas handbook · 1.2 Three identities · 8.1 Integration catalog · 14.8–14.9 Durable agents, identity · 15.1–15.8 @B · 16.5 Production decisions", ""],
+      ["Vector, annotated (v3 explainer film) · chapter 07 @B in Teams", "https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4"],
+      ["Vector Sigma Films · 05 @B: Just Ask", "https://claude.ai/artifact/W4XMFpXyBPrftXBEah4xzQ"],
+    ],
+  });
+})();
+</script>
+</body>
+</html>
