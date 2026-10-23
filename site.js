@@ -136,8 +136,10 @@ const chaps=$('#chaps');
 D.chapters.forEach((c,i)=>{const li=document.createElement('li');const first=D.scenes.find(s=>s.ch===c.id);
   li.innerHTML=`<button type="button" data-t="${c.start}" data-sid="${first.id}"><span class="k">${String(i).padStart(2,'0')}</span><b>${bee(c.name)}</b><time>${mmss(c.start)}</time></button>`;chaps.append(li)});
 const cbtn=[...chaps.querySelectorAll('button')];
-function fail(){filmOK=false;$('#fallback').hidden=false;$('#screen').style.setProperty('--poster','url("thumbs/CodeX.webp")');video.removeAttribute('controls')}
-video.querySelector('source').addEventListener('error',fail);video.addEventListener('error',fail);
+function fail(){const e=video.error;if(e&&e.code===1)return;filmOK=false;$('#fallback').hidden=false;$('#screen').style.setProperty('--poster','url("media/poster.jpg")');
+  $('#fErr').textContent=e?' (code '+e.code+(e.message?': '+e.message:'')+')':'';video.removeAttribute('controls')}
+[...video.querySelectorAll('source')].pop().addEventListener('error',()=>setTimeout(()=>{if(video.networkState===3)fail()},0));video.addEventListener('error',fail);
+$('#fRetry').onclick=()=>{filmOK=true;$('#fallback').hidden=true;video.setAttribute('controls','');video.load()};
 video.addEventListener('timeupdate',()=>{const t=video.currentTime;let k=0;D.chapters.forEach((c,i)=>{if(t>=c.start-.05)k=i});
   cbtn.forEach((b,i)=>b.classList.toggle('on',i===k));$('#fNow').innerHTML=bee(D.chapters[k].name);$('#fTime').textContent=mmss(t)+' / '+mmss(D.total)});
 cbtn[0].classList.add('on');
