@@ -288,3 +288,6 @@ footer b{color:var(--ink);font-weight:600}
   *,*::before,*::after{transition-duration:.01s!important;animation:none!important}
   .js .rv:not(.in),.js .close .say:not(.in) span{opacity:1;transform:none}
 }
+.filmnote{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:14px;padding:14px 16px;border:1px solid #3A3D45;border-radius:var(--radius);background:#26282E;color:#D8DBE2;font-size:16px}
+.filmnote .btn{padding:10px 14px;font-size:12px;background:#F2F3F6;color:var(--ink);border-color:#F2F3F6}
+.filmnote .btn.ghost{background:transparent;color:#F2F3F6}

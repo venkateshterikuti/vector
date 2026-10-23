@@ -11,7 +11,7 @@
 <meta property="og:image" content="https://venkateshterikuti.github.io/vector/media/poster.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231D1D1F'/%3E%3Cpath d='M7 8h5l4 11.5L20 8h5l-6.5 16h-5z' fill='%23FCFCFD'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="site.css?v=2">
+<link rel="stylesheet" href="site.css?v=3">
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -185,18 +185,13 @@
           <video id="video" controls preload="metadata" playsinline poster="media/poster.jpg">
             <source src="media/vector-up-close.mp4" type="video/mp4">
           </video>
-          <div class="fallback" id="fallback" hidden>
-            <div>
-              <strong style="font:800 34px/1 var(--f-display);text-transform:uppercase">The film didn't load here</strong>
-              <p>Your browser or network stopped it from playing inside the page<span id="fErr"></span>. Try opening the film file on its own, or try again.</p>
-              <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-                <a class="btn" href="media/vector-up-close.mp4" target="_blank" rel="noopener"><span class="tri"></span>Open the film file</a>
-                <button type="button" class="btn ghost" id="fRetry" style="color:#F2F3F6;border-color:#F2F3F6">Try again</button>
-              </div>
-            </div>
-          </div>
         </div>
-        <div class="filmbar"><span><b id="fNow">Vector</b></span><span id="fTime">0:00 / 12:22</span><span>Narration is a synthetic voice</span></div>
+        <div class="filmnote" id="fallback" hidden>
+          <span>The film didn't start here<span id="fErr"></span>.</span>
+          <a class="btn" href="media/vector-up-close.mp4" target="_blank" rel="noopener"><span class="tri"></span>Open the film file</a>
+          <button type="button" class="btn ghost" id="fRetry">Try again</button>
+        </div>
+        <div class="filmbar"><span><b id="fNow">Vector</b></span><span id="fTime">0:00 / 12:22</span><a href="media/vector-up-close.mp4" target="_blank" rel="noopener" style="color:inherit">Open the film file ↗</a><span>Narration is a synthetic voice</span></div>
       </div>
       <ol class="chaps" id="chaps"></ol>
     </div>
@@ -258,8 +253,8 @@
   </div>
 </footer>
 
-<script src="data.js?v=2"></script>
-<script src="stages.js?v=2"></script>
-<script src="site.js?v=2"></script>
+<script src="data.js?v=3"></script>
+<script src="stages.js?v=3"></script>
+<script src="site.js?v=3"></script>
 </body>
 </html>
