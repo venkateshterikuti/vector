@@ -1,0 +1,522 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Vector Walkthrough</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one slide per screen; story copy on the left, the real Vector screen on the right with numbered pins */
+:root{
+  --paper:#F6F7F9; --surface:#FFFFFF; --ink:#14161B; --mute:#555B66; --line:#E1E4EA;
+  --accent:#0071E3; --accent-soft:#E7F0FC; --accent-ink:#FFFFFF;
+  --bee:#FFD60A; --bee-ink:#3A2C00; --bee-stripe:#2A2208; --bee-wing:rgba(255,255,255,.88); --bee-wing-line:#8C96A6; --shadow:0 18px 50px rgba(20,30,50,.12),0 2px 8px rgba(20,30,50,.06);
+  --display:"Geist","Segoe UI",system-ui,-apple-system,sans-serif;
+  --body:"Geist","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"Geist Mono","Cascadia Code",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E1014; --surface:#171A20; --ink:#ECEEF2; --mute:#A4A9B4; --line:#2A2E37;
+  --accent:#4C9BFF; --accent-soft:#16263D; --accent-ink:#06121F;
+  --shadow:0 18px 50px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1014; --surface:#171A20; --ink:#ECEEF2; --mute:#A4A9B4; --line:#2A2E37;
+  --accent:#4C9BFF; --accent-soft:#16263D; --accent-ink:#06121F;
+  --shadow:0 18px 50px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.3); color-scheme:dark}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden}
+*{box-sizing:border-box}
+.app{height:100%;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.bar{flex:none;display:flex;align-items:center;gap:14px;padding-block:14px}
+.mark{display:flex;align-items:center;gap:9px;font:600 15px var(--display);letter-spacing:-.01em}
+.mark svg{flex:none}
+.where{font:500 12px var(--mono);color:var(--mute);letter-spacing:.04em;text-transform:uppercase}
+.bar .sp{flex:1}
+button,.btn{font:500 13px var(--body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:9px;height:34px;padding:0 12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+button:hover{border-color:var(--mute)}
+button:focus-visible,a:focus-visible,li[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{flex:1;min-height:0;position:relative}
+.slide{position:absolute;inset:0;display:none;overflow:hidden}
+.slide.on{display:grid;animation:fade .35s ease}
+@keyframes fade{from{opacity:.0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.slide.on{animation:none}.pin.hot{animation:none}}
+.kicker{display:flex;gap:12px;align-items:center;margin:0 0 14px;font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.kicker .time{color:var(--accent)}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.025em}
+h2{font-size:clamp(24px,2.5vw,34px);line-height:1.12;font-weight:600}
+.lede{margin:10px 0 0;color:var(--mute);max-width:62ch}
+.lede.strong{color:var(--ink);font-weight:500}
+.bee{display:inline-flex;align-items:center;height:1.35em;padding:0 .38em;border-radius:.35em;background:var(--bee);color:var(--bee-ink);font-weight:700;font-size:.86em;vertical-align:.08em;line-height:1;white-space:nowrap}
+.bee.lg{font-size:.8em}
+
+/* screen slides */
+.screen{grid-template-columns:minmax(300px,30%) minmax(0,1fr);gap:clamp(20px,3vw,48px);align-items:center;padding-block:4px 10px}
+.copy{min-width:0;max-height:100%;overflow:auto;padding-right:4px}
+.points{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.points li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;padding:6px 8px;border-radius:10px;cursor:default}
+.points li:hover,.points li.hot{background:var(--accent-soft)}
+.points b{display:block;font-weight:600;font-size:14px}
+.points span:not(.num):not(.bee){display:block;color:var(--mute);font-size:13px;line-height:1.4}
+.num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:600 12px var(--mono);margin-top:1px}
+.fig{margin:0;min-width:0;height:100%;display:flex;align-items:center;justify-content:center}
+.frame{position:relative;width:100%;max-width:calc((100vh - 150px) * 1.6);aspect-ratio:16/10;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#fff}
+.frame img{display:block;width:100%;height:100%;object-fit:cover}
+.pin{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:600 11px var(--mono);box-shadow:0 0 0 2px rgba(255,255,255,.95),0 4px 12px rgba(0,60,140,.35);transition:transform .2s}
+.pin.hot{transform:scale(1.35);animation:ring 1.2s ease-out infinite}
+@keyframes ring{0%{box-shadow:0 0 0 3px #fff,0 0 0 3px rgba(0,113,227,.5)}100%{box-shadow:0 0 0 3px #fff,0 0 0 18px rgba(0,113,227,0)}}
+
+/* text slides */
+.text,.close{place-items:center}
+.text-wrap{width:min(980px,100%);max-height:100%;overflow:auto;padding-block:10px}
+.text-wrap h2{font-size:clamp(28px,3.4vw,46px)}
+.tools{list-style:none;padding:0;margin:28px 0 6px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tools li,.rules li,.recap li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.tools b,.rules b,.recap b{display:block;font-weight:600;font-size:15px}
+.tools span:not(.bee),.rules span:not(.bee),.recap span:not(.bee){display:block;color:var(--mute);font-size:13.5px;margin-top:3px}
+.rules{list-style:none;padding:0;margin:28px 0 0;display:flex;flex-direction:column;gap:8px}
+.rules li{display:grid;grid-template-columns:minmax(0,34%) minmax(0,1fr);gap:20px;align-items:baseline}
+.rules li span:not(.bee){margin-top:0}
+@media (max-width:860px){.rules li{grid-template-columns:1fr;gap:4px}}
+.recap{list-style:none;padding:0;margin:26px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:20px}
+.thumbs img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.by{margin:18px 0 0;font:500 12.5px var(--mono);color:var(--mute)}
+
+/* cover */
+.cover{grid-template-columns:minmax(300px,36%) minmax(0,1fr);align-items:center;gap:clamp(20px,4vw,64px)}
+.cover h1{font-size:clamp(64px,9vw,128px);font-weight:600;letter-spacing:-.05em;line-height:.95}
+.cover .sub{font-size:clamp(18px,1.8vw,24px);margin:18px 0 0;max-width:30ch}
+.cover .hint{margin-top:12px;color:var(--mute);font-size:13px}
+.start{margin-top:28px;height:42px;padding:0 18px;border-radius:21px;background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600;font-size:14px}
+.start:hover{border-color:var(--accent);filter:brightness(1.05)}
+.cover-fig{margin:0;min-width:0}
+.cover-fig{display:flex;align-items:center;justify-content:center;height:100%}
+.cover-fig img{width:100%;height:auto;max-height:100%;max-width:calc((100vh - 150px) * 1.6);aspect-ratio:16/10;object-fit:cover;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);display:block}
+
+
+/* cover bee: flies in, lands on the @B badge, then hovers */
+.cover .sub .l1,.cover .sub .l2{display:block}
+.cover .sub .l2{margin-top:30px}
+.perch{position:relative;display:inline-block}
+.flybee{position:absolute;left:38%;bottom:70%;width:44px;height:34px;pointer-events:none;z-index:2;animation:flight 2.6s cubic-bezier(.45,0,.3,1) .5s both}
+.flybee .bob{display:block;animation:bob 2.4s ease-in-out 3.1s infinite}
+.flybee svg{display:block;overflow:visible}
+.flybee .wings{transform-origin:20px 13px;animation:flap .11s linear .5s 24,flutter 1.8s ease-in-out 3.2s infinite}
+.bee.hop{transform-origin:50% 100%;animation:squash .55s ease-out 2.5s both}
+@keyframes flight{
+ 0%{transform:translate(-300px,-190px) rotate(-12deg);opacity:0}
+ 8%{opacity:1}
+ 32%{transform:translate(-110px,-150px) rotate(10deg)}
+ 50%{transform:translate(70px,-90px) rotate(-8deg)}
+ 66%{transform:translate(18px,-44px) rotate(4deg)}
+ 78%{transform:translate(0,0) scale(1.1,.84)}
+ 86%{transform:translate(0,-9px) scale(.95,1.05)}
+ 93%{transform:translate(0,0) scale(1.03,.97)}
+ 100%{transform:translate(0,0) scale(1);opacity:1}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+@keyframes flutter{0%,100%{transform:scaleY(1)}45%,55%{transform:scaleY(.6)}}
+@keyframes squash{0%{transform:scale(1)}35%{transform:scale(1.12,.78)}65%{transform:scale(.96,1.06)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.flybee,.flybee .bob,.flybee .wings,.bee.hop{animation:none}}
+
+/* footer */
+footer.nav{position:relative;z-index:3;flex:none;display:flex;align-items:center;gap:12px;padding-block:10px 14px}
+.progress{flex:1;display:flex;gap:4px;height:4px}
+.seg{background:var(--line);border-radius:2px;position:relative;overflow:hidden}
+.seg.done{background:var(--accent)}
+.seg.cur{background:linear-gradient(90deg,var(--accent) var(--p,0%),var(--line) var(--p,0%))}
+.count{font:500 12px var(--mono);color:var(--mute);min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* chapter menu */
+.menu{position:absolute;top:58px;right:max(16px,env(safe-area-inset-right,0px));z-index:5;width:min(320px,calc(100% - 32px));background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px}
+.menu ol{list-style:none;margin:0;padding:0}
+.menu a{display:flex;justify-content:space-between;padding:9px 12px;border-radius:9px;color:var(--ink);text-decoration:none;font-size:14px}
+.menu a:hover,.menu a.cur{background:var(--accent-soft)}
+.mc{font:500 12px var(--mono);color:var(--mute)}
+
+@media (max-width:860px){
+  .cover-fig{height:auto}
+  body{overflow:auto}
+  .stage{overflow:auto}
+  .screen,.cover{grid-template-columns:1fr;align-content:start;gap:16px}
+  .screen .fig{order:-1;height:auto}
+  .frame{max-width:100%}
+  .copy,.text-wrap{max-height:none;overflow:visible}
+  .slide{position:absolute;overflow:auto}
+  .where{display:none}
+  .thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+
+<div class="app">
+  <header class="bar">
+    <div class="mark"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="6" fill="currentColor"></rect><path d="M6.2 6.8 11 15.6l4.8-8.8" fill="none" stroke="var(--paper)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Vector</div>
+    <span class="where" id="where">Vector</span>
+    <span class="sp"></span>
+    <button type="button" id="menuBtn" aria-expanded="false" aria-controls="menu">Chapters</button>
+  </header>
+  <nav class="menu" id="menu" hidden aria-label="Chapters"><ol><li><a href="#cover" data-go="0"><span class="mn">Vector</span><span class="mc">1</span></a></li><li><a href="#problem" data-go="1"><span class="mn">Why</span><span class="mc">2</span></a></li><li><a href="#home" data-go="3"><span class="mn">Morning</span><span class="mc">2</span></a></li><li><a href="#work" data-go="5"><span class="mn">The work</span><span class="mc">2</span></a></li><li><a href="#codex" data-go="7"><span class="mn">Build it</span><span class="mc">3</span></a></li><li><a href="#jenkins" data-go="10"><span class="mn">Ship it</span><span class="mc">3</span></a></li><li><a href="#failed" data-go="13"><span class="mn">When it breaks</span><span class="mc">1</span></a></li><li><a href="#dash" data-go="14"><span class="mn">Watch it</span><span class="mc">2</span></a></li><li><a href="#map" data-go="16"><span class="mn">Understand it</span><span class="mc">3</span></a></li><li><a href="#skills" data-go="19"><span class="mn">Teach @B</span><span class="mc">3</span></a></li><li><a href="#teams1" data-go="22"><span class="mn">Next day, in Teams</span><span class="mc">3</span></a></li><li><a href="#audit" data-go="25"><span class="mn">Stay in control</span><span class="mc">7</span></a></li><li><a href="#close" data-go="32"><span class="mn">Close</span><span class="mc">1</span></a></li></ol></nav>
+  <main class="stage" id="stage">
+<section class="slide cover" id="cover" data-ch="open" aria-label="Vector">
+  <div class="cover-copy">
+    <p class="kicker"><span>Project Wheeljack</span><span class="time">October 2026</span></p>
+    <h1>Vector</h1>
+    <p class="sub"><span class="l1">Code to production in one window.</span><span class="l2"><span class="perch"><span class="bee hop">@B</span><span class="flybee" aria-hidden="true"><span class="bob"><svg viewBox="0 0 44 34" width="44" height="34" aria-hidden="true"><defs><clipPath id="beeBody"><ellipse cx="20" cy="21" rx="12.5" ry="8.6"></ellipse></clipPath></defs><g class="wings"><ellipse cx="15" cy="9.5" rx="7.2" ry="5.2" fill="var(--bee-wing)" stroke="var(--bee-wing-line)" stroke-width=".9"></ellipse><ellipse cx="23.5" cy="8.6" rx="7.6" ry="5.4" fill="var(--bee-wing)" stroke="var(--bee-wing-line)" stroke-width=".9"></ellipse></g><path d="M8 21 3.2 22.2 8 23.4z" fill="var(--bee-stripe)"></path><ellipse cx="20" cy="21" rx="12.5" ry="8.6" fill="var(--bee)"></ellipse><g clip-path="url(#beeBody)" fill="var(--bee-stripe)"><rect x="13" y="10" width="3.6" height="22"></rect><rect x="20" y="10" width="3.6" height="22"></rect></g><ellipse cx="20" cy="21" rx="12.5" ry="8.6" fill="none" stroke="var(--bee-stripe)" stroke-width="1.2"></ellipse><circle cx="33.5" cy="18.5" r="6" fill="var(--bee-stripe)"></circle><circle cx="35.6" cy="17.2" r="2.1" fill="#fff"></circle><circle cx="36.1" cy="17.4" r="1" fill="var(--bee-stripe)"></circle><path d="M32.5 13c-.5-3 .5-5.5 2.6-6.6M35.5 13.4c.6-2.6 2.2-4.4 4.6-4.8" fill="none" stroke="var(--bee-stripe)" stroke-width="1.2" stroke-linecap="round"></path><circle cx="35.2" cy="6.3" r="1.1" fill="var(--bee-stripe)"></circle><circle cx="40.2" cy="8.5" r="1.1" fill="var(--bee-stripe)"></circle></svg></span></span></span> beside you.</span></p>
+    <p class="by">Venkatesh Terikuti</p>
+    <button type="button" class="start" id="start">Start<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"></path></svg></button>
+    <p class="hint">Or use the arrow keys and the buttons below.</p>
+  </div>
+  <figure class="cover-fig"><img src="shots/Main.webp" alt="Vector home screen" width="2000" height="1250"></figure>
+</section>
+<section class="slide text" id="problem" data-ch="why" aria-label="Why Vector">
+  <div class="text-wrap">
+    <p class="kicker"><span>Why</span><span class="time">Today</span></p>
+    <h2>One change. Seven tools.</h2>
+    <p class="lede">Every tool holds part of the answer. Putting it together is the job nobody planned for.</p>
+    <ul class="tools"><li><b>Jira</b><span>The ticket</span></li><li><b>Bitbucket</b><span>The code</span></li><li><b>Jenkins</b><span>The build</span></li><li><b>Rafay</b><span>The deploy</span></li><li><b>Grafana · Dynatrace · Splunk · Optimus Logger</b><span>The signals</span></li><li><b>Confluence</b><span>The docs</span></li><li><b>Teams</b><span>The conversation</span></li></ul>
+    <p class="lede strong">Vector brings them into one window. Each tool stays the source of truth. <span class="bee">@B</span> works across all of them.</p>
+  </div>
+</section>
+<section class="slide text" id="rules" data-ch="why" aria-label="Five rules">
+  <div class="text-wrap">
+    <p class="kicker"><span>Why</span><span class="time">The rules</span></p>
+    <h2>Five rules behind every screen.</h2>
+    <ul class="rules"><li><b>One environment per window</b><span>Pick dev, sit, uat, perf, cte or prod. Everything follows.</span></li><li><b><span class="bee">@B</span> on every page, and in Teams</b><span>One conversation that moves with you.</span></li><li><b>Work happens in the repo or the pipeline</b><span>Every path leads to CodeX, the build or the deploy.</span></li><li><b>Every page looks like the tool you know</b><span>VS Code, Jenkins, Rafay, Grafana. Nothing new to learn.</span></li><li><b><span class="bee">@B</span> can only do what you can do</b><span>And it asks before it changes anything.</span></li></ul>
+  </div>
+</section>
+<section class="slide screen" id="home" data-ch="morning" aria-label="Start with what needs you.">
+  <div class="copy">
+    <p class="kicker"><span>Morning</span><span class="time">Thursday · 9:12</span></p>
+    <h2>Start with what needs you.</h2>
+    <p class="lede"><span class="bee">@B</span> in the center. Below it, the seven things that matter today, across every app you work on.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>One environment</b><span>Pick it once. The whole window follows.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Next meeting</b><span>One reminder in the title bar. Change it from the bell.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Ask <span class="bee">@B</span></b><span>Attach context, tag a tool, pick a model.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Your top seven</b><span>Failures, meetings, approvals, reviews and reminders, ranked.</span></div></li><li data-pin="5" tabindex="0"><span class="num" aria-hidden="true">5</span><div><b>One action each</b><span>Every row opens the repo, the pipeline or Teams.</span></div></li><li data-pin="6" tabindex="0"><span class="num" aria-hidden="true">6</span><div><b>Nine spaces</b><span>Everything else is one click away.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/Main.webp" alt="Vector screen: Start with what needs you." width="2000" height="1250" loading="eager"><span class="pin" data-pin="1" style="left:4.24%;top:2.05%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:76.72%;top:2.05%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:26.38%;top:20.98%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:24.56%;top:39.48%" aria-hidden="true">4</span><span class="pin" data-pin="5" style="left:70.44%;top:45.0%" aria-hidden="true">5</span><span class="pin" data-pin="6" style="left:1.0%;top:6.2%" aria-hidden="true">6</span></div></figure>
+</section>
+<section class="slide screen" id="home-menus" data-ch="morning" aria-label="Context, tools and models, on demand.">
+  <div class="copy">
+    <p class="kicker"><span>Morning</span><span class="time">9:13</span></p>
+    <h2>Context, tools and models, on demand.</h2>
+    <p class="lede">The composer stays simple until you need more.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Attach</b><span>Repos and pipelines from your setup, plus logs, skills and files.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Mention</b><span>Jira, Teams, Outlook, Confluence, Bitbucket, Rafay and FMDEV.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Model</b><span>Claude, GPT or Gemini. Only what your org approved.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Reminder</b><span>Choose what the title bar shows, or add your own.</span></div></li><li data-pin="5" tabindex="0"><span class="num" aria-hidden="true">5</span><div><b>Customize</b><span>Pick the sources and the order. Your own broken builds stay on top.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/HomeMenus.webp" alt="Vector screen: Context, tools and models, on demand." width="2000" height="1250" loading="eager"><span class="pin" data-pin="1" style="left:12.69%;top:36.59%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:30.02%;top:45.99%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:47.35%;top:36.59%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:68.81%;top:23.8%" aria-hidden="true">4</span><span class="pin" data-pin="5" style="left:76.69%;top:57.41%" aria-hidden="true">5</span></div></figure>
+</section>
+<section class="slide screen" id="work" data-ch="work" aria-label="Everything you own, at a glance.">
+  <div class="copy">
+    <p class="kicker"><span>The work</span><span class="time">9:15</span></p>
+    <h2>Everything you own, at a glance.</h2>
+    <p class="lede">Tickets, reviews and approvals as tiles. Each one opens where the work happens.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Boards and filters</b><span>Pick a Jira board, then filter the way Jira does.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Progress on every tile</b><span>Criteria met and how far the change has travelled.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Reviews by repo</b><span>Opens the PR in CodeX.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Approvals by pipeline</b><span>Each waits on the product owner and the tech lead.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/Work.webp" alt="Vector screen: Everything you own, at a glance." width="2000" height="1250" loading="eager"><span class="pin" data-pin="1" style="left:13.85%;top:14.2%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:5.12%;top:21.51%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:64.5%;top:18.0%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:7.38%;top:70.31%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="ticket" data-ch="work" aria-label="LPA-118. Done, with proof.">
+  <div class="copy">
+    <p class="kicker"><span>The work</span><span class="time">9:16</span></p>
+    <h2>LPA-118. Done, with proof.</h2>
+    <p class="lede">Every acceptance criterion shows the evidence behind it.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Evidence per criterion</b><span>Tests, checks and the mock run, linked.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>You confirm</b><span><span class="bee">@B</span> suggests the tick. A person signs off.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>One timeline</b><span>Code, builds, chats and Jira in one place.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Straight to work</b><span>Open the repo or the pipeline.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/Ticket.webp" alt="Vector screen: LPA-118. Done, with proof." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:5.56%;top:35.8%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:10.94%;top:54.87%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:55.73%;top:35.6%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:86.74%;top:11.01%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="codex" data-ch="build" aria-label="CodeX. It&#x27;s VS Code.">
+  <div class="copy">
+    <p class="kicker"><span>Build it</span><span class="time">9:20</span></p>
+    <h2>CodeX. It&#x27;s VS Code.</h2>
+    <p class="lede">Built on the open-source VS Code core, with <span class="bee">@B</span> working alongside you.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Worktrees</b><span>One per feature. Each carries its ticket.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Checked changes</b><span>Every file matches the plan <span class="bee">@B</span> showed.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Checks first</b><span>Tests, 26 business checks and the mock run.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b><span class="bee">@B</span>, in context</b><span>The same conversation, now beside the code.</span></div></li><li data-pin="5" tabindex="0"><span class="num" aria-hidden="true">5</span><div><b>One next step</b><span><span class="bee">@B</span> drafts the commit and the PR. You send it.</span></div></li><li data-pin="6" tabindex="0"><span class="num" aria-hidden="true">6</span><div><b>Status bar</b><span>Branch, app, ticket and environment.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/CodeX.webp" alt="Vector screen: CodeX. It&#x27;s VS Code." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:2.62%;top:68.7%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:6.5%;top:33.5%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:24.75%;top:78.95%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:77.25%;top:10.8%" aria-hidden="true">4</span><span class="pin" data-pin="5" style="left:86.82%;top:6.65%" aria-hidden="true">5</span><span class="pin" data-pin="6" style="left:5.5%;top:98.6%" aria-hidden="true">6</span></div></figure>
+</section>
+<section class="slide screen" id="review" data-ch="build" aria-label="Review with a second pair of eyes.">
+  <div class="copy">
+    <p class="kicker"><span>Build it</span><span class="time">9:30</span></p>
+    <h2>Review with a second pair of eyes.</h2>
+    <p class="lede">PRs open in the same editor, with <span class="bee">@B</span>&#x27;s summary beside the diff.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Approve or request changes</b><span>Right in the top bar.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>PR summary</b><span>What changed, the risk and the tests that cover it.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/CodeXReview.webp" alt="Vector screen: Review with a second pair of eyes." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:83.07%;top:6.95%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:77.25%;top:11.4%" aria-hidden="true">2</span></div></figure>
+</section>
+<section class="slide screen" id="clone" data-ch="build" aria-label="Tag it once. Find it everywhere.">
+  <div class="copy">
+    <p class="kicker"><span>Build it</span><span class="time">9:34</span></p>
+    <h2>Tag it once. Find it everywhere.</h2>
+    <p class="lede">The application tag set at clone time follows the repo&#x27;s tickets, PRs, builds and approvals.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Application tag</b><span>Filter by app on any page.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Shared setup</b><span>Start from a teammate&#x27;s template. Never their credentials.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/CloneRepo.webp" alt="Vector screen: Tag it once. Find it everywhere." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:33.0%;top:43.48%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:33.88%;top:72.23%" aria-hidden="true">2</span></div></figure>
+</section>
+<section class="slide screen" id="jenkins" data-ch="ship" aria-label="Jenkins, exactly as you know it.">
+  <div class="copy">
+    <p class="kicker"><span>Ship it</span><span class="time">9:41</span></p>
+    <h2>Jenkins, exactly as you know it.</h2>
+    <p class="lede">Build and deploy sit side by side, in the layouts your team already uses.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Familiar layout</b><span>Breadcrumbs, tasks and build history.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Stage view</b><span>Build #27 is deploying to dev.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Console</b><span>The full log, one click away.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Deploy tab</b><span>Rafay, one tab over.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/JenkinsBuild.webp" alt="Vector screen: Jenkins, exactly as you know it." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:5.5%;top:10.8%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:85.12%;top:11.05%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:2.62%;top:22.2%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:22.42%;top:5.75%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="rafay" data-ch="ship" aria-label="Deployed to dev. Checked first.">
+  <div class="copy">
+    <p class="kicker"><span>Ship it</span><span class="time">9:46</span></p>
+    <h2>Deployed to dev. Checked first.</h2>
+    <p class="lede">Rafay&#x27;s own layout, with every environment in one table.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Six environments</b><span>Cluster, namespace and version for each.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Safe rollout</b><span>The old version serves until the new one is ready.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Six checks</b><span>Target, config, simulator, storage, rollback and access.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/RafayDeploy.webp" alt="Vector screen: Deployed to dev. Checked first." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:22.98%;top:20.94%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:57.85%;top:30.44%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:75.31%;top:23.01%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="logs" data-ch="ship" aria-label="The first assessment. Proven in the logs.">
+  <div class="copy">
+    <p class="kicker"><span>Ship it</span><span class="time">9:52</span></p>
+    <h2>The first assessment. Proven in the logs.</h2>
+    <p class="lede">One submission. Each wait taken from LPA&#x27;s response. Completed in 46 seconds.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>App first</b><span>Then cluster, namespace, pod and level.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Run timeline</b><span>Submit, wait, wait, completed.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Codes, not data</b><span>Loan values never reach the logs.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Close the loop</b><span>Confirm the last criterion right here.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/Observe.webp" alt="Vector screen: The first assessment. Proven in the logs." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:3.88%;top:11.0%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:18.19%;top:35.42%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:37.22%;top:67.57%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:76.12%;top:38.77%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="failed" data-ch="break" aria-label="A build breaks. Ask why.">
+  <div class="copy">
+    <p class="kicker"><span>When it breaks</span><span class="time">10:01</span></p>
+    <h2>A build breaks. Ask why.</h2>
+    <p class="lede"><span class="bee">@B</span> reads the log, the commit and the schema, then shows its work.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Plain question</b><span>Asked on Home, answered on the pipeline.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Quoted lines</b><span>The exact log lines, with line numbers.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Fix in the repo</b><span>Opens CodeX in a new worktree, ready to review.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Or change the contract</b><span>Drafts a v3 schema and a ticket.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/JenkinsFailed.webp" alt="Vector screen: A build breaks. Ask why." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:77.95%;top:20.4%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:75.31%;top:36.75%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:76.12%;top:53.86%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:76.12%;top:66.38%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="dash" data-ch="watch" aria-label="Dashboards you already read.">
+  <div class="copy">
+    <p class="kicker"><span>Watch it</span><span class="time">10:05</span></p>
+    <h2>Dashboards you already read.</h2>
+    <p class="lede">Grafana, Splunk, Dynatrace and Optimus Logger on one page. Every panel names its source.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Grafana-style</b><span>Time range, refresh and variables.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Deploy markers</b><span>See exactly when things changed.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Suggested alert</b><span><span class="bee">@B</span> spots the gap and offers the fix.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/ObserveDashboards.webp" alt="Vector screen: Dashboards you already read." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:7.68%;top:11.1%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:14.55%;top:58.19%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:76.12%;top:48.86%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="health" data-ch="watch" aria-label="Health, with the cause attached.">
+  <div class="copy">
+    <p class="kicker"><span>Watch it</span><span class="time">10:40</span></p>
+    <h2>Health, with the cause attached.</h2>
+    <p class="lede">Problems, service flow and error budgets, in the style of Dynatrace.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Root cause</b><span>Two sit samples use an account type the mapping doesn&#x27;t know.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Service flow</b><span>Who calls whom, and how fast.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Problem to fix</b><span>One click hands it to <span class="bee">@B</span> in Teams.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/ObserveHealth.webp" alt="Vector screen: Health, with the cause attached." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:56.49%;top:31.04%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:46.74%;top:20.77%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:75.31%;top:37.48%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="map" data-ch="know" aria-label="See what talks to what.">
+  <div class="copy">
+    <p class="kicker"><span>Understand it</span><span class="time">10:44</span></p>
+    <h2>See what talks to what.</h2>
+    <p class="lede">Every connection, with the evidence that proves it.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Dashed means planned</b><span>The real LPA connection isn&#x27;t built yet.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Proof per line</b><span>Code, runtime calls and docs.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Ask the map</b><span><span class="bee">@B</span> explains any part of it.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/KnowMap.webp" alt="Vector screen: See what talks to what." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:58.5%;top:82.41%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:75.31%;top:27.99%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:77.75%;top:84.0%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="docs" data-ch="know" aria-label="The docs behind each app.">
+  <div class="copy">
+    <p class="kicker"><span>Understand it</span><span class="time">10:46</span></p>
+    <h2>The docs behind each app.</h2>
+    <p class="lede">Confluence spaces and pages, grouped by the application they describe.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>By application</b><span>Find the right page without searching.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Ask the page</b><span>Answers cite the section they came from.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/KnowDocs.webp" alt="Vector screen: The docs behind each app." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:45.5%;top:19.4%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:47.88%;top:96.52%" aria-hidden="true">2</span></div></figure>
+</section>
+<section class="slide screen" id="catalog" data-ch="know" aria-label="Where @B looks first.">
+  <div class="copy">
+    <p class="kicker"><span>Understand it</span><span class="time">10:48</span></p>
+    <h2>Where <span class="bee">@B</span> looks first.</h2>
+    <p class="lede">Each app&#x27;s setup in one file: repos, jobs, namespaces, boards, channels, logs, rules and people.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>The starting point</b><span>Every answer about LPA starts here.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Private</b><span>Stored with your credentials. Only you can open it.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Asks before writing</b><span><span class="bee">@B</span> proposes changes and waits.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Share safely</b><span>Teammates get the mappings, never the secrets.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/KnowCatalog.webp" alt="Vector screen: Where @B looks first." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:28.24%;top:13.39%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:20.88%;top:20.4%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:75.5%;top:21.75%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:58.81%;top:14.05%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="skills" data-ch="teach" aria-label="Teach @B once. Every team benefits.">
+  <div class="copy">
+    <p class="kicker"><span>Teach @B</span><span class="time">10:52</span></p>
+    <h2>Teach <span class="bee">@B</span> once. Every team benefits.</h2>
+    <p class="lede">Skills are instructions and scripts, shared and improved like code.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Edge cases as PRs</b><span>Reviewed by the owner, like any change.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Use or fork</b><span>Run it with <span class="bee">@B</span> or adapt it for your app.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Drafts in Mine</b><span>Test it before anyone else sees it.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/Skills.webp" alt="Vector screen: Teach @B once. Every team benefits." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:25.44%;top:20.08%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:81.19%;top:7.6%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:17.1%;top:52.42%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="aichat" data-ch="teach" aria-label="A playground for decision makers.">
+  <div class="copy">
+    <p class="kicker"><span>Teach @B</span><span class="time">11:00</span></p>
+    <h2>A playground for decision makers.</h2>
+    <p class="lede">Big questions, answered with options, trade-offs and sources.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Familiar controls</b><span>Model, temperature, sources and guardrails.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Grounded</b><span>Answers start from the app&#x27;s catalog.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Keep what works</b><span>Save a good prompt as a draft skill.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AIChat.webp" alt="Vector screen: A playground for decision makers." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:79.81%;top:7.4%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:79.81%;top:31.68%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:70.07%;top:7.15%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="compare" data-ch="teach" aria-label="Three models. Same prompt. Scored.">
+  <div class="copy">
+    <p class="kicker"><span>Teach @B</span><span class="time">11:20</span></p>
+    <h2>Three models. Same prompt. Scored.</h2>
+    <p class="lede">See which model gets it right before it becomes a skill.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Measured</b><span>Every answer checked against the same cases.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Keep the best</b><span>Save the winner as a draft skill.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AICompare.webp" alt="Vector screen: Three models. Same prompt. Scored." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:18.5%;top:44.97%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:72.07%;top:7.15%" aria-hidden="true">2</span></div></figure>
+</section>
+<section class="slide screen" id="teams1" data-ch="teams" aria-label="sit fails. The team asks @B.">
+  <div class="copy">
+    <p class="kicker"><span>Next day, in Teams</span><span class="time">Friday · 10:36</span></p>
+    <h2>sit fails. The team asks <span class="bee">@B</span>.</h2>
+    <p class="lede">No tool hopping. The question goes in the thread, and the answer comes back there.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Vector posts it</b><span>Rolled back automatically, with the numbers.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>One request</b><span><span class="bee">@B</span> works with the asker&#x27;s access.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Shows its work</b><span>What it read and each step, live.</span></div></li><li data-pin="4" tabindex="0"><span class="num" aria-hidden="true">4</span><div><b>Knows the line</b><span>It won&#x27;t force a check to pass.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/TeamsFailure.webp" alt="Vector screen: sit fails. The team asks @B." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:28.81%;top:18.8%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:26.06%;top:40.64%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:27.0%;top:53.3%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:55.59%;top:67.52%" aria-hidden="true">4</span></div></figure>
+</section>
+<section class="slide screen" id="promote" data-ch="teams" aria-label="Product owner. Tech lead. Ready.">
+  <div class="copy">
+    <p class="kicker"><span>Next day, in Teams</span><span class="time">11:06</span></p>
+    <h2>Product owner. Tech lead. Ready.</h2>
+    <p class="lede">Two approvals, on the exact build that was proven in dev.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Product owner</b><span>Approves what the change means.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Tech lead</b><span>Approves the exact build.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Then promote</b><span>Same build. Nothing is rebuilt.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/RafayPromote.webp" alt="Vector screen: Product owner. Tech lead. Ready." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:31.03%;top:28.33%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:41.12%;top:28.33%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:65.87%;top:14.14%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="teams2" data-ch="teams" aria-label="Fixed in forty minutes. Learned for good.">
+  <div class="copy">
+    <p class="kicker"><span>Next day, in Teams</span><span class="time">11:14</span></p>
+    <h2>Fixed in forty minutes. Learned for good.</h2>
+    <p class="lede">sit is healthy, the ticket moves on, and the lesson becomes part of the skill.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Proven first</b><span>Verified against every sit sample.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Healthy</b><span>The full run is linked for later.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Skill update</b><span>The next app won&#x27;t hit this.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/TeamsResolved.webp" alt="Vector screen: Fixed in forty minutes. Learned for good." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:27.0%;top:27.45%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:28.81%;top:63.33%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:27.19%;top:72.19%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="audit" data-ch="control" aria-label="Every prompt, on the record.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">11:30</span></p>
+    <h2>Every prompt, on the record.</h2>
+    <p class="lede">From Vector, Teams chats and Teams groups.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Every source</b><span>Filter by place, person or app.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Clear refusals</b><span>When <span class="bee">@B</span> can&#x27;t, it says why.</span></div></li><li data-pin="3" tabindex="0"><span class="num" aria-hidden="true">3</span><div><b>Full trail</b><span>What <span class="bee">@B</span> read, the model and its reply.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/GovernAudit.webp" alt="Vector screen: Every prompt, on the record." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:4.81%;top:25.63%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:56.28%;top:20.37%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:74.19%;top:96.8%" aria-hidden="true">3</span></div></figure>
+</section>
+<section class="slide screen" id="access" data-ch="control" aria-label="Know exactly what you can do.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">11:32</span></p>
+    <h2>Know exactly what you can do.</h2>
+    <p class="lede">Read, write, build, deploy and post, tool by tool.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Your setup</b><span>Every row comes from your own workspace.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/GovernAccess.webp" alt="Vector screen: Know exactly what you can do." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:82.88%;top:30.37%" aria-hidden="true">1</span></div></figure>
+</section>
+<section class="slide screen" id="integrations" data-ch="control" aria-label="Your tools, connected.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">Admin</span></p>
+    <h2>Your tools, connected.</h2>
+    <p class="lede">Every integration, with its health.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Status at a glance</b><span>Expiring tokens show up early.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Add a tool</b><span>Each one comes with a guide.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AdminIntegrations.webp" alt="Vector screen: Your tools, connected." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:78.82%;top:9.2%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:87.41%;top:8.9%" aria-hidden="true">2</span></div></figure>
+</section>
+<section class="slide screen" id="envs" data-ch="control" aria-label="Six environments, clearly mapped.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">Admin</span></p>
+    <h2>Six environments, clearly mapped.</h2>
+    <p class="lede">dev, sit, uat, perf, cte and prod, in promotion order.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Real targets</b><span>Each resolves to its Rafay project, cluster and namespace.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AdminEnvironments.webp" alt="Vector screen: Six environments, clearly mapped." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:24.44%;top:40.32%" aria-hidden="true">1</span></div></figure>
+</section>
+<section class="slide screen" id="templates" data-ch="control" aria-label="Share a setup, not your secrets.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">Admin</span></p>
+    <h2>Share a setup, not your secrets.</h2>
+    <p class="lede">Templates pass from person to person. Credentials never travel.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Mappings only</b><span>You choose what to send.</span></div></li><li data-pin="2" tabindex="0"><span class="num" aria-hidden="true">2</span><div><b>Import and adjust</b><span>Anything you can&#x27;t access is flagged.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AdminTemplates.webp" alt="Vector screen: Share a setup, not your secrets." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:22.0%;top:64.99%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:59.06%;top:15.8%" aria-hidden="true">2</span></div></figure>
+</section>
+<section class="slide screen" id="workspaces" data-ch="control" aria-label="Your repos, all in one place.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">Admin</span></p>
+    <h2>Your repos, all in one place.</h2>
+    <p class="lede">App tag, branch and worktrees for each, one click from CodeX.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Clone and tag</b><span>New repos start tagged.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AdminWorkspaces.webp" alt="Vector screen: Your repos, all in one place." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:64.69%;top:8.9%" aria-hidden="true">1</span></div></figure>
+</section>
+<section class="slide screen" id="onboarding" data-ch="control" aria-label="Set up in minutes.">
+  <div class="copy">
+    <p class="kicker"><span>Stay in control</span><span class="time">Admin</span></p>
+    <h2>Set up in minutes.</h2>
+    <p class="lede">A guide for every tool and every application.</p>
+    <ol class="points"><li data-pin="1" tabindex="0"><span class="num" aria-hidden="true">1</span><div><b>Step by step</b><span>What you need, what to do, and <span class="bee">@B</span> to help.</span></div></li></ol>
+  </div>
+  <figure class="fig"><div class="frame"><img src="shots/AdminOnboarding.webp" alt="Vector screen: Set up in minutes." width="2000" height="1250" loading="lazy"><span class="pin" data-pin="1" style="left:17.88%;top:38.0%" aria-hidden="true">1</span></div></figure>
+</section>
+<section class="slide close" id="close" data-ch="close" aria-label="Close">
+  <div class="text-wrap">
+    <p class="kicker"><span>Close</span><span class="time">Two days, one ticket</span></p>
+    <h2>One window. The tools you know. <span class="bee lg">@B</span> beside you.</h2>
+    <ul class="recap">
+      <li><b>Thursday</b><span>LPA-118 goes from ticket to working in dev, with proof for every criterion.</span></li>
+      <li><b>Friday</b><span>A sit failure is explained, fixed, approved and healthy in forty minutes, all in Teams.</span></li>
+      <li><b>Every day</b><span>Answers show their sources. Prompts are on the record. Lessons become skills.</span></li>
+    </ul>
+    <div class="thumbs">
+      <img src="shots/CodeX.webp" alt="CodeX" loading="lazy"><img src="shots/JenkinsFailed.webp" alt="Failed build with @B" loading="lazy"><img src="shots/ObserveDashboards.webp" alt="Dashboards" loading="lazy"><img src="shots/TeamsResolved.webp" alt="Teams thread resolved" loading="lazy">
+    </div>
+    <p class="by">Vector · Project Wheeljack · Venkatesh Terikuti, with Arun Sivakumar and Praneeth Gande</p>
+  </div>
+</section></main>
+  <footer class="nav">
+    <button type="button" id="prev" aria-label="Previous slide"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"></path></svg></button>
+    <div class="progress" id="progress" aria-hidden="true"><span class="seg" style="flex:1" data-ch="open"></span><span class="seg" style="flex:2" data-ch="why"></span><span class="seg" style="flex:2" data-ch="morning"></span><span class="seg" style="flex:2" data-ch="work"></span><span class="seg" style="flex:3" data-ch="build"></span><span class="seg" style="flex:3" data-ch="ship"></span><span class="seg" style="flex:1" data-ch="break"></span><span class="seg" style="flex:2" data-ch="watch"></span><span class="seg" style="flex:3" data-ch="know"></span><span class="seg" style="flex:3" data-ch="teach"></span><span class="seg" style="flex:3" data-ch="teams"></span><span class="seg" style="flex:7" data-ch="control"></span><span class="seg" style="flex:1" data-ch="close"></span></div>
+    <span class="count" id="count">1 / 33</span>
+    <button type="button" id="next" aria-label="Next slide"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"></path></svg></button>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var CH = {"open": "Vector", "why": "Why", "morning": "Morning", "work": "The work", "build": "Build it", "ship": "Ship it", "break": "When it breaks", "watch": "Watch it", "know": "Understand it", "teach": "Teach @B", "teams": "Next day, in Teams", "control": "Stay in control", "close": "Close"};
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var segs = Array.prototype.slice.call(document.querySelectorAll('.seg'));
+  var order = segs.map(function(s){return s.dataset.ch});
+  var cur = 0;
+  function show(i){
+    i = Math.max(0, Math.min(slides.length-1, i));
+    slides[cur].classList.remove('on'); cur = i; var s = slides[cur]; s.classList.add('on');
+    document.getElementById('count').textContent = (cur+1) + ' / ' + slides.length;
+    document.getElementById('where').textContent = CH[s.dataset.ch] || '';
+    var ci = order.indexOf(s.dataset.ch);
+    var inCh = slides.filter(function(x){return x.dataset.ch===s.dataset.ch});
+    var pos = inCh.indexOf(s);
+    segs.forEach(function(g,k){ g.classList.toggle('done', k<ci); g.classList.toggle('cur', k===ci); if(k===ci) g.style.setProperty('--p', Math.round((pos+1)/inCh.length*100)+'%'); });
+    document.querySelectorAll('.menu a').forEach(function(a){ a.classList.toggle('cur', a.getAttribute('href')==='#'+firstOf(s.dataset.ch)); });
+    try{ history.replaceState(null,'','#'+s.id); }catch(e){}
+    document.getElementById('prev').disabled = cur===0;
+    document.getElementById('next').disabled = cur===slides.length-1;
+  }
+  function firstOf(ch){ for(var k=0;k<slides.length;k++){ if(slides[k].dataset.ch===ch) return slides[k].id; } return ''; }
+  function byId(id){ for(var k=0;k<slides.length;k++){ if(slides[k].id===id) return k; } return -1; }
+  document.getElementById('prev').addEventListener('click', function(){ show(cur-1); });
+  var st=document.getElementById('start'); if(st) st.addEventListener('click', function(){ show(cur+1); });
+  document.getElementById('next').addEventListener('click', function(){ show(cur+1); });
+  var menu = document.getElementById('menu'), mb = document.getElementById('menuBtn');
+  function toggleMenu(open){ menu.hidden = !open; mb.setAttribute('aria-expanded', String(open)); }
+  mb.addEventListener('click', function(){ toggleMenu(menu.hidden); });
+  menu.addEventListener('click', function(e){ var a = e.target.closest('a'); if(!a) return; e.preventDefault(); show(+a.dataset.go); toggleMenu(false); });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); show(cur+1); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); show(cur-1); }
+    else if(e.key==='Home'){ show(0); } else if(e.key==='End'){ show(slides.length-1); }
+    else if(e.key==='Escape'){ toggleMenu(false); }
+  });
+  var sx=null; document.getElementById('stage').addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  document.getElementById('stage').addEventListener('touchend',function(e){ if(sx===null) return; var dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>60) show(cur+(dx<0?1:-1)); sx=null; },{passive:true});
+  // link list items and pins
+  document.querySelectorAll('.screen').forEach(function(sl){
+    function hot(n,on){ sl.querySelectorAll('[data-pin="'+n+'"]').forEach(function(el){ el.classList.toggle('hot', on); }); }
+    sl.querySelectorAll('.points li').forEach(function(li){
+      var n = li.dataset.pin;
+      ['mouseenter','focus'].forEach(function(ev){ li.addEventListener(ev,function(){hot(n,true)}); });
+      ['mouseleave','blur'].forEach(function(ev){ li.addEventListener(ev,function(){hot(n,false)}); });
+    });
+  });
+  window.addEventListener('hashchange',function(){ var k=byId((location.hash||'').slice(1)); if(k>=0&&k!==cur) show(k); });
+  var start = byId((location.hash||'').slice(1));
+  slides[0].classList.add('on'); show(start>=0?start:0);
+})();
+</script>
+
+</body></html>

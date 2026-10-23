@@ -1,0 +1,526 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cybertron, annotated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="field.css">
+<style>
+  .layers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--hair); border-radius: var(--radius); background: var(--card); overflow: hidden; }
+  .layers > div { padding: 14px 16px; border-left: 1px solid var(--hair); display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .layers > div:first-child { border-left: 0; }
+  .layers b { font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; text-transform: uppercase; line-height: 1; display: flex; gap: 8px; align-items: center; }
+  .layers b i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex: none; }
+  .layers span { font-size: 0.95rem; color: var(--ink-2); line-height: 1.4; }
+  @media (max-width: 760px) { .layers { grid-template-columns: minmax(0, 1fr); } .layers > div { border-left: 0; border-top: 1px solid var(--hair); } .layers > div:first-child { border-top: 0; } }
+  .thumb.film { background: linear-gradient(135deg, #1D1D1F 0%, #2B2F3A 100%); color: #F2F3F6; display: grid; place-items: center; text-align: center; font-family: var(--f-display); font-size: 1.4rem; font-weight: 800; text-transform: uppercase; line-height: 1; padding: 10px; }
+  .thumb.film small { display: block; font-family: var(--f-mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.08em; color: #B9BFCC; margin-top: 6px; }
+  .thumb.doc { background: var(--sheet); display: grid; align-content: center; gap: 6px; padding: 14px; }
+  .thumb.doc i { display: block; height: 6px; border-radius: 3px; background: var(--grid); }
+  .thumb.doc b { font-family: var(--f-display); font-size: 1.2rem; text-transform: uppercase; line-height: 1; }
+</style>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 3 6 9.4 9.8 3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Cybertron</b><span>annotated</span></a>
+    <nav aria-label="Chapters">
+      <a class="num" href="problem.html" title="The scattered answer">01</a>
+      <a class="num" href="names.html" title="Names and the map">02</a>
+      <a class="num" href="planes.html" title="Five planes">03</a>
+      <a class="num" href="environment.html" title="One environment">04</a>
+      <a class="num" href="matrix.html" title="Matrix">05</a>
+      <a class="num" href="knowledge.html" title="Answers with sources">06</a>
+      <a class="num" href="codex.html" title="Code in Dev">07</a>
+      <a class="num" href="pipelines.html" title="Builds that explain themselves">08</a>
+      <a class="num" href="allspark.html" title="AllSpark">09</a>
+      <a class="num" href="evals.html" title="Evals">10</a>
+      <a class="num" href="release.html" title="The sealed bundle">11</a>
+      <a class="num" href="sentinel.html" title="Sentinel">12</a>
+      <a class="num" href="observe.html" title="Observe and cost">13</a>
+      <a class="num" href="bee.html" title="@B">14</a>
+      <a class="num" href="interface.html" title="The interface">15</a>
+      <a class="num" href="road.html" title="The road">16</a>
+      <a href="index.html" aria-current="page">Map</a>
+    </nav>
+  </div>
+  <div class="progress"></div>
+</header>
+<main>
+  <section class="hero hub-hero">
+    <div class="wrap">
+      <div class="hub-title">
+        <span class="eyebrow">An illustrated field guide · 16 chapters</span>
+        <h1>Cybertron, <em>annotated</em></h1>
+        <p class="dek">Vector, the engineering platform at the centre of Project Cybertron, taken apart one idea at a time. Each chapter explains how the design works, pins it on the real screens, lets you try it, and sets it beside how other tools do the same job.</p>
+        <div class="files">
+          <a class="tag" href="https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss" target="_blank" rel="noopener">Vector UI Concepts v3 ↗</a>
+          <a class="tag" href="https://claude.ai/artifact/5a8FHYBwSo3jKArRVm12Qd" target="_blank" rel="noopener">Homepage directions ↗</a>
+          <a class="tag" href="https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4" target="_blank" rel="noopener">Vector, annotated (film) ↗</a>
+          <a class="tag" href="https://claude.ai/artifact/W4XMFpXyBPrftXBEah4xzQ" target="_blank" rel="noopener">Vector Sigma films ↗</a>
+          <span class="tag">Atlas handbook · 17 chapters</span>
+        </div>
+      </div>
+      <div class="board wide" data-stage="system" data-label="The whole machine: a Vector window with its environment picker, five planes (experience, control, execution, knowledge, telemetry and cost) with their components, cross-cutting rules down the side, and the tools Bridge connects on either side. Numbered markers show where each chapter lives.">
+        <span class="ruler">the whole machine · numbers = chapters</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hub-read">
+    <div class="wrap">
+      <div class="legend-row">
+        <span class="k-label">How to read the drawings</span>
+        <span class="tag t-exp"><i></i>experience</span>
+        <span class="tag t-ctl"><i></i>control</span>
+        <span class="tag t-exe"><i></i>execution</span>
+        <span class="tag t-kno"><i></i>knowledge</span>
+        <span class="tag t-tel"><i></i>telemetry and cost</span>
+        <span class="tag t-ok"><i></i>passed, verified</span>
+        <span class="tag t-bad"><i></i>failed, conflict, refused</span>
+        <span class="tag"><i class="dash"></i>dashed: proposed, inferred or pending</span>
+        <span class="tag"><i class="bee"></i>@B</span>
+      </div>
+      <div class="layers">
+        <div><b><i style="background:var(--ink-3)"></i>Atlas prototype today</b><span>A working React proof of concept with a synthetic estate. Its integrations, model runs, approvals and deployments are simulated.</span></div>
+        <div><b><i style="background:var(--exp)"></i>v3 design</b><span>30 boards for a light, Windows-style Vector app, all scoped to one environment and telling one ticket's story. The main story of this guide.</span></div>
+        <div><b><i style="border:1.5px dashed var(--ink-3)"></i>Production proposal</b><span>The future architecture from the handbook. Proposed, not built. Every chapter ends by saying which layer each claim belongs to.</span></div>
+      </div>
+      <p class="note">Every lab runs locally on the design's own data or on the prototype's documented logic. Cost figures in the design are illustrative. Comparisons with other tools cite their public documentation.</p>
+    </div>
+  </section>
+
+  <section class="section" id="chapters">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The chapters</span>
+        <h2>From one question to a platform</h2>
+        <p class="lede">Read in order for the whole argument, or jump to the part you need. Chapters 01 to 04 set up everything else.</p>
+      </header>
+      <div class="chgrid">
+          <a class="chap" href="problem.html"><div class="glyph" data-stage="g01" data-label="Six tool windows each holding a fragment, converging into one answer card."></div><div class="txt"><span class="num">01 · Foundations</span><h3>The scattered answer</h3><p>Six tools, five names for one service, and one answer with its evidence attached.</p></div></a>
+          <a class="chap" href="names.html"><div class="glyph" data-stage="g02" data-label="A name tree from Project Cybertron to Vector to its capabilities."></div><div class="txt"><span class="num">02 · Foundations</span><h3>Names and the map</h3><p>Cybertron, Vector, Atlas and @B, and every themed name beside its plain label.</p></div></a>
+          <a class="chap" href="planes.html"><div class="glyph" data-stage="g03" data-label="Five coloured planes with a request crossing them."></div><div class="txt"><span class="num">03 · Foundations</span><h3>Five planes</h3><p>Experience, control, execution, knowledge, telemetry and cost, with Bridge around them.</p></div></a>
+          <a class="chap" href="environment.html"><div class="glyph" data-stage="g04" data-label="An environment picker cycling while a column of screens follows it together."></div><div class="txt"><span class="num">04 · Foundations</span><h3>One environment</h3><p>One picker in the title bar scopes every screen, terminal, agent and @B run.</p></div></a>
+          <a class="chap" href="matrix.html"><div class="glyph" data-stage="g05" data-label="A small dependency graph with a dashed proposed edge and a flickering conflict edge."></div><div class="txt"><span class="num">05 · Know</span><h3>Matrix</h3><p>Assertions with sources and two clocks. Conflicts stay visible until a person decides.</p></div></a>
+          <a class="chap" href="knowledge.html"><div class="glyph" data-stage="g06" data-label="Lines of an answer with numbered citations leading to source cards."></div><div class="txt"><span class="num">06 · Know</span><h3>Answers with sources</h3><p>Answers only from pages you can open, drifted docs flagged, and the context a model would see.</p></div></a>
+          <a class="chap" href="codex.html"><div class="glyph" data-stage="g07" data-label="An editor with added lines and a terminal tab labelled dev."></div><div class="txt"><span class="num">07 · Build and run</span><h3>Code in Dev</h3><p>CodeX workspaces bound to Dev, terminals that carry their environment, reviews with context.</p></div></a>
+          <a class="chap" href="pipelines.html"><div class="glyph" data-stage="g08" data-label="A nine-stage build track failing at contract tests, then passing."></div><div class="txt"><span class="num">08 · Build and run</span><h3>Builds that explain themselves</h3><p>Build #418, Ratchet's diagnosis, and the pod that kept restarting.</p></div></a>
+          <a class="chap" href="allspark.html"><div class="glyph" data-stage="g09" data-label="Three model columns streaming output side by side."></div><div class="txt"><span class="num">09 · AI engineering</span><h3>AllSpark</h3><p>Versioned prompts, an approved model catalog, agents with a human step, and gated tools.</p></div></a>
+          <a class="chap" href="evals.html"><div class="glyph" data-stage="g10" data-label="Eight case cells flipping as a threshold marker slides."></div><div class="txt"><span class="num">10 · Prove and ship</span><h3>Evals</h3><p>Eight cases bound to one fingerprint, and datasets that grow from Dev traces.</p></div></a>
+          <a class="chap" href="release.html"><div class="glyph" data-stage="g11" data-label="A sealed bundle with four gate lamps and two signature seals."></div><div class="txt"><span class="num">11 · Prove and ship</span><h3>The sealed bundle</h3><p>Four gates, one fingerprint, two signatures, and nothing rebuilt on promotion.</p></div></a>
+          <a class="chap" href="sentinel.html"><div class="glyph" data-stage="g12" data-label="A request passing a row of policy gates, stopped at the last one."></div><div class="txt"><span class="num">12 · Prove and ship</span><h3>Sentinel</h3><p>Seven policies, who can do what, and where every rule is checked.</p></div></a>
+          <a class="chap" href="observe.html"><div class="glyph" data-stage="g13" data-label="A trace waterfall of six spans beside a latency line with a deploy marker."></div><div class="txt"><span class="num">13 · Observe and ask</span><h3>Observe and cost</h3><p>Optimus Logger, a six-span AI trace, and spend charged to a team.</p></div></a>
+          <a class="chap" href="bee.html"><div class="glyph" data-stage="g14" data-label="Chat bubbles in a Teams thread with the @B mark and a waiting run card."></div><div class="txt"><span class="num">14 · Observe and ask</span><h3>@B</h3><p>The Teams front door: your own permissions, the context shown, every write waits for a person.</p></div></a>
+          <a class="chap" href="interface.html"><div class="glyph" data-stage="g15" data-label="A window wireframe with title bar, environment strip, sidebar and cards."></div><div class="txt"><span class="num">15 · Design and road</span><h3>The interface</h3><p>The light Windows shell, all 30 boards, and six homepage directions.</p></div></a>
+          <a class="chap" href="road.html"><div class="glyph" data-stage="g16" data-label="A track with four milestones and a marker at the first."></div><div class="txt"><span class="num">16 · Design and road</span><h3>The road</h3><p>What is real today, the Phase 1 ask, four decisions and five measures.</p></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="journey">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">The journey of one ticket</span>
+        <h2>Follow COM-2841 through the machine</h2>
+        <p class="lede">The v3 design tells one story across every screen: hold high-risk orders for review before payment, without changing the event eight services consume. Each step links to the chapter that explains it.</p>
+      </header>
+      <div class="scrolly" data-scrolly>
+        <div class="beats">
+          <div class="beat"><div class="card"><span class="k">1 · Plan · Oct 6</span><h4>A ticket in Jira</h4><p>Maya Chen, the Commerce application owner, creates COM-2841 and links the Fraud Risk API guide in Confluence. The ask: score each order before payment, hold risky ones for review, and leave <code>order.confirmed.v2</code> alone.</p><p class="go"><a href="problem.html">01 The scattered answer →</a> <a href="knowledge.html">06 Answers with sources →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">2 · Understand · Oct 7</span><h4>Matrix maps the blast radius</h4><p>Two callers, eight dependents, and the new fraud call drawn dashed because it is only proposed. One edge conflicts: Git says loyalty-consumer reads the topic, Kafka hasn't seen it for 48 hours.</p><p class="go"><a href="matrix.html">05 Matrix →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">3 · Code · 09:58</span><h4>A workspace in Dev</h4><p>Venkatesh opens CodeX workspace ws-vt-01 on <code>feature/fraud-review</code>. It runs beside <code>nsx-dev-use1</code> and sees Dev's services, flags and secrets, because the window is set to Dev.</p><p class="go"><a href="environment.html">04 One environment →</a> <a href="codex.html">07 Code in Dev →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">4 · Review · 10:12</span><h4>@B blocks one line</h4><p>PR #214 opens in Bitbucket. @B's review flags that the change adds a field to an event whose schema forbids extra properties, read by eight consumers.</p><p class="go"><a href="codex.html">07 Code in Dev →</a> <a href="bee.html">14 @B →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">5 · Build · 10:31 → 10:48</span><h4>#418 fails, Ratchet explains</h4><p>Jenkins build #418 fails at contract tests. Ratchet reads the log, the commit and the schema, names commit a41c9e2, and proposes keeping <code>riskDecision</code> internal. Venkatesh approves fix 5c0d7e1.</p><p class="go"><a href="pipelines.html">08 Builds that explain themselves →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">6 · Evaluate · 11:04 → 11:09</span><h4>#419 passes, evals 8 of 8</h4><p>Build #419 passes all nine stages. Evals runs eight cases on configuration cfg-7f3a9c and all pass. At 11:09 order-service 2.14.0-rc2 is running in Dev on two healthy pods.</p><p class="go"><a href="allspark.html">09 AllSpark →</a> <a href="evals.html">10 Evals →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">7 · Promote · 15:12 → 15:14</span><h4>One bundle, two signatures</h4><p>GroundBridge seals the release and requests promotion to QA. Four gates pass on the same configuration. Maya Chen approves at 15:14; Lena Fischer of Application Security has not signed yet.</p><p class="go"><a href="release.html">11 The sealed bundle →</a> <a href="sentinel.html">12 Sentinel →</a></p></div></div>
+          <div class="beat"><div class="card"><span class="k">8 · Meanwhile · 14:31</span><h4>A question in Teams</h4><p>Arjun asks @B why loyalty-consumer keeps restarting in Dev. @B answers with his permissions and shows its context: Dev pins an old version that reads a retired topic. The redeploy becomes run R-2207 and waits for Sam Patel.</p><p class="go"><a href="observe.html">13 Observe and cost →</a> <a href="bee.html">14 @B →</a></p></div></div>
+        </div>
+        <div class="stick"><div class="board" data-stage="journey" data-label="The whole machine with the parts used at the current step highlighted and the ticket moving through them."><span class="ruler">COM-2841</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="trail">
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">Everything designed so far</span>
+        <h2>The design trail</h2>
+        <p class="lede">Nine stops from a naming chat to this guide. The two dark attempts were rejected; every later piece is light, and since v3 every screen sits in one environment.</p>
+      </header>
+      <div class="trail">
+        <div class="stop"><div><span class="when">October 5</span><h4>Naming</h4><p>The team's Transformers theme becomes a hierarchy: Project Cybertron for the initiative, Vector Sigma for the platform, and @B, "bee as in Bumblebee", for the Teams assistant. Optimus Logger and the team name Wheeljack already existed.</p><div class="links"><a class="tag" href="names.html">Chapter 02</a></div></div><div class="thumb doc" aria-hidden="true"><b>Cybertron → Vector Sigma → @B</b><i style="width:90%"></i><i style="width:70%"></i><i style="width:80%"></i></div></div>
+        <div class="stop"><div><span class="when">October 13</span><h4>The Atlas handbook</h4><p>Seventeen chapters and a reference that document the working React prototype: 22 views, a synthetic estate of 960 repositories, and the exact logic behind every gate, run and evaluation.</p><div class="links"><span class="tag">your handbook folder</span><a class="tag" href="road.html">Chapter 16</a></div></div><div class="thumb doc" aria-hidden="true"><b>Atlas handbook</b><i style="width:85%"></i><i style="width:95%"></i><i style="width:60%"></i><i style="width:75%"></i></div></div>
+        <div class="stop"><div><span class="when">October 13</span><h4>Seven concept films</h4><p>About ten minutes of motion graphics on a dark cinema stage with light product windows, from "The Scattered Answer" to "The Road to Cybertron", with an interactive player and a release-gate lab.</p><div class="links"><a class="tag" href="https://claude.ai/artifact/W4XMFpXyBPrftXBEah4xzQ" target="_blank" rel="noopener">Vector Sigma Films ↗</a></div></div><div class="thumb film" aria-hidden="true">7 films<small>≈ 10 min · Vector Sigma</small></div></div>
+        <div class="stop rejected"><div><span class="when">October 13 · rejected</span><h4>Two dark attempts</h4><p>A dark concept poster was rejected because it was not an actual Windows application. Realistic Windows windows on a dark theme were rejected next: the direction became light, clean and Apple-like, with no black backgrounds or unusual colours.</p></div><div class="thumb doc" aria-hidden="true" style="background:#2B2F3A"><b style="color:#B9BFCC">dark · rejected</b></div></div>
+        <div class="stop"><div><span class="when">October 13</span><h4>28 light screens</h4><p>The first full screen set: every view from the handbook plus Jira, a Teams calendar, EKS, Bitbucket, Confluence, Jenkins with a pipeline agent, and @B. Some screens still let you choose environments per screen; the pipeline track ran from Dev through Stage to Prod.</p><div class="links"><a class="tag" href="https://claude.ai/artifact/NRLPGKxJitwREe5uWRv91m" target="_blank" rel="noopener">Vector UI Concepts ↗</a><button type="button" class="tag" data-lightbox="screens/v2/Main.webp" data-title="Home in the 28-screen set">see its home screen</button></div></div><div class="thumb" data-lightbox="screens/v2/Pipelines.webp" data-title="Pipelines in the 28-screen set: the stage track spans Dev, Stage and Prod" style="cursor:zoom-in"><img src="screens/v2/Pipelines.webp" alt="Pipelines screen from the 28-screen set, with stages for Dev, Stage and Prod" loading="lazy"></div></div>
+        <div class="stop"><div><span class="when">October 13–14</span><h4>v3: one shell, one environment</h4><p>Every screen rebuilt on one identical shell and scoped to Dev, with QA appearing only as a promotion target. Two diagrams join them: the open environment picker and the environment flow. 30 boards in six rows.</p><div class="links"><a class="tag" href="https://claude.ai/artifact/JgpnECp8Z5d9qT6WiPetss" target="_blank" rel="noopener">Vector UI Concepts v3 ↗</a><a class="tag" href="interface.html">Chapter 15</a></div></div><div class="thumb" data-lightbox="screens/v3/Main.webp" data-title="Home in the v3 set" style="cursor:zoom-in"><img src="screens/v3/Main.webp" alt="Home screen from the v3 set" loading="lazy"></div></div>
+        <div class="stop"><div><span class="when">October 16</span><h4>Six homepage directions</h4><p>Ask, Mission control, Threads, Glance, Flow and Map: six full-fidelity homepages that fuse work across tools, built to choose a direction before redesigning the rest of the suite. None is chosen yet.</p><div class="links"><a class="tag" href="https://claude.ai/artifact/5a8FHYBwSo3jKArRVm12Qd" target="_blank" rel="noopener">Homepage directions ↗</a><a class="tag" href="interface.html#lab">Compare them</a></div></div><div class="thumb" data-lightbox="screens/home/C-Threads.webp" data-title="Homepage direction C · Threads" style="cursor:zoom-in"><img src="screens/home/C-Threads.webp" alt="Homepage direction C, Threads" loading="lazy"></div></div>
+        <div class="stop"><div><span class="when">October 20</span><h4>Vector, annotated · the film</h4><p>A narrated explainer of about four and a half minutes for the v3 concept, in eleven chapters: the environment model, COM-2841 from Jira to a gated promotion, @B, the five planes and the Phase 1 ask.</p><div class="links"><a class="tag" href="https://claude.ai/artifact/DYbVij5ToofZytuzRHJci4" target="_blank" rel="noopener">Watch the film ↗</a></div></div><div class="thumb film" aria-hidden="true">Vector, annotated<small>4 min 33 s · 11 chapters</small></div></div>
+        <div class="stop current"><div><span class="when">October 21</span><h4>This field guide</h4><p>Everything above, taken apart chapter by chapter in the format of the DeepInfer field guide.</p><div class="links"><a class="tag" href="problem.html">Start reading</a></div></div><div class="thumb"><img src="screens/v3/EnvFlow.webp" alt="The v3 environment flow board" loading="lazy"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hub-close">
+    <div class="wrap">
+      <div class="facts">
+        <div><b>30</b><span>v3 boards: 28 screens and 2 environment diagrams</span></div>
+        <div><b>6</b><span>homepage directions, none chosen yet</span></div>
+        <div><b>5</b><span>planes under every screen</span></div>
+        <div><b>66</b><span>integrations in Bridge's catalog, 8 categories</span></div>
+        <div><b>1</b><span>environment per window, one ticket's story across all of them</span></div>
+      </div>
+      <p class="note">Built from the Vector UI Concepts v3 and homepage-direction canvases, the Atlas handbook, and the project's notes and film scripts. Screens are rendered from the design files. Names follow the October 13 decisions: Vector, CodeX, Bridge, Compute and Evals.</p>
+      <a class="start" href="problem.html">Start with chapter 01 →</a>
+    </div>
+  </section>
+</main>
+<script src="field.js"></script>
+<script>
+(function () {
+  const { ramp, ease, clamp, lerp, rng } = Field;
+
+  /* ================= the whole machine ================= */
+  const PLANES = [
+    { key: "exp", name: "Experience", note: "where people work", chips: ["Home", "Threads", "Reviews", "CodeX", "@B in Teams"] },
+    { key: "ctl", name: "Control", note: "what may happen", chips: ["Sentinel · policy", "Approvals", "GroundBridge · gates", "Model routing"] },
+    { key: "exe", name: "Execution", note: "runs the work", chips: ["Compute · workspaces", "Agent runtime", "Tool sandbox", "AllSpark", "Pipeline handoff"] },
+    { key: "kno", name: "Knowledge", note: "what is true, with sources", chips: ["Matrix · graph", "Knowledge index", "Retrieval", "Vault · artifacts", "Repositories"] },
+    { key: "tel", name: "Telemetry and cost", note: "what happened, what it cost", chips: ["Optimus Logger", "Traces", "Evals", "Datasets", "Cost"] },
+  ];
+  const TOOLS_L = ["Jira", "Bitbucket", "Jenkins", "Amazon EKS", "Confluence", "Teams"];
+  const TOOLS_R = ["Bedrock", "Azure OpenAI", "Kafka", "LaunchDarkly", "HashiCorp Vault", "ServiceNow", "+54 more"];
+  const RAIL = ["environment", "identity", "classification", "audit", "budgets", "lineage"];
+  const CHIP_MARK = { "CodeX": "07", "@B in Teams": "14", "Sentinel · policy": "12", "GroundBridge · gates": "11", "AllSpark": "09", "Pipeline handoff": "08", "Matrix · graph": "05", "Knowledge index": "06", "Evals": "10", "Optimus Logger": "13" };
+
+  function layout(g) {
+    const { W, H } = g;
+    const tall = H > W * 0.95;
+    const top = Math.max(g.safeTop + 10, 40);
+    let win, toolsL = [], toolsR = [];
+    if (!tall) {
+      const side = Math.max(150, W * 0.13);
+      win = { x: side + 34, y: top, w: W - 2 * (side + 34), h: H - top - 56 };
+      const ch = 30, gl = (win.h - 60) / TOOLS_L.length, gr = (win.h - 60) / TOOLS_R.length;
+      TOOLS_L.forEach((t, i) => toolsL.push({ t, x: 22, y: win.y + 60 + i * gl + gl / 2 - ch / 2, w: side, h: ch }));
+      TOOLS_R.forEach((t, i) => toolsR.push({ t, x: W - 22 - side, y: win.y + 60 + i * gr + gr / 2 - ch / 2, w: side, h: ch }));
+    } else {
+      win = { x: 18, y: top, w: W - 36, h: H * 0.7 };
+      const all = TOOLS_L.concat(TOOLS_R), cols = 3, cw = (W - 36 - 2 * 10) / cols, ch = 28;
+      all.forEach((t, i) => { const r = Math.floor(i / cols), q = i % cols; (i < TOOLS_L.length ? toolsL : toolsR).push({ t, x: 18 + q * (cw + 10), y: win.y + win.h + 34 + r * (ch + 10), w: cw, h: ch }); });
+    }
+    const bar = 36, strip = 22, railW = tall ? 0 : 92;
+    const by = win.y + bar + strip + 10, bh = (win.y + win.h - 12 - by) / 5;
+    const bands = PLANES.map((p, i) => ({ ...p, x: win.x + 12, y: by + i * bh, w: win.w - 24 - railW - (railW ? 10 : 0), h: bh - 8 }));
+    const rail = railW ? { x: win.x + win.w - 12 - railW, y: by, w: railW, h: 5 * bh - 8 } : null;
+    return { tall, win, bar, strip, bands, rail, toolsL, toolsR };
+  }
+
+  function drawMachine(g, s, F) {
+    const { W, H } = g;
+    const L = layout(g), { win, bands, tall } = L, t = s.t;
+    const dim = (on) => (!F ? 1 : on ? 1 : 0.2);
+    const chipOn = (c) => !F || (F.chips || []).includes(c);
+    const toolOn = (tname) => !F || (F.tools || []).includes(tname);
+    const marks = {};
+    // connectors from tools to the window
+    [...L.toolsL, ...L.toolsR].forEach((T, i) => {
+      const left = L.toolsL.includes(T);
+      const on = toolOn(T.t), a = dim(on) * 0.9;
+      let p0, p2;
+      if (!tall) { p0 = left ? [T.x + T.w, T.y + T.h / 2] : [T.x, T.y + T.h / 2]; p2 = left ? [win.x - 2, T.y + T.h / 2] : [win.x + win.w + 2, T.y + T.h / 2]; }
+      else { p0 = [T.x + T.w / 2, T.y]; p2 = [T.x + T.w / 2, win.y + win.h + 2]; }
+      g.line(p0[0], p0[1], p2[0], p2[1], { color: "hair", lw: 1.4, a, dash: [3, 4] });
+      const u = (t * 0.35 + i * 0.17) % 1;
+      if (!F || on) g.circle(lerp(p0[0], p2[0], u), lerp(p0[1], p2[1], u), 3, { fill: "exp", a: a * Math.sin(Math.PI * u) });
+      g.rect(T.x, T.y, T.w, T.h, { fill: "card", stroke: on && F ? "exp" : "hair", lw: on && F ? 1.8 : 1.2, r: 7, a: Math.max(0.35, dim(on)) });
+      g.text(T.t, T.x + 10, T.y + T.h / 2 + 4.5, { size: 12, font: "ui", weight: 600, color: T.t.startsWith("+") ? "ink-3" : "ink", a: Math.max(0.35, dim(on)), maxW: T.w - 16 });
+    });
+    const bridgeLabelY = tall ? win.y + win.h + 22 : win.y + 30;
+    g.text("BRIDGE · 66 connectors", tall ? 18 : 22, bridgeLabelY, { size: 11, color: "ink-3", ls: 1, a: dim(!F || F.bridge) });
+    marks["01"] = tall ? [W - 30, bridgeLabelY - 4] : [L.toolsL[0].x + L.toolsL[0].w - 4, L.toolsL[0].y - 2];
+    // the window
+    g.rect(win.x + 3, win.y + 5, win.w, win.h, { fill: "ink", r: 12, a: 0.05 });
+    g.rect(win.x, win.y, win.w, win.h, { fill: "card", stroke: "hair", lw: 1.3, r: 12 });
+    g.rect(win.x + 1, win.y + 1, win.w - 2, L.bar, { fill: "#F2F2F5", r: 11 });
+    g.rect(win.x + 1, win.y + L.bar - 10, win.w - 2, 10, { fill: "#F2F2F5" });
+    g.line(win.x, win.y + L.bar, win.x + win.w, win.y + L.bar, { color: "hair", lw: 1 });
+    g.rect(win.x + 12, win.y + L.bar / 2 - 8, 16, 16, { fill: "ink", r: 4.5 });
+    g.poly([[win.x + 15.6, win.y + L.bar / 2 - 3], [win.x + 20, win.y + L.bar / 2 + 4], [win.x + 24.4, win.y + L.bar / 2 - 3]], { color: "#FFFFFF", lw: 1.6 });
+    g.text("Vector", win.x + 36, win.y + L.bar / 2 + 5, { size: 14, font: "ui", weight: 700 });
+    marks["02"] = [win.x + 36 + g.tw("Vector", 14, "ui", 700) + 16, win.y + L.bar / 2];
+    // search
+    if (!tall && win.w > 560) {
+      const sw = Math.min(300, win.w * 0.36), sx = win.x + win.w / 2 - sw / 2;
+      g.rect(sx, win.y + L.bar / 2 - 11, sw, 22, { fill: "#E4E4E9", r: 6 });
+      g.text("Search or ask @B", sx + 12, win.y + L.bar / 2 + 4, { size: 11.5, font: "ui", color: "ink-3" });
+    }
+    // environment picker
+    const pk = "Dev us-east-1", pw = g.tw(pk, 12, "ui", 600) + 30, px = win.x + win.w - 16 - pw, py = win.y + L.bar / 2;
+    const pOn = !F || F.picker;
+    g.rect(px, py - 11, pw, 22, { fill: "#F4F8FE", stroke: pOn && F ? "exp" : "#B9D3F5", lw: pOn && F ? 2 : 1.2, r: 11, a: dim(pOn) });
+    g.circle(px + 11, py, 3.4, { fill: "exp", a: dim(pOn) });
+    g.text(pk, px + 19, py + 4.2, { size: 12, font: "ui", weight: 600, color: "#0058B0", a: dim(pOn) });
+    marks["04"] = [px - 16, py];
+    // env strip
+    const sy = win.y + L.bar;
+    g.rect(win.x + 1, sy, win.w - 2, L.strip, { fill: "#F4F8FE", a: dim(pOn) });
+    const stripTxt = tall ? "DEV · northstar-dev · nsx-dev-use1" : "DEV · northstar-dev · nsx-dev-use1 / commerce · commerce/dev · msk-dev-use1";
+    g.text(stripTxt, win.x + 14, sy + 15, { size: 10.5, color: "#0058B0", a: dim(pOn), maxW: win.w - 30 });
+    // plane bands
+    bands.forEach((B, bi) => {
+      const on = !F || (F.planes || []).includes(B.key);
+      const a = dim(on);
+      g.rect(B.x, B.y, B.w, B.h, { fill: g.rgba(B.key, 0.07), stroke: B.key, lw: 1.3, r: 9, a: Math.max(0.3, a) });
+      const lw = tall ? 0 : Math.min(W < 1000 ? 112 : 150, B.w * 0.19);
+      if (!tall) {
+        g.text(B.name, B.x + 12, B.y + B.h / 2 - 1, { size: 15, font: "display", weight: 800, color: B.key, a: Math.max(0.3, a), maxW: lw - 16 });
+        g.text(B.note, B.x + 12, B.y + B.h / 2 + 15, { size: 10, color: "ink-3", a: Math.max(0.3, a), maxW: lw - 16 });
+      } else {
+        g.text(B.name, B.x + 10, B.y + 15, { size: 12.5, font: "display", weight: 800, color: B.key, a: Math.max(0.3, a) });
+      }
+      // chips: shrink the type until the plane's chips fit on one row
+      const startX = B.x + (tall ? 10 : lw + 6), cy = tall ? B.y + B.h * 0.66 : B.y + B.h / 2 + (F ? 0 : 6), maxX = B.x + B.w - 8;
+      let fs = tall ? 10.5 : 12;
+      const widthAt = (f) => B.chips.reduce((acc, c) => acc + g.tw(c, f, "ui", 600) + 16 + (c === "@B in Teams" ? 14 : 0) + 8, 0);
+      while (fs > 8 && startX + widthAt(fs) > maxX) fs -= 0.5;
+      let cx = startX;
+      B.chips.forEach((c) => {
+        const isBee = c === "@B in Teams";
+        const w = g.tw(c, fs, "ui", 600) + 16 + (isBee ? 14 : 0);
+        if (cx + w > maxX) return;
+        const con = chipOn(c) && on;
+        g.rect(cx, cy - 11, w, 22, { fill: "card", stroke: con && F ? B.key : "hair", lw: con && F ? 2 : 1, r: 6, a: Math.max(0.3, dim(con)) });
+        if (isBee) g.bee(cx + 11, cy, 13, { a: Math.max(0.3, dim(con)) });
+        g.text(c, cx + 8 + (isBee ? 14 : 0), cy + fs * 0.36, { size: fs, font: "ui", weight: 600, a: Math.max(0.3, dim(con)) });
+        if (CHIP_MARK[c]) marks[CHIP_MARK[c]] = [cx + w / 2, cy - 11 - 13];
+        cx += w + 8;
+      });
+      if (bi === 0) marks["03"] = tall ? [B.x + B.w - 14, B.y + 12] : [B.x + 8, B.y + 4];
+    });
+    // cross-cutting rail
+    if (L.rail) {
+      const R = L.rail, a = dim(!F || F.rail);
+      g.rect(R.x, R.y, R.w, R.h, { fill: "sheet", stroke: "ink-3", lw: 1.1, r: 9, dash: [4, 4], a: Math.max(0.3, a) });
+      g.text("ACROSS ALL", R.x + R.w / 2, R.y + 18, { size: 9.5, color: "ink-3", align: "center", ls: 1, a: Math.max(0.3, a) });
+      RAIL.forEach((r, i) => g.text(r, R.x + R.w / 2, R.y + 42 + i * ((R.h - 54) / 6), { size: 10.5, color: "ink-2", align: "center", a: Math.max(0.3, a), maxW: R.w - 8 }));
+    }
+    // interface + road markers
+    marks["15"] = [win.x + 4, win.y + win.h - 4];
+    if (!tall) {
+      const ry = win.y + win.h + 30, rx0 = win.x + win.w - 260, rx1 = win.x + win.w - 10;
+      g.line(rx0, ry, rx1, ry, { color: "hair", lw: 3 });
+      ["0", "1", "2", "3"].forEach((p, i) => { const x = lerp(rx0, rx1, i / 3); g.circle(x, ry, 6, { fill: i === 0 ? "ink" : "card", stroke: i === 1 ? "exp" : "ink-3", lw: 1.6 }); g.text("Phase " + p, x, ry - 12, { size: 9.5, color: i === 1 ? "exp" : "ink-3", align: "center" }); });
+      g.text("the road", rx0 - 14, ry + 4, { size: 11, color: "ink-3", align: "right" });
+      marks["16"] = [rx0 - 86, ry];
+    } else marks["16"] = [W - 30, H - 22];
+    return { L, marks };
+  }
+  function drawMarks(g, s, marks, F) {
+    Object.keys(marks).sort().forEach((k, idx) => {
+      const show = !F || (F.marks || []).includes(k);
+      if (!show) return;
+      const [x, y] = marks[k];
+      const pulse = !F ? 0.5 + 0.5 * Math.max(0, Math.sin(s.t * 1.3 - idx * 0.42)) : 1;
+      g.circle(x, y, 11, { fill: "card", stroke: "ink", lw: 1.6 });
+      if (!F) g.circle(x, y, 11 + 6 * pulse, { stroke: "exp", lw: 1.2, a: (1 - pulse) * 0.6 });
+      g.text(k, x, y + 3.8, { size: 9.5, color: "ink", align: "center", weight: 700 });
+    });
+  }
+  // a packet that walks down the planes: the ambient story
+  function storyPacket(g, s, L) {
+    const order = [0, 1, 2, 3, 4], per = 1.4, cyc = (s.t / per) % order.length, i = Math.floor(cyc), u = ease(cyc - i);
+    const B0 = L.bands[order[i]], B1 = L.bands[order[(i + 1) % order.length]];
+    const x = B0.x + B0.w * 0.92, y0 = B0.y + B0.h / 2, y1 = B1.y + B1.h / 2;
+    if (i === order.length - 1) return;
+    g.circle(x, lerp(y0, y1, u), 6, { fill: B0.key, stroke: "card", lw: 2 });
+  }
+
+  Field.scene("system", (g, s) => { const { L, marks } = drawMachine(g, s, null); storyPacket(g, s, L); drawMarks(g, s, marks, null); }, { anim: true, restT: 3, zoom: 1.1, minW: 640, maxW: 1240 });
+
+  const BEATS = [
+    { planes: ["exp", "kno"], chips: ["Home", "Threads", "Knowledge index"], tools: ["Jira", "Confluence"], marks: ["01", "06"], bridge: true, at: [0, 0] },
+    { planes: ["kno"], chips: ["Matrix · graph", "Repositories"], tools: ["Kafka", "Bitbucket"], marks: ["05"], at: [3, 0] },
+    { planes: ["exp", "exe"], chips: ["CodeX", "Compute · workspaces"], tools: ["Bitbucket", "Amazon EKS"], marks: ["04", "07"], picker: true, at: [0, 3] },
+    { planes: ["exp"], chips: ["Reviews", "@B in Teams"], tools: ["Bitbucket"], marks: ["07", "14"], at: [0, 2] },
+    { planes: ["exe"], chips: ["Pipeline handoff", "Agent runtime"], tools: ["Jenkins"], marks: ["08"], at: [2, 4] },
+    { planes: ["exe", "tel"], chips: ["AllSpark", "Evals", "Datasets"], tools: ["Jenkins", "Amazon EKS", "Bedrock"], marks: ["09", "10"], at: [4, 2] },
+    { planes: ["ctl", "kno"], chips: ["GroundBridge · gates", "Approvals", "Sentinel · policy", "Vault · artifacts"], tools: ["Teams"], marks: ["11", "12"], at: [1, 2] },
+    { planes: ["exp", "tel"], chips: ["@B in Teams", "Optimus Logger", "Traces"], tools: ["Teams", "Amazon EKS", "Kafka"], marks: ["13", "14"], at: [0, 4] },
+  ];
+  const STEP = ["Plan", "Understand", "Code", "Review", "Build", "Evaluate", "Promote", "Meanwhile"];
+  Field.scene("journey", (g, s) => {
+    const i = clamp(Math.round(s.b), 0, BEATS.length - 1), F = BEATS[i];
+    const { L, marks } = drawMachine(g, s, F);
+    drawMarks(g, s, marks, F);
+    // the ticket token sits on the first focused plane
+    const B = L.bands.find((b) => b.key === F.planes[0]);
+    const x = B.x + B.w - 70, y = B.y + 6;
+    const lbl = "COM-2841 · " + STEP[i];
+    const w = g.tw(lbl, 11, "mono", 600) + 18;
+    g.rect(x - w + 50, y - 14, w, 22, { fill: "ink", r: 6 });
+    g.text(lbl, x - w + 50 + 9, y + 1.5, { size: 11, weight: 600, color: "#FFFFFF" });
+  }, { anim: true, restT: 2.4, zoom: 1.2, minW: 640, maxW: 1100 });
+
+  /* ================= chapter glyphs ================= */
+  const G = { anim: true, restT: 2, zoom: 1.15, minW: 300, maxW: 460 };
+  Field.scene("g01", (g, s) => {
+    const { W, H } = g, names = ["Jira", "Bitbucket", "Jenkins", "EKS", "Confluence", "Teams"];
+    const cx = W * 0.72, cy = H * 0.5;
+    names.forEach((n, i) => {
+      const r = Math.floor(i / 2), q = i % 2, x = 20 + q * (W * 0.24), y = 18 + r * ((H - 36) / 3);
+      g.rect(x, y, W * 0.22, (H - 36) / 3 - 10, { fill: "card", stroke: "hair", lw: 1.2, r: 6 });
+      g.text(n, x + 8, y + 17, { size: 11.5, font: "ui", weight: 600, maxW: W * 0.2 - 8 });
+      const u = (s.t * 0.45 + i / 6) % 1, sx = x + W * 0.22, sy = y + ((H - 36) / 3 - 10) / 2;
+      g.circle(lerp(sx, cx - 50, u), lerp(sy, cy, u), 3.5, { fill: "exp", a: Math.sin(Math.PI * u) });
+    });
+    g.rect(cx - 50, cy - 40, 110, 80, { fill: "card", stroke: "exp", lw: 1.8, r: 8 });
+    g.text("one answer", cx + 5, cy - 16, { size: 11.5, weight: 600, color: "exp", align: "center" });
+    [0, 1, 2].forEach((k) => g.rect(cx - 38, cy - 2 + k * 11, 86 - k * 16, 5, { fill: "grid", r: 2 }));
+    ["1", "2", "3"].forEach((k, j) => g.circle(cx - 30 + j * 20, cy + 32, 6, { fill: "kno", a: 0.9 }));
+  }, G);
+  Field.scene("g02", (g, s) => {
+    const { W, H } = g;
+    const root = [W / 2, 26], mid = [W / 2, H * 0.42];
+    g.pill(root[0], root[1], "Project Cybertron", { size: 12, align: "center" });
+    g.line(root[0], root[1] + 12, mid[0], mid[1] - 14, { color: "ink-3", lw: 1.4 });
+    g.pill(mid[0], mid[1], "Vector", { size: 15, align: "center", stroke: "exp", color: "exp", lw: 2 });
+    const kids = [["Matrix", "kno"], ["CodeX", "exp"], ["AllSpark", "exe"], ["Sentinel", "ctl"], ["Evals", "tel"], ["@B", "exp"]];
+    const hi = Math.floor(s.t * 0.8) % kids.length;
+    kids.forEach(([n, c], i) => {
+      const r = Math.floor(i / 3), q = i % 3, x = W * (0.2 + q * 0.3), y = H * 0.66 + r * 30;
+      if (r === 0) g.line(mid[0], mid[1] + 14, x, y - 12, { color: "hair", lw: 1.2 });
+      g.pill(x, y, n, { size: 10.5, align: "center", stroke: i === hi ? c : "hair", color: i === hi ? c : "ink", lw: i === hi ? 2 : 1.2 });
+    });
+  }, G);
+  Field.scene("g03", (g, s) => {
+    const { W, H } = g, ks = ["exp", "ctl", "exe", "kno", "tel"], bh = (H - 30) / 5;
+    ks.forEach((k, i) => g.rect(20, 15 + i * bh, W - 40, bh - 6, { fill: g.rgba(k, 0.12), stroke: k, lw: 1.2, r: 6 }));
+    const u = (s.t * 0.4) % 1, y = 15 + u * (5 * bh - 6), x = W * 0.25 + Math.sin(s.t * 1.6) * W * 0.18;
+    g.circle(x, y, 6, { fill: ks[Math.min(4, Math.floor(u * 5))], stroke: "card", lw: 2 });
+    g.line(W - 60, 10, W - 60, H - 10, { color: "ink-3", lw: 1.2, dash: [3, 4] });
+  }, G);
+  Field.scene("g04", (g, s) => {
+    const { W, H } = g, envs = ["Dev", "QA", "Stage", "Prod"], k = Math.floor(s.t / 1.8) % 4, ph = (s.t / 1.8) % 1;
+    const lbl = envs[k] + " us-east-1", w = g.tw(lbl, 13, "ui", 600) + 30;
+    g.rect(W - 20 - w, 14, w, 24, { fill: "#F4F8FE", stroke: "#B9D3F5", lw: 1.2, r: 12 });
+    g.circle(W - 20 - w + 12, 26, 3.5, { fill: "exp" });
+    g.text(lbl, W - 20 - w + 21, 30.5, { size: 13, font: "ui", weight: 600, color: "#0058B0" });
+    for (let i = 0; i < 8; i++) {
+      const r = Math.floor(i / 4), q = i % 4, x = 20 + q * ((W - 40) / 4), y = 52 + r * ((H - 64) / 2), w2 = (W - 40) / 4 - 8, h2 = (H - 64) / 2 - 8;
+      const a = ph < 0.15 ? 0.25 : 1;
+      g.rect(x, y, w2, h2, { fill: "card", stroke: "hair", lw: 1, r: 5 });
+      g.chip(x + w2 - 4, y + h2 - 12, envs[k].toUpperCase(), "exp", { size: 9, align: "right", a });
+      g.rect(x + 6, y + 8, w2 * 0.6, 4, { fill: "grid", r: 2, a });
+    }
+  }, G);
+  Field.scene("g05", (g, s) => {
+    const { W, H } = g, N = { a: [40, H * 0.3], b: [40, H * 0.72], o: [W * 0.4, H * 0.5], c: [W * 0.72, H * 0.2], e: [W * 0.72, H * 0.52], l: [W - 40, H * 0.82], f: [W * 0.62, H - 22] };
+    const E = [["a", "o"], ["b", "o"], ["o", "c"], ["o", "e"], ["e", "l", "conf"], ["o", "f", "prop"]];
+    E.forEach(([p, q, k]) => g.line(N[p][0], N[p][1], N[q][0], N[q][1], { color: k === "conf" ? (Math.sin(s.t * 3) > 0 ? "bad" : "ok") : k === "prop" ? "ink-3" : "kno", lw: 1.6, dash: k ? [5, 4] : null }));
+    Object.entries(N).forEach(([k, [x, y]]) => g.circle(x, y, k === "o" ? 11 : 7, { fill: k === "o" ? "kno" : "card", stroke: k === "f" ? "ink-3" : "kno", lw: 1.6, dash: k === "f" ? [3, 3] : null }));
+  }, G);
+  Field.scene("g06", (g, s) => {
+    const { W, H } = g, n = 4;
+    for (let i = 0; i < n; i++) { g.rect(20, 22 + i * 24, W * 0.5 - (i % 2) * 30, 7, { fill: "grid", r: 3 }); g.circle(W * 0.5 - (i % 2) * 30 + 30, 25 + i * 24, 7, { fill: "kno" }); g.text(String(i + 1), W * 0.5 - (i % 2) * 30 + 30, 29 + i * 24, { size: 9.5, color: "#FFFFFF", align: "center", weight: 700 }); }
+    const hi = Math.floor(s.t) % n;
+    for (let i = 0; i < n; i++) { const y = 18 + i * ((H - 30) / n); g.rect(W * 0.68, y, W * 0.28, (H - 30) / n - 8, { fill: "card", stroke: i === hi ? "kno" : "hair", lw: i === hi ? 1.8 : 1, r: 5 }); g.rect(W * 0.68 + 8, y + 8, W * 0.16, 4, { fill: "grid", r: 2 }); }
+    g.line(W * 0.5 - (hi % 2) * 30 + 38, 25 + hi * 24, W * 0.68, 18 + hi * ((H - 30) / n) + 10, { color: "kno", lw: 1.2 });
+    g.text("disagrees", W * 0.82, H - 6, { size: 9.5, color: "bad", align: "center" });
+  }, G);
+  Field.scene("g07", (g, s) => {
+    const { W, H } = g;
+    g.rect(20, 14, W - 40, H * 0.62, { fill: "card", stroke: "hair", lw: 1, r: 6 });
+    for (let i = 0; i < 7; i++) { const add = i >= 3 && i <= 5; if (add) g.rect(21, 22 + i * 13, W - 42, 12, { fill: g.rgba("ok", 0.12) }); g.rect(36, 26 + i * 13, (W - 90) * (0.4 + ((i * 3) % 5) / 9), 4, { fill: add ? "ok" : "grid", r: 2 }); }
+    const ty = H * 0.62 + 22;
+    g.rect(20, ty, W - 40, H - ty - 12, { fill: "card", stroke: "hair", lw: 1, r: 6 });
+    g.chip(30, ty + 14, "dev", "exp", { size: 10 });
+    g.text("mvn -q verify · 43 tests", 80, ty + 18, { size: 10.5, color: "ink-2" });
+    if (Math.floor(s.t * 2) % 2) g.rect(W - 40, ty + 10, 6, 12, { fill: "ink" });
+  }, G);
+  Field.scene("g08", (g, s) => {
+    const { W, H } = g, n = 9, x0 = 22, x1 = W - 22, y1 = H * 0.36, y2 = H * 0.72, ph = (s.t * 0.25) % 1;
+    for (let i = 0; i < n; i++) {
+      const x = lerp(x0, x1, i / (n - 1));
+      const st418 = i < 4 ? "ok" : i === 4 ? "bad" : "skip";
+      g.circle(x, y1, 8, { fill: st418 === "ok" ? "ok" : st418 === "bad" ? "bad" : "card", stroke: st418 === "skip" ? "hair" : null, lw: 1.2 });
+      const on = ph > 0.3 && i <= Math.floor((ph - 0.3) / 0.7 * n);
+      g.circle(x, y2, 8, { fill: on ? "ok" : "card", stroke: on ? null : "hair", lw: 1.2 });
+    }
+    g.line(x0, y1, lerp(x0, x1, 4 / 8), y1, { color: "ok", lw: 1.4 });
+    g.text("#418", x0, y1 - 16, { size: 10.5, color: "bad", weight: 600 });
+    g.text("#419", x0, y2 - 16, { size: 10.5, color: "ok", weight: 600 });
+  }, G);
+  Field.scene("g09", (g, s) => {
+    const { W, H } = g, cols = [["exe", 8], ["exp", 7], ["ink-3", 6]], cw = (W - 60) / 3;
+    cols.forEach(([c, sc], i) => {
+      const x = 20 + i * (cw + 10);
+      g.rect(x, 14, cw, H - 28, { fill: "card", stroke: i === 0 ? "exe" : "hair", lw: i === 0 ? 1.8 : 1, r: 6 });
+      const n = Math.floor((s.t * 3 + i) % 9);
+      for (let k = 0; k < Math.min(n, 6); k++) g.rect(x + 8, 26 + k * 12, (cw - 16) * (0.5 + ((k * 7 + i) % 5) / 10), 5, { fill: "grid", r: 2 });
+      g.text(sc + "/8", x + cw / 2, H - 22, { size: 12, weight: 600, color: sc === 8 ? "ok" : "ink-3", align: "center" });
+    });
+  }, G);
+  Field.scene("g10", (g, s) => {
+    const { W, H } = g, thr = 0.8 + 0.18 * (0.5 + 0.5 * Math.sin(s.t * 0.9)), guard = Math.sin(s.t * 0.45) > -0.6;
+    const pass = [true, thr <= 0.94, guard, guard, true, thr <= 0.82, true, guard];
+    pass.forEach((p, i) => { const q = i % 4, r = Math.floor(i / 4), cw = (W - 50) / 4; g.rect(20 + q * (cw + 3), 14 + r * 40, cw - 4, 34, { fill: p ? g.rgba("ok", 0.16) : g.rgba("bad", 0.14), stroke: p ? "ok" : "bad", lw: 1.2, r: 5 }); g.text("T0" + (i + 1), 20 + q * (cw + 3) + (cw - 4) / 2, 14 + r * 40 + 22, { size: 11, weight: 600, color: p ? "ok" : "bad", align: "center" }); });
+    const x0 = 22, x1 = W - 22, y = H - 22, sx = (v) => lerp(x0, x1, (v - 0.5) / 0.5);
+    g.line(x0, y, x1, y, { color: "hair", lw: 3 });
+    [0.82, 0.94].forEach((v) => g.line(sx(v), y - 6, sx(v), y + 6, { color: "ink-3", lw: 1.2 }));
+    g.circle(sx(thr), y, 6, { fill: "tel" });
+    g.text("threshold " + thr.toFixed(2), Math.min(W - 60, sx(thr)), y - 12, { size: 10, color: "tel", align: "center" });
+  }, G);
+  Field.scene("g11", (g, s) => {
+    const { W, H } = g, cyc = (s.t % 6) / 6, broken = cyc > 0.7;
+    g.rect(W * 0.2, 22, W * 0.6, H * 0.5, { fill: "card", stroke: broken ? "bad" : "exe", lw: 2, r: 8, dash: broken ? [5, 4] : null });
+    g.text(broken ? "back to Draft" : "cfg-7f3a9c", W / 2, 22 + H * 0.25 + 4, { size: 13, weight: 600, color: broken ? "bad" : "exe", align: "center" });
+    for (let i = 0; i < 4; i++) g.circle(W * 0.3 + i * (W * 0.4 / 3), H * 0.5 + 40, 7, { fill: broken ? "card" : "ok", stroke: broken ? "hair" : null, lw: 1.2 });
+    [["MC", true], ["LF", cyc > 0.4 && !broken]].forEach(([n, ok], j) => { const x = W * 0.42 + j * W * 0.16, y = H - 22; g.circle(x, y, 10, { fill: ok ? "ok" : "card", stroke: ok ? null : "ink-3", lw: 1.2, dash: ok ? null : [3, 3] }); g.text(n, x, y + 3.5, { size: 9, weight: 700, color: ok ? "#FFFFFF" : "ink-3", align: "center" }); });
+  }, G);
+  Field.scene("g12", (g, s) => {
+    const { W, H } = g, n = 5, u = (s.t * 0.35) % 1, y = H / 2;
+    for (let i = 0; i < n; i++) { const x = lerp(40, W - 40, i / (n - 1)); g.rect(x - 5, y - 30, 10, 60, { fill: i === n - 1 ? "ctl" : g.rgba("ctl", 0.3), r: 3 }); }
+    const stop = lerp(40, W - 40, (n - 1) / n) - 8, x = Math.min(lerp(20, W - 20, u), stop);
+    g.circle(x, y, 7, { fill: x >= stop - 0.5 ? "ctl" : "exe" });
+    if (x >= stop - 0.5) g.text("ask a person", W - 40, y + 50, { size: 11, color: "ctl", align: "right", weight: 600 });
+  }, G);
+  Field.scene("g13", (g, s) => {
+    const { W, H } = g, spans = [60, 140, 220, 1280, 90, 50], tot = 1840, x0 = 20, w = W * 0.5;
+    let acc = 0;
+    spans.forEach((d, i) => { g.rect(x0 + (acc / tot) * w, 18 + i * 14, Math.max(3, (d / tot) * w), 9, { fill: i === 3 ? "tel" : g.rgba("tel", 0.45), r: 2 }); acc += d; });
+    const pts = []; for (let i = 0; i <= 20; i++) { const x = W * 0.58 + i * ((W * 0.38) / 20), v = i < 11 ? 0.35 : 0.7; pts.push([x, H - 20 - v * (H - 50) - Math.sin(i + s.t) * 3]); }
+    g.poly(pts, { color: "tel", lw: 2 });
+    g.line(W * 0.58 + 11 * (W * 0.38 / 20), 12, W * 0.58 + 11 * (W * 0.38 / 20), H - 12, { color: "ink-3", lw: 1, dash: [3, 3] });
+    g.text("#419", W * 0.58 + 11 * (W * 0.38 / 20) + 4, 22, { size: 10, color: "ink-3" });
+  }, G);
+  Field.scene("g14", (g, s) => {
+    const { W, H } = g, ph = Math.floor(s.t * 0.6) % 4;
+    g.rect(20, 16, W * 0.62, 22, { fill: "card", stroke: "hair", lw: 1, r: 11 });
+    g.text("why is loyalty-consumer failing?", 30, 31, { size: 10.5, font: "ui", color: "ink", maxW: W * 0.58 });
+    if (ph >= 1) { g.bee(30, 58, 16); g.rect(44, 48, W * 0.64, 22, { fill: "#FFFBE6", stroke: "#F2D24B", lw: 1, r: 8 }); g.text("context used · 4 sources", 52, 63, { size: 10.5, color: "ink-2" }); }
+    if (ph >= 2) { g.rect(44, 80, W * 0.7, 40, { fill: "card", stroke: "ctl", lw: 1.4, r: 8, dash: [5, 4] }); g.text("R-2207 · waiting for approval", 54, 104, { size: 11, color: "ctl", weight: 600 }); }
+  }, G);
+  Field.scene("g15", (g, s) => {
+    const { W, H } = g, c = g.win(16, 12, W - 32, H - 24, { title: "Vector", env: "Dev", bar: 20, tsize: 10.5 });
+    g.rect(c.x, c.y, c.w, 12, { fill: "#F4F8FE" });
+    g.rect(c.x, c.y + 12, c.w * 0.2, c.h - 12, { fill: "#F2F2F5" });
+    for (let i = 0; i < 6; i++) g.rect(c.x + 8, c.y + 22 + i * 12, c.w * 0.12, 4, { fill: i === Math.floor(s.t) % 6 ? "exp" : "grid", r: 2 });
+    for (let i = 0; i < 3; i++) g.rect(c.x + c.w * 0.24 + i * (c.w * 0.25), c.y + 22, c.w * 0.22, c.h * 0.4, { fill: "card", stroke: "hair", lw: 1, r: 5 });
+    g.rect(c.x + c.w * 0.24, c.y + 30 + c.h * 0.4, c.w * 0.72, c.h * 0.36, { fill: "card", stroke: "hair", lw: 1, r: 5 });
+  }, G);
+  Field.scene("g16", (g, s) => {
+    const { W, H } = g, x0 = 58, x1 = W - 58, y = H / 2 + 6;
+    g.line(x0, y, x1, y, { color: "hair", lw: 4 });
+    ["Prototype", "One slice", "Writes", "More domains"].forEach((n, i) => {
+      const x = lerp(x0, x1, i / 3);
+      g.circle(x, y, 9, { fill: i === 0 ? "ink" : "card", stroke: i === 1 ? "exp" : "ink-3", lw: 2, dash: i > 1 ? [3, 3] : null });
+      g.text(String(i), x, y + 4, { size: 10, weight: 700, color: i === 0 ? "#FFFFFF" : i === 1 ? "exp" : "ink-3", align: "center" });
+      g.text(n, x, y + (i % 2 ? -18 : 28), { size: 10.5, color: i === 1 ? "exp" : "ink-2", align: "center" });
+    });
+    const u = 0.5 + 0.5 * Math.sin(s.t * 1.2);
+    g.text("the ask →", lerp(x0, x1, 1 / 3) - 18 - u * 6, y - 40, { size: 11, color: "exp", weight: 600, align: "right" });
+  }, G);
+})();
+</script>
+
+</body></html>
