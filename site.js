@@ -68,7 +68,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b)
 /* 03 story */
 const MOM=[['Thu','home',3],['Thu','ticket',1],['Thu','codex',3],['Thu','jenkins',2],['Thu','rafay',3],['Thu','logs',2],['Thu','failed',1],['Thu','health',1],['Thu','skills',1],
   ['Fri','teams1',2],['Fri','teams1',4],['Fri','promote',3],['Fri','teams2',3],['Fri','audit',3]];
-const DAY={Thu:['Thursday','LPA-118 goes from ticket to working in dev, with proof for every criterion.'],Fri:['Friday','A sit failure is explained, fixed, approved and healthy in forty minutes, all in Teams.']};
+const DAY={Thu:['Thursday','RCS-118 goes from ticket to working in dev, with proof for every criterion.'],Fri:['Friday','A sit failure is explained, fixed, approved and healthy in forty minutes, all in Teams.']};
 const steps=$('#steps');let lastDay='';const moments=[];
 MOM.forEach(([d,id,li],i)=>{const s=SC[id],l=s.lines[li];const clock=(s.clock||'').replace(/^(Thursday|Friday) · /,'');
   if(d!==lastDay){lastDay=d;const m=document.createElement('li');m.className='daymark';m.innerHTML=`<div>${DAY[d][0]}<small>${bee(DAY[d][1])}</small></div>`;steps.append(m)}

@@ -1,6 +1,6 @@
 # Vector, walked through
 
-Project Wheeljack. A walkthrough of **Vector**: code to production in one window, with @B beside you. It follows one ticket, LPA-118, from a Thursday morning to a Friday fix in Teams, across 29 real screens.
+Project Wheeljack. A walkthrough of **Vector**: code to production in one window, with @B beside you. It follows one ticket, RCS-118, from a Thursday morning to a Friday fix in Teams, across 29 real screens.
 
 Live at **https://venkateshterikuti.github.io/vector/**
 
@@ -13,7 +13,6 @@ Live at **https://venkateshterikuti.github.io/vector/**
 | `media/vector-up-close.mp4` | *Vector, up close*, the narrated film (12:22) |
 | `shots/`, `thumbs/` | The 29 Vector screens |
 | `fonts/` | Big Shoulders Display, Newsreader and IBM Plex Mono, bundled so the site works offline |
-| `cybertron/` | The earlier field guide, *Cybertron, annotated*, now at `/vector/cybertron/` |
 
 To view it locally, open `index.html` in Chrome or Edge.
 

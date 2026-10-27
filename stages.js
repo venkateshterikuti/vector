@@ -65,7 +65,7 @@ const hero={w:960,h:600,loop:14,still:9.6,draw(g,t,el){
     path(g,vx,vy,vw,34,12);g.save();g.clip();g.fillStyle=C.sheet;g.fillRect(vx,vy,vw,34);g.restore();line(g,vx,vy+34,vx+vw,vy+34,C.hair);
     box(g,vx+12,vy+9,16,16,4,C.ink);tx(g,'V',vx+20,vy+17.5,{f:FD,w:800,s:13,c:'#fff',a:'center'});tx(g,'VECTOR',vx+36,vy+17.5,{f:FD,w:800,s:15});
     box(g,vx+104,vy+8,74,18,9,'#E7F0FC',C.exp);dot(g,vx+116,vy+17,3.5,C.exp);tx(g,'dev',vx+126,vy+17.5,{s:10.5,w:600,c:C.exp});
-    tx(g,'LPA-118',vx+vw-16,vy+17.5,{s:10.5,c:C.ink3,a:'right'});
+    tx(g,'RCS-118',vx+vw-16,vy+17.5,{s:10.5,c:C.ink3,a:'right'});
     line(g,vx+160,vy+34,vx+160,vy+vh,C.hair);
     g.restore()}
   // tools: scatter -> rail
@@ -85,14 +85,14 @@ const hero={w:960,h:600,loop:14,still:9.6,draw(g,t,el){
   // counter
   const tabs=t<5.6?hops:1;
   if(el){const ce=el.querySelector('.corner');if(ce){const s=t<5.6?('tabs open · '+tabs):'tabs open · 1';if(ce.textContent!==s)ce.textContent=s}}
-  if(t<4.9&&hops){g.save();g.globalAlpha*=1-seg(t,4.4,4.9);box(g,cx-120,cy-24,240,48,8,C.ink);tx(g,'Why did LPA-118 fail in sit?',cx,cy+1,{s:12.5,w:500,c:'#fff',a:'center'});g.restore()}
+  if(t<4.9&&hops){g.save();g.globalAlpha*=1-seg(t,4.4,4.9);box(g,cx-120,cy-24,240,48,8,C.ink);tx(g,'Why did RCS-118 fail in sit?',cx,cy+1,{s:12.5,w:500,c:'#fff',a:'center'});g.restore()}
   // phase C: @B answers
   const cxL=vx+180,cw=vw-200;
   const pk=eo(seg(t,6.3,6.9));
   if(pk>0){g.save();g.globalAlpha*=pk;
     tx(g,'Good morning.',cxL,vy+66,{f:FD,w:800,s:24});
     box(g,cxL,vy+86,cw,48,10,C.sheet,C.ink,1.2);bee(g,cxL+12,vy+101);
-    const q='Why did LPA-118 fail in sit?';const n=Math.floor(clamp((t-6.9)/1.1)*q.length);tx(g,q.slice(0,n)+((t*2|0)%2&&t<8.4?'|':''),cxL+52,vy+111,{s:13,c:C.ink});
+    const q='Why did RCS-118 fail in sit?';const n=Math.floor(clamp((t-6.9)/1.1)*q.length);tx(g,q.slice(0,n)+((t*2|0)%2&&t<8.4?'|':''),cxL+52,vy+111,{s:13,c:C.ink});
     g.restore()}
   const ak=eo(seg(t,8.3,8.9));
   if(ak>0){g.save();g.globalAlpha*=ak;const ay=vy+150+(1-ak)*10;
@@ -112,7 +112,7 @@ const hops={w:760,h:520,loop:10,still:8,draw(g,t,el){
   const mode=el?el.dataset.mode:'today';
   const A=Math.min(seg(t,0,.4),1-seg(t,9.5,10));g.globalAlpha=A;
   tx(g,'QUESTION',40,62,{s:10,w:600,c:C.ink3,ls:1.2});
-  box(g,40,74,360,40,8,C.ink);tx(g,'Why did LPA-118 fail in sit?',58,94.5,{s:13,c:'#fff'});
+  box(g,40,74,360,40,8,C.ink);tx(g,'Why did RCS-118 fail in sit?',58,94.5,{s:13,c:'#fff'});
   if(mode==='today'){
     const pos=[];const ww=150,wh=92;
     for(let i=0;i<7;i++){const r=i<4?0:1,c=i<4?i:i-4;pos.push({x:40+c*172+(r?86:0),y:144+r*122})}
@@ -162,14 +162,14 @@ const r1={w:400,h:250,loop:9,still:2,draw(g,t){
 const r2={w:400,h:250,loop:7,still:2.6,draw(g,t){
   box(g,20,44,160,180,10,C.card,C.hair);tx(g,'Vector · CodeX',32,62,{s:10,w:600,c:C.ink2});line(g,20,76,180,76,C.hair);
   for(let r=0;r<5;r++)box(g,32,92+r*16,[100,80,120,70,96][r],5,3,C.grid);
-  box(g,220,44,160,180,10,C.card,C.hair);box(g,232,56,8,8,2,C.ctl);tx(g,'Teams · #lpa-squad',246,62,{s:10,w:600,c:C.ink2});line(g,220,76,380,76,C.hair);
+  box(g,220,44,160,180,10,C.card,C.hair);box(g,232,56,8,8,2,C.ctl);tx(g,'Teams · #rcs-squad',246,62,{s:10,w:600,c:C.ink2});line(g,220,76,380,76,C.hair);
   const go=io(seg(t,.8,2.2)),ret=io(seg(t,4.2,5.6));const k=go-ret;
   const sx=110,sy=180,ex=300,ey=110;const x=lerp(sx,ex,k),y=lerp(sy,ey,k)-Math.sin(k*Math.PI)*70;
   g.save();g.setLineDash([2,5]);g.strokeStyle=C.kno;g.lineWidth=1.4;g.beginPath();g.moveTo(sx+15,sy+9);g.quadraticCurveTo((sx+ex)/2+15,Math.min(sy,ey)-80,ex+15,ey+9);g.stroke();g.restore();
   const b1=eo(seg(t,2.3,2.7)),b2=eo(seg(t,2.9,3.3));
   if(b1>0){g.save();g.globalAlpha*=b1;box(g,232,92,136,22,11,C.grid);tx(g,'why did sit fail?',242,103.5,{s:10,c:C.ink2});g.restore()}
   if(b2>0){g.save();g.globalAlpha*=b2;box(g,232,136,140,44,8,'#FFFBE0',C.bee,1.2);tx(g,'Contract test, stage 4.',241,150,{s:9.5,c:C.ink});tx(g,'Same thread as CodeX.',241,166,{s:9.5,c:C.ink3});g.restore()}
-  box(g,32,196,136,18,9,'#FFFBE0');tx(g,'thread · LPA-118',100,205.5,{s:9.5,w:600,c:C.kno,a:'center'});
+  box(g,32,196,136,18,9,'#FFFBE0');tx(g,'thread · RCS-118',100,205.5,{s:9.5,w:600,c:C.kno,a:'center'});
   bee(g,x,y,1.1);
 }};
 const r3={w:400,h:250,loop:5,still:2.4,draw(g,t){
@@ -198,7 +198,7 @@ const r4={w:400,h:250,loop:10,still:1.2,draw(g,t){
     g.restore()}
 }};
 const r5={w:400,h:250,loop:8,still:3,draw(g,t){
-  box(g,24,30,352,112,10,C.card,C.ink,1.2);bee(g,38,44);tx(g,'Restart pod lpa-api-7f9 in sit?',78,53.5,{s:12,w:600});
+  box(g,24,30,352,112,10,C.card,C.ink,1.2);bee(g,38,44);tx(g,'Restart pod rcs-api-7f9 in sit?',78,53.5,{s:12,w:600});
   tx(g,'Uses your access. Logged to the audit trail.',38,80,{s:10,c:C.ink3});
   const click=2.3,done=t>click+.2;
   if(!done){box(g,38,98,92,30,6,C.ink);tx(g,'Approve',84,113.5,{s:11,w:600,c:'#fff',a:'center'});box(g,138,98,86,30,6,C.card,C.hair);tx(g,'Not now',181,113.5,{s:11,c:C.ink2,a:'center'})}
