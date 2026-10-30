@@ -68,11 +68,13 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* hero */
 .hero{padding-block:clamp(40px,6vw,80px) clamp(32px,5vw,64px)}
 .hero .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,4vw,60px);align-items:center}
-.hero h1{font:800 clamp(64px,9vw,128px)/.86 var(--f-display);text-transform:uppercase;letter-spacing:-.005em;margin-top:18px}
+.hero h1{font:800 clamp(52px,7vw,104px)/.88 var(--f-display);text-transform:uppercase;letter-spacing:-.005em;margin-top:18px}
 .hero h1 em{font-style:normal;color:var(--exp);display:block}
 .hero h1 .w{display:inline-block;animation:rise .9s var(--ease) both}
 .hero h1 em .w{animation-delay:.18s}
-.hero .dek{margin-top:22px;font-size:21px;line-height:1.45;color:var(--ink-2);max-width:31em}
+.hero .verse{margin-top:22px;font:italic 400 clamp(22px,2.2vw,28px)/1.3 var(--f-body);color:var(--ink);max-width:22em;animation:rise .9s var(--ease) .36s both}
+.hero .verse b{font-weight:400;color:var(--exp);display:block}
+.hero .dek{margin-top:18px;font-size:21px;line-height:1.45;color:var(--ink-2);max-width:31em}
 .hero .cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
 .hero .files{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
 .hero .board{aspect-ratio:8/5}
