@@ -6,7 +6,7 @@ const bee=s=>esc(s).replace(/@B/g,'<span class="bee">@B</span>');
 const mmss=t=>{t=Math.max(0,Math.floor(t));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const SC={};D.scenes.forEach(s=>SC[s.id]=s);
-const CHC={open:'exp',why:'exp',morning:'exp',work:'exp',build:'exe',ship:'exe','break':'bad',watch:'tel',know:'kno',teach:'ctl',teams:'ok',control:'ctl',close:'exp'};
+const CHC={meet:'exp',open:'exp',why:'exp',morning:'exp',work:'exp',build:'exe',ship:'exe','break':'bad',watch:'tel',know:'kno',teach:'ctl',teams:'ok',control:'ctl',close:'exp'};
 const CV={exp:'#0071E3',exe:'#0E8F86',bad:'#D7372C',tel:'#C23B83',kno:'#B86E00',ctl:'#7C4DDB',ok:'#1F8A4C'};
 const CHN={};D.chapters.forEach(c=>CHN[c.id]=c.name);
 const deckId=id=>id==='title'?'cover':id;
@@ -145,7 +145,7 @@ video.addEventListener('timeupdate',()=>{const t=video.currentTime;let k=0;D.cha
 cbtn[0].classList.add('on');
 
 /* 06 deck chips */
-const dc=$('#deckch');D.chapters.forEach((c,i)=>{const first=D.scenes.find(s=>s.ch===c.id);const a=document.createElement('a');a.className='tag';a.href='deck.html#'+deckId(first.id);a.target='_blank';a.rel='noopener';
+const dc=$('#deckch');D.chapters.forEach((c,i)=>{if(c.id==='meet')return;const first=D.scenes.find(s=>s.ch===c.id);const a=document.createElement('a');a.className='tag';a.href='deck.html#'+deckId(first.id);a.target='_blank';a.rel='noopener';
   a.innerHTML=`<i style="color:${CV[CHC[c.id]]}"></i>${String(i).padStart(2,'0')} ${bee(c.name)}`;dc.append(a)});
 
 /* 07 counters */
